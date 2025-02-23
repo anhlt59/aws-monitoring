@@ -1,0 +1,46 @@
+default:
+  stage: dev
+  region: ap-southeast-1
+  accountId: 691802122630
+
+# AWS Services
+S3:
+  DeploymentBucket:
+    name: denaribots-dev-deployment
+
+Lambda:
+  environment:
+    LOG_LEVEL: DEBUG
+  logRetentionInDays: 7
+  versionRetentionNumber: 2
+
+DynamoDB:
+  BillingMode: PROVISIONED
+
+  # only for PROVISIONED mode
+  RCU: 10
+  WCU: 20
+  AutoScale:
+    Enable: true
+    RCU:
+      min: 10
+      max: 20
+    WCU:
+      min: 20
+      max: 50
+    TargetUtilization: 70 # scale when CPU utilization reach 70%
+
+VPC:
+  PrivateSubnetIds:
+    - subnet-08cc5d69be197b5f4
+    - subnet-0c3f5696d7541b437
+    - subnet-0a552e89af58fdfd0
+  SecurityGroupIds:
+    - sg-0fa7d84572f03fae3
+
+# Separate plugins for different environments
+plugins:
+  - ./serverless/plugins/validateDeployment.js
+  - serverless-plugin-conditional-functions
+  - serverless-python-requirements
+  - serverless-prune-versions

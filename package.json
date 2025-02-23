@@ -1,0 +1,25 @@
+{
+  "name": "denaribots",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "docker-compose up -d",
+    "dev": "npx serverless offline start --stage local",
+    "deploy": "scripts/deploy.sh",
+    "package": "npx serverless package -s ",
+    "coverage": "pytest --cov=src tests/ && coverage-badge -o docs/images/coverage.svg -f"
+  },
+  "devDependencies": {
+    "serverless": "^3.33.0",
+    "serverless-localstack": "^1.1.1",
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-conditional-functions": "^1.0.8",
+    "serverless-python-requirements": "^6.0.0"
+  },
+  "dependencies": {
+    "serverless": "^3.33.0",
+    "serverless-plugin-conditional-functions": "^1.0.8",
+    "serverless-prune-versions": "^1.0.4",
+    "serverless-python-requirements": "^6.0.0"
+  }
+}

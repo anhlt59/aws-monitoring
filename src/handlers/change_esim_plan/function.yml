@@ -1,0 +1,21 @@
+function:
+  name: ${self:service}-${self:provider.stage}-ChangeESimPlan
+  description: Change eSim plan, triggered by Soracom
+  handler: src.handlers.change_esim_plan.main.handler
+  package:
+    patterns:
+      - src/handlers/change_esim_plan/*.py
+      - src/models/*.py
+      - src/repositories/*.py
+      - src/services/iot_core.py
+      - src/services/soracom.py
+      - src/services/storage.py
+      - src/services/devices.py
+      - src/*.py
+      - "!src/templates.py"
+  maximumRetryAttempts: 0
+  vpc:
+    securityGroupIds: ${self:custom.VPC.SecurityGroupIds}
+    subnetIds: ${self:custom.VPC.PrivateSubnetIds}
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-ChangeESimPlan

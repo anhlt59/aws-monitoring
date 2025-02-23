@@ -1,0 +1,31 @@
+services:
+  localstack:
+    platform: linux/amd64
+    image: localstack/localstack:3.4.0
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,s3,sqs,ses
+      - DEBUG=1
+      - DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOSTNAME_EXTERNAL=localstack
+    volumes:
+      - "./.local/data/localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./.local/localstack:/etc/localstack/init/ready.d/"
+
+  mysql:
+    platform: linux/amd64
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=denaribots
+      - MYSQL_ROOT_PASSWORD=12345678
+    ports:
+      - '3306:3306'
+    volumes:
+      - "./.local/data/mysql:/var/lib/mysql"
+      - "./.local/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql"

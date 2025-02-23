@@ -1,0 +1,80 @@
+IoTThing:
+  # Must be created manually
+  Type: AWS::IoT::Thing
+  Properties:
+    ThingName: ${self:service}-${self:provider.stage}-Thing
+    AttributePayload:
+      Attributes:
+        Environment: ${self:provider.stage}
+    Tags:
+      - Key: Owner
+        Value: ${self:service}
+      - Key: Environment
+        Value: ${self:provider.stage}
+
+
+IoTRule0:
+  Type: AWS::IoT::TopicRule
+  Properties:
+    RuleName: ${self:service}_${self:provider.stage}_rule0
+    TopicRulePayload:
+      Description: IoT Rule to route messages having event=`0`
+      AwsIotSqlVersion: "2016-03-23"
+      Sql: "SELECT *, topic() as topic FROM '/nb/+/data' WHERE event=0"
+      Actions:
+        - Sqs:
+            RoleArn: !GetAtt IOTCoreRole.Arn
+            QueueUrl: !GetAtt IOTStreamQueue.QueueUrl
+      # TODO: add error action
+    Tags:
+      - Key: Owner
+        Value: ${self:service}
+      - Key: Environment
+        Value: ${self:provider.stage}
+
+
+IoTRule1:
+  Type: AWS::IoT::TopicRule
+  Properties:
+    RuleName: ${self:service}_${self:provider.stage}_rule1
+    TopicRulePayload:
+      Description: IoT Rule to route messages having event=`1`
+      AwsIotSqlVersion: "2016-03-23"
+      Sql: "SELECT *, topic() as topic FROM '/nb/+/data' WHERE event=1"
+      Actions:
+        - Lambda:
+            FunctionArn: !GetAtt StreamsIOTToRDSLambdaFunction.Arn
+      # TODO: add error action
+    Tags:
+      - Key: Owner
+        Value: ${self:service}
+      - Key: Environment
+        Value: ${self:provider.stage}
+
+
+IoTRule2:
+  Type: AWS::IoT::TopicRule
+  Properties:
+    RuleName: ${self:service}_${self:provider.stage}_rule2
+    TopicRulePayload:
+      Description: IoT Rule to route messages having event = 2
+      AwsIotSqlVersion: "2016-03-23"
+      Sql: "SELECT *, topic() as topic FROM '/nb/+/data' WHERE event = 2"
+      Actions:
+        - Lambda:
+            FunctionArn: !GetAtt ConfirmFirmwareUpdateLambdaFunction.Arn
+      # TODO: add error action
+    Tags:
+      - Key: Owner
+        Value: ${self:service}
+      - Key: Environment
+        Value: ${self:provider.stage}
+
+
+IoTLogs:
+  Type: AWS::IoT::Logging
+  Properties:
+    AccountId:
+      Ref: AWS::AccountId
+    DefaultLogLevel: WARN
+    RoleArn: !GetAtt IOTCoreRole.Arn

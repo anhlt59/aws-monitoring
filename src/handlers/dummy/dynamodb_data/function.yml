@@ -1,0 +1,22 @@
+function:
+  enabled: '"${self:provider.stage}" == "dev"'
+  name: ${self:service}-${self:provider.stage}-DummyDynamoDBData
+  description: Dummy DynamoDB device data (Only dev environment)
+  handler: src.handlers.dummy.dynamodb_data.main.handler
+  package:
+    patterns:
+      - src/handlers/dummy/dynamodb_data/*.py
+      - src/handlers/dummy/*.*
+      - src/models/sensors.py
+      - src/repositories/sensors.py
+      - src/*.py
+      - "!src/templates.py"
+  maximumRetryAttempts: 0
+#  events:
+#    - eventBridge:
+#        schedule: cron(0/5 * * * ? *) # every 5 minutes
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-DummyDynamoDBData
+    LOG_LEVEL: WARNING
+  logRetentionInDays: 3
+  memorySize: 128

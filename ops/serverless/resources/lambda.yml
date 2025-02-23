@@ -1,0 +1,16 @@
+IOTRule1LambdaPermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    Action: lambda:InvokeFunction
+    FunctionName: !GetAtt StreamsIOTToRDSLambdaFunction.Arn
+    Principal: iot.amazonaws.com
+    SourceArn: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${self:service}_${self:provider.stage}_rule1"
+
+
+IOTRule2LambdaPermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    Action: lambda:InvokeFunction
+    FunctionName: !GetAtt ConfirmFirmwareUpdateLambdaFunction.Arn
+    Principal: iot.amazonaws.com
+    SourceArn: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${self:service}_${self:provider.stage}_rule2"

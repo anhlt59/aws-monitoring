@@ -1,0 +1,17 @@
+function:
+  name: ${self:service}-${self:provider.stage}-IOTStreamsToRDS
+  description: IOT Core > Lambda > RDS
+  handler: src.handlers.stream_iot_to_rds.main.handler
+  package:
+    patterns:
+      - src/handlers/stream_iot_to_rds/*.py
+      - src/models/*.py
+      - src/repositories/*.py
+      - src/*.py
+      - "!src/templates.py"
+  maximumRetryAttempts: 0
+  vpc:
+    securityGroupIds: ${self:custom.VPC.SecurityGroupIds}
+    subnetIds: ${self:custom.VPC.PrivateSubnetIds}
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-IOTStreamsToRDS

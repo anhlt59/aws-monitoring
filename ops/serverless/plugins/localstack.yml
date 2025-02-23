@@ -1,0 +1,3 @@
+# https://www.serverless.com/plugins/serverless-localstack
+localstack:
+  stages: [ local ]
