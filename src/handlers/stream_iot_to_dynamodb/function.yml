@@ -1,0 +1,22 @@
+function:
+  name: ${self:service}-${self:provider.stage}-IOTStreamsToDynamoDB
+  description: IOT Core > SQS > Lambda > DynamoDB
+  handler: src.handlers.stream_iot_to_dynamodb.main.handler
+  package:
+    patterns:
+      - src/handlers/stream_iot_to_dynamodb/*.py
+      - src/models/sensors.py
+      - src/repositories/sensors.py
+      - src/*.py
+      - "!src/templates.py"
+  maximumRetryAttempts: 0
+  events:
+    - sqs:
+        arn: !GetAtt IOTStreamQueue.Arn
+        batchSize: 100
+        maximumBatchingWindow: 10
+        maximumConcurrency: 2
+        functionResponseType: ReportBatchItemFailures
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-IOTStreamsToDynamoDB
+  memorySize: 128

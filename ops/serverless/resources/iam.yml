@@ -1,0 +1,178 @@
+LambdaFunctionRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:service}-${self:provider.stage}-LambdaFunctionRole
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+              - edgelambda.amazonaws.com
+              - lambda.amazonaws.com
+          Action:
+            - sts:AssumeRole
+    Path: /
+    ManagedPolicyArns:
+      - !Ref LambdaFunctionPolicy
+    Tags:
+      - Key: Owner
+        Value: ${self:service}
+      - Key: Environment
+        Value: ${self:provider.stage}
+
+
+LambdaFunctionPolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    ManagedPolicyName: ${self:service}-${self:provider.stage}-LambdaFunctionPolicy
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowCloudwatchLogs
+          Effect: Allow
+          Action:
+            - logs:CreateLogStream
+            - logs:CreateLogGroup
+            - logs:PutLogEvents
+          Resource: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+        - Sid: AllowAssignVPC
+          Effect: Allow
+          Action:
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DeleteNetworkInterface
+            - ec2:AssignPrivateIpAddresses
+            - ec2:UnassignPrivateIpAddresses
+          Resource: "*"
+        - Sid: AllowAccessS3
+          Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:ListBucket
+            - s3:PutBucketNotification
+            - s3:DeleteObject
+          Resource:
+            - !Sub "arn:${AWS::Partition}:s3:::*"
+        - Sid: AllowReadWriteSSM
+          Effect: Allow
+          Action:
+            - ssm:Put*
+            - ssm:Get*
+            - ssm:Describe*
+          Resource: !Sub "arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*"
+        - Sid: AllowAccessDynamoDB
+          Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Get*
+            - dynamodb:List*
+            - dynamodb:BatchGet*
+            - dynamodb:BatchWrite*
+            - dynamodb:Describe*
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+          Resource:
+            - !Sub "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*"
+        - Sid: AllowSendMessagesToSQS
+          Effect: Allow
+          Action:
+            - sqs:Get*
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:ChangeMessageVisibility
+          Resource: !Sub "arn:${AWS::Partition}:sqs:${AWS::Region}:${AWS::AccountId}:*"
+        - Sid: AllowPublishMessageToIoTCore
+          Effect: Allow
+          Action:
+            - iot:Connect
+            - iot:Publish
+            - iot:RetainPublish
+            - iot:Receive
+          Resource:
+            - !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:client/*"
+            - !Sub "arn:${AWS::Partition}:iot:${AWS::Region}:${AWS::AccountId}:topic/*"
+        - Sid: AllowSendSESEmails
+          Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: !Sub "arn:${AWS::Partition}:ses:${AWS::Region}:${AWS::AccountId}:*"
+
+
+SoracomPolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    ManagedPolicyName: ${self:service}-${self:provider.stage}-SoracomPolicy
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowInvokeFunction
+          Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            # Only ChangeESimPlan function
+            - !GetAtt ChangeESimPlanLambdaFunction.Arn
+
+
+IOTCoreRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:service}-${self:provider.stage}-IOTCoreRole
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+              - iot.amazonaws.com
+          Action:
+            - sts:AssumeRole
+    Path: /
+    ManagedPolicyArns:
+      - !Ref IOTCorePolicy
+    Tags:
+      - Key: Owner
+        Value: ${self:service}
+      - Key: Environment
+        Value: ${self:provider.stage}
+
+
+IOTCorePolicy:
+  Type: AWS::IAM::ManagedPolicy
+  Properties:
+    ManagedPolicyName: ${self:service}-${self:provider.stage}-IOTCorePolicy
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowSendMessagesToSQS
+          Effect: Allow
+          Action:
+            - sqs:Get*
+            - sqs:SendMessage
+          Resource: !Sub "arn:${AWS::Partition}:sqs:${AWS::Region}:${AWS::AccountId}:*"
+        - Sid: AllowInvokeFunction
+          Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function/*"
+        - Sid: AllowAccessCloudwatchLogs
+          Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - logs:PutMetricFilter
+            - logs:PutRetentionPolicy
+            - iot:GetLoggingOptions
+            - iot:SetLoggingOptions
+            - iot:SetV2LoggingOptions
+            - iot:GetV2LoggingOptions
+            - iot:SetV2LoggingLevel
+            - iot:ListV2LoggingLevels
+            - iot:DeleteV2LoggingLevel
+          Resource: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group::*"

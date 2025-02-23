@@ -1,0 +1,17 @@
+services:
+  localstack:
+    platform: linux/amd64
+    image: localstack/localstack:3.4.0
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,s3,sqs,ses
+      - DEBUG=1
+      - DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - HOSTNAME_EXTERNAL=localstack
+    volumes:
+      - "./.local/data/localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./.local/localstack:/etc/localstack/init/ready.d/"

@@ -1,0 +1,28 @@
+function:
+  name: ${self:service}-${self:provider.stage}-NotifyUsers
+  description: Send firebase messages or SES emails to users
+  handler: src.handlers.notify_users.main.handler
+  timeout: 300
+  package:
+    patterns:
+      - src/handlers/notify_users/*.py
+      - src/models/*.py
+      - src/repositories/*.py
+      - src/services/notification.py
+      - src/services/firebase.py
+      - src/services/ses.py
+      - src/*.py
+  maximumRetryAttempts: 0
+  events:
+    - sqs:
+        arn: !GetAtt NotificationQueue.Arn
+        batchSize: 2
+        maximumConcurrency: 2
+        functionResponseType: ReportBatchItemFailures
+        # maximumBatchingWindow: 10
+  # reservedConcurrency: 10
+  vpc:
+    securityGroupIds: ${self:custom.VPC.SecurityGroupIds}
+    subnetIds: ${self:custom.VPC.PrivateSubnetIds}
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-NotifyUsers

@@ -1,0 +1,19 @@
+# https://www.serverless.com/plugins/serverless-python-requirements
+pythonRequirements:
+  fileName: requirements/${self:provider.stage}.txt
+  dockerizePip: non-linux
+  useDownloadCache: false
+  useStaticCache: false
+  slim: true
+  strip: false
+  slimPatternsAppendDefaults: false
+  slimPatterns:
+    - "**/*.py[c|o]"
+    - "**/__pycache__*"
+  layer:
+    name: ${self:service}-${self:provider.stage}-python-layer
+    description: ${self:service} ${self:provider.stage} Python Layer
+    compatibleRuntimes:
+      - python3.10
+    allowedAccounts:
+      - "*"

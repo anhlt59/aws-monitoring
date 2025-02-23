@@ -1,0 +1,26 @@
+function:
+  name: ${self:service}-${self:provider.stage}-MonitorCase5
+  description: Long-term absence alarm
+  handler: src.handlers.monitors.case_5.main.handler
+  timeout: 60
+  package:
+    patterns:
+      - src/handlers/monitors/case_5/*.py
+      - src/handlers/monitors/*.py
+      - src/models/*.py
+      - src/repositories/*.py
+      - src/services/sqs.py
+      - src/*.py
+  maximumRetryAttempts: 0
+  events:
+    - sqs:
+        arn: !GetAtt MonitorCase5Queue.Arn
+        batchSize: 2
+        maximumConcurrency: 2
+        functionResponseType: ReportBatchItemFailures
+  # reservedConcurrency: 10
+  vpc:
+    securityGroupIds: ${self:custom.VPC.SecurityGroupIds}
+    subnetIds: ${self:custom.VPC.PrivateSubnetIds}
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-MonitorCase5

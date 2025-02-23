@@ -1,0 +1,23 @@
+function:
+  name: ${self:service}-${self:provider.stage}-LoadDisconnectedDevices
+  description: Load disconnected devices
+  handler: src.handlers.load_disconnected_devices.main.handler
+  package:
+    patterns:
+      - src/handlers/load_disconnected_devices/*.py
+      - src/models/*.py
+      - src/repositories/*.py
+      - src/services/soracom.py
+      - src/services/sqs.py
+      - src/*.py
+      - "!src/templates.py"
+  maximumRetryAttempts: 0
+  events:
+    - eventBridge:
+        schedule: cron(0/10 * * * ? *) # every 10 minutes
+  vpc:
+    securityGroupIds: ${self:custom.VPC.SecurityGroupIds}
+    subnetIds: ${self:custom.VPC.PrivateSubnetIds}
+  environment:
+    FUNTION_NAME: ${self:service}-${self:provider.stage}-LoadDisconnectedDevices
+  timeout: 900
