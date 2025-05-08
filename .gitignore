@@ -325,6 +325,9 @@ tags
 ### Project template
 django_celery/media
 
+# Others
 .pytest_cache
 .ipython
 .serverless
+serverless.log
+ops/local/data

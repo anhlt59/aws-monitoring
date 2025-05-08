@@ -1,17 +1,19 @@
 services:
   localstack:
     platform: linux/amd64
-    image: localstack/localstack:3.4.0
+    image: localstack/localstack:4.4.0
     container_name: localstack
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=dynamodb,s3,sqs,ses
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_SECRET_ACCESS_KEY=local
+      - SERVICES=sts,s3,dynamodb,apigateway,cloudformation,cloudwatch,ssm,lambda,events,logs,iam
       - DEBUG=1
-      - DEFAULT_REGION=us-east-1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - HOSTNAME_EXTERNAL=localstack
     volumes:
-      - "./.local/data/localstack:/var/lib/localstack"
+      - "./ops/local/data/localstack:/var/lib/localstack"
+      - "./ops/local/localstack:/etc/localstack/init/ready.d/"
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./.local/localstack:/etc/localstack/init/ready.d/"

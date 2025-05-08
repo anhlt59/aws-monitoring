@@ -1,5 +1,0 @@
-# https://www.serverless.com/plugins/serverless-prune-versions
-prune:
-  automatic: true
-  includeLayers: true
-  number: ${file(./serverless/configs/${self:provider.stage}.yml):Lambda.versionRetentionNumber, 10}

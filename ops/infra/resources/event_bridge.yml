@@ -1,0 +1,5 @@
+MonitoringEventBus:
+  Type: AWS::Events::EventBus
+  Properties:
+    Name: ${self:service}-${self:provider.stage}-MonitoringEventBus
+    Description: Custom EventBus for monitoring events

@@ -1,65 +1,22 @@
-#!/bin/bash
-# Deploy to AWS from your local
-set -o errexit
-set -o pipefail
-set -o nounset
+#!/usr/bin/env bash
 
-# STAGE
-cat <<EOF
-Select a stage:
-- dev
-- stg
-- prod
-EOF
-read -rp "Choose from dev, stg, prod [dev]: " choice
-choice=${choice:-dev}
-if [[ "$choice" == dev ]]; then
-  STAGE=dev
-  BRANCH=develop
-  PROFILE=aws_monitoring_dev
-elif [[ "$choice" == stg ]]; then
-  STAGE=stg
-  BRANCH=staging
-  PROFILE=aws_monitoring_stg
-elif [[ "$choice" == prod ]]; then
-  STAGE=prod
-  BRANCH=main
-  PROFILE=aws_monitoring_prod
+set -euo pipefail
+
+SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+source "${SCRIPT_DIR}/base.sh"
+STAGE="${1:-local}"
+
+if [[ "$STAGE" == "local" ]]; then
+    if ! docker ps | grep -q localstack; then
+        echo -e "${RED}Warning: LocalStack is not running. Please start LocalStack before deploying to 'local'.${RESET}"
+        echo -e "${YELLOW}Use 'make start-localstack' to start LocalStack.${RESET}"
+        exit 1
+    fi
+    TEMPLATE_PATH=serverless.local.yml
 else
-  echo "'${choice}' Invalid choice."
-  exit 1
+    TEMPLATE_PATH=serverless.yml
 fi
 
-# pull the latest source code
-echo
-read -rp "Pull the latest source code y/n [n]: " choice
-choice=${choice:-n}
-if [[ "$choice" =~ ^[Yy]$ ]]; then
-  git stash && git checkout "$BRANCH" && git reset "origin/${BRANCH}"
-elif [[ "$choice" =~ ^[Nn]$ ]]; then
-  echo "Skip pulling the latest source code."
-else
-  echo "'${choice}' Invalid choice."
-  exit 1
-fi
-
-# Confirm the summary
-echo
-cat <<EOF
-Summary:
-STAGE - $STAGE
-PROFILE - $PROFILE
-BRANCH - $(git branch --show-current)
-EOF
-# Deploy to AWS
-echo
-read -rp "Continue to deploy? y/n [y]: " choice
-choice=${choice:-y}
-if [[ "$choice" =~ ^[Yy]$ ]]; then
-  npx serverless deploy --stage "$STAGE" --aws-profile "$PROFILE"
-elif [[ "$choice" =~ ^[Nn]$ ]]; then
-  git status
-else
-  echo "'${choice}' Invalid choice."
-  exit 1
-fi
+echo -e "${GREEN}${BOLD}Deploying 'teligent' in stage '${STAGE}'...${RESET}"
+echo -e "${BLUE}pnpm exec sls deploy --stage ${STAGE} --config ${TEMPLATE_PATH}${RESET}"
+pnpm exec sls deploy --stage "$STAGE" --config "$TEMPLATE_PATH"

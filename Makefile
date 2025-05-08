@@ -1,19 +1,15 @@
-.PHONY: active clean clean-build clean-pyc clean-test coverage install help test
-
+.PHONY: help active install coverage test start-master start-agent deploy-agent deploy-master
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
-
 from urllib.request import pathname2url
-
 webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
 
 define PRINT_HELP_PYSCRIPT
 import re, sys
-
 for line in sys.stdin:
 	match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
 	if match:
@@ -24,38 +20,41 @@ export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
-# ===============================================================================================
+# =================================================================================
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+install: ## Install the packages
+	@bash ops/scripts/development/install.sh
+activate: ## Activate the virtual environment
+	@bash ops/scripts/development/activate.sh
 
-install: ## install the packages
-	bash ops/scripts/install.sh
+# RUNNING ========================================================================
+start: ## Start the local master server
+	@bash ops/scripts/development/start.sh
 
-active: ## activate the virtual environment
-	bash ops/scripts/activate.sh
+# DEPLOYMENT ========================================================================
+deploy-local: ## Deploy to the local environment
+	@bash ops/scripts/deployment/deploy.sh local
+deploy-neos: ## Deploy to the NEOS environment
+	@bash ops/scripts/deployment/deploy.sh neos
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+# PACKAGING ========================================================================
+package-local: ## Create artifacts for local deployment
+	@bash ops/scripts/deployment/package.sh local
+package-neos: ## Create artifacts for NEOS deployment
+	@bash ops/scripts/deployment/package.sh neos
 
-clean-build: ## remove build artifacts
-	rm -fr .serverless
+# DELETE ===========================================================================
+delete-local: ## Delete the local deployment
+	@bash ops/scripts/deployment/delete.sh local
+delete-neos: ## Delete the NEOS deployment
+	@bash ops/scripts/deployment/delete.sh neos
 
-clean-pyc: ## remove Python file artifacts
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
+# TESTING ==========================================================================
+test: ## Run the tests
+	@pytest --cov=src tests/
 
-clean-test: ## remove test and coverage artifacts
-	rm -fr .tox/
-	rm -f .coverage
-	rm -fr htmlcov/
-	rm -fr .pytest_cache
-
-test: ## run pytest
-	pytest
-
-coverage: ## check code coverage
-	coverage run --source src -m pytest
-	coverage report -m
-	coverage html
-	$(BROWSER) htmlcov/index.html
+coverage: ## Check code coverage
+	@coverage run --source src -m pytest
+	@coverage report -m
+	#@coverage html && $(BROWSER) htmlcov/index.html

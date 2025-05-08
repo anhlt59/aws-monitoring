@@ -1,0 +1,23 @@
+# https://www.serverless.com/plugins/serverless-python-requirements
+pythonRequirements:
+  usePoetry: true
+  fileName: pyproject.toml
+  dockerizePip: non-linux
+
+  slim: true
+  slimPatternsAppendDefaults: false
+  slimPatterns:
+    - "**/*.py[c|o]"
+    - "**/__pycache__*"
+  strip: false
+
+  useDownloadCache: true
+  useStaticCache: true
+
+  layer:
+    name: ${self:service}-${self:provider.stage}-PythonLayer
+    description: ${self:service} ${self:provider.stage} Python Layer
+    compatibleRuntimes:
+      - python3.12
+    allowedAccounts:
+      - "*"

@@ -1,58 +1,34 @@
-import json
-from datetime import date, datetime
+# from typing import Any, Generic, TypeVar
 
-from sqlalchemy import Column, DateTime, func
-from sqlalchemy.orm import attributes, declarative_base
+# from pydantic import BaseModel, ConfigDict, Field
+# from uuid_utils import uuid7
 
-from src.constants import DATETIME_FORMAT
-
-Base = declarative_base()
+# from src.common.utils.datetime_utils import current_utc_timestamp
 
 
-class BaseModel(Base):
-    __slots__ = ()
-    __abstract__ = True
+# class Model(BaseModel):
+#     model_config = ConfigDict(from_attributes=True, use_enum_values=True, validate_assignment=True)
+#     # Attributes
+#     id: str = Field(default_factory=lambda: str(uuid7()))
+#     created_at: int = Field(default_factory=current_utc_timestamp)
+#     updated_at: int = Field(default_factory=current_utc_timestamp)
 
-    created_at = Column(DateTime, default=datetime.utcnow, server_default=func.current_timestamp())
-    updated_at = Column(
-        DateTime,
-        onupdate=datetime.utcnow,
-        default=datetime.utcnow,
-        server_default=func.current_timestamp(),
-    )
 
-    @staticmethod
-    def _json_serializer(_obj):
-        if isinstance(_obj, datetime) or isinstance(_obj, date):
-            return _obj.strftime(DATETIME_FORMAT)
+# M = TypeVar("M", bound=BaseModel)
 
-    def to_dict(self, ignore_null=True) -> dict:
-        if ignore_null is False:
-            return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
-        return {
-            column.name: getattr(self, column.name) for column in self.__table__.columns if getattr(self, column.name)
-        }
+# class PaginatedInputDTO(BaseModel):
+#     model_config = ConfigDict(use_enum_values=True, str_strip_whitespace=True)
+#     # Attributes
+#     limit: int = 20
+#     cursor: str | None = None
+#     direction: str | None = "asc"
 
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict(), default=self._json_serializer)
 
-    def to_log(self) -> str:
-        item = dict(
-            (column.name, getattr(self, column.name))
-            for column in self.__table__.columns
-            if getattr(self, column.name)
-        )
-        return json.dumps(item, default=self._json_serializer)
-
-    @classmethod
-    def deserialize(cls, data: dict):
-        # deserialize
-        for column in cls.__table__.columns:
-            if isinstance(column.type, DateTime):
-                if value := data.get(column.name):
-                    data[column.name] = datetime.strptime(value, DATETIME_FORMAT)
-        return cls(**data)
-
-    def is_modified(self):
-        return attributes.instance_state(self).modified
+# class PaginatedOutputDTO(BaseModel, Generic[M]):
+#     model_config = ConfigDict(use_enum_values=True, str_strip_whitespace=True)
+#     # Attributes
+#     items: list[M]
+#     limit: int = 20
+#     next: str | None = None
+#     previous: str | None = None

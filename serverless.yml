@@ -1,23 +1,32 @@
-service: denaribots
+service: teligent
+
+stages:
+  default:
+    resolvers:
+      aws-account:
+        type: aws
+        profile: ${self:custom.configs.Profile}
+        region: ${opt:region, self:custom.configs.Region}
 
 provider:
   name: aws
-  stage: ${opt:stage, "dev"}
-  region: ${opt:region, self:custom.default.region}
+  resolver: aws-account
+  stage: ${opt:stage, "neos"}
   stackName: ${self:service}-${self:provider.stage}
 
   # default tags for all resources
-  tags:
+  stackTags:
     Owner: ${self:service}
     Environment: ${self:provider.stage}
+  tags: ${self:provider.stackTags}
 
   # S3 bucket where the artifact is stored
   deploymentBucket:
-    name: ${file(./serverless/configs/${self:provider.stage}.yml):S3.DeploymentBucket.name}
+    name: ${self:custom.configs.S3.DeploymentBucket.name}
 
   # config lambda functions
-  runtime: python3.13
-  logRetentionInDays: ${self:custom.Lambda.logRetentionInDays}
+  runtime: python3.12
+  logRetentionInDays: ${self:custom.configs.Lambda.logRetentionInDays}
   memorySize: 256
   timeout: 10
   role: LambdaFunctionRole
@@ -26,28 +35,20 @@ provider:
 
   # Default environment for lambda functions
   environment:
-    REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
-    LOG_LEVEL: ${self:custom.Lambda.environment.LOG_LEVEL}
-
+    POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.environment.LOG_LEVEL}
     # references to resources in this template
-    DYNAMODB_TABLE: !Ref DynamoDBTable
 
-plugins: ${file(./serverless/configs/${self:provider.stage}.yml):plugins}
+plugins:
+  - serverless-python-requirements
+
 useDotenv: true
 
 custom:
-  # load the configuration coresponding to a specific $stage
-  default: ${file(./serverless/configs/${self:provider.stage}.yml):default}
-  Lambda: ${file(./serverless/configs/${self:provider.stage}.yml):Lambda}
-  DynamoDB: ${file(./serverless/configs/${self:provider.stage}.yml):DynamoDB}
-  VPC: ${file(./serverless/configs/${self:provider.stage}.yml):VPC}
-  # load Secrets manager from AWS
-  Secrets: ${ssm:/aws/reference/secretsmanager/nishinboeki/secretKey, ""}
+  # load the configuration corresponding to a specific $stage
+  configs: ${file(ops/infra/configs/${self:provider.stage}.yml)}
   # plugins
-  prune: ${file(./serverless/plugins/prune_versions.yml):prune}
-  localstack: ${file(./serverless/plugins/localstack.yml):localstack}
-  pythonRequirements: ${file(./serverless/plugins/python_requirements.yml):pythonRequirements}
+  pythonRequirements: ${file(ops/infra/plugins/python_requirements.yml):pythonRequirements}
 
 package:
   individually: true
@@ -56,8 +57,9 @@ package:
     - "!./**"
 
 functions:
-  # Testing
-  DummyDynamoDBData: ${file(./src/handlers/dummy/dynamodb_data/function.yml):function}
+  # API -------------------------------------------------------------------------
+  # Notifiers -------------------------------------------------------------------
+  SendHealthEvents: ${file(ops/infra/functions/notifiers/SendHealthEvents.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------
@@ -65,30 +67,13 @@ resources:
     Stage:
       Type: String
       Default: ${self:provider.stage}
-      AllowedValues: [ local, dev, stg, prod ]
-    AutoScale:
-      Type: String
-      Default: ${self:custom.DynamoDB.AutoScale.Enable}
-      AllowedValues: [ true, false ]
-  # -----------------------------------------------------------------------------
-  Conditions:
-    AutoScaleCondition: !Equals [ !Ref AutoScale, true ]
+      AllowedValues: [ neos ]
   # -----------------------------------------------------------------------------
   Resources:
     # IAM
-    LambdaFunctionRole: ${file(./serverless/resources/iam.yml):LambdaFunctionRole}
-    LambdaFunctionPolicy: ${file(./serverless/resources/iam.yml):LambdaFunctionPolicy}
-
-    # DynamoDB
-    DynamoDBTable: ${file(./serverless/resources/dynamodb.yml):DynamoDBTable}
-    ScalingRole: ${file(./serverless/resources/dynamodb.yml):ScalingRole}
-    WriteScalingPolicy: ${file(./serverless/resources/dynamodb.yml):WriteScalingPolicy}
-    ReadScalingPolicy: ${file(./serverless/resources/dynamodb.yml):ReadScalingPolicy}
-    WriteCapacityScalableTarget: ${file(./serverless/resources/dynamodb.yml):WriteCapacityScalableTarget}
-    ReadCapacityScalableTarget: ${file(./serverless/resources/dynamodb.yml):ReadCapacityScalableTarget}
-
-    # Permission
-    IOTRule1LambdaPermission: ${file(./serverless/resources/lambda.yml):IOTRule1LambdaPermission}
-    IOTRule2LambdaPermission: ${file(./serverless/resources/lambda.yml):IOTRule2LambdaPermission}
+    LambdaFunctionRole: ${file(ops/infra/resources/iam.yml):LambdaFunctionRole}
+    LambdaFunctionPolicy: ${file(ops/infra/resources/iam.yml):LambdaFunctionPolicy}
+    # EventBridge
+    MonitoringEventBus: ${file(ops/infra/resources/event_bridge.yml):MonitoringEventBus}
   # -----------------------------------------------------------------------------
   Outputs: { }

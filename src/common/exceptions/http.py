@@ -1,0 +1,42 @@
+from http import HTTPStatus
+
+from aws_lambda_powertools.event_handler.exceptions import (
+    BadRequestError,
+    ForbiddenError,
+    InternalServerError,
+    NotFoundError,
+    RequestEntityTooLargeError,
+    RequestTimeoutError,
+    ServiceError,
+    ServiceUnavailableError,
+    UnauthorizedError,
+)
+
+
+class UnprocessedError(ServiceError):
+    """Unprocessed Error (422)"""
+
+    def __init__(self, msg: str):
+        super().__init__(HTTPStatus.UNPROCESSABLE_ENTITY, msg)
+
+
+class ConflictError(ServiceError):
+    """Conflict Error (409)"""
+
+    def __init__(self, msg: str):
+        super().__init__(HTTPStatus.CONFLICT, msg)
+
+
+__all__ = [
+    "BadRequestError",
+    "ForbiddenError",
+    "InternalServerError",
+    "NotFoundError",
+    "RequestEntityTooLargeError",
+    "RequestTimeoutError",
+    "ServiceError",
+    "ServiceUnavailableError",
+    "UnauthorizedError",
+    "UnprocessedError",
+    "ConflictError",
+]
