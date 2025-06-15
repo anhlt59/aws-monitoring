@@ -64,7 +64,7 @@ version = "1.38.27"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "test"]
+groups = ["local", "test"]
 files = [
     {file = "boto3-1.38.27-py3-none-any.whl", hash = "sha256:95f5fe688795303a8a15e8b7e7f255cadab35eae459d00cc281a4fd77252ea80"},
     {file = "boto3-1.38.27.tar.gz", hash = "sha256:94bd7fdd92d5701b362d4df100d21e28f8307a67ff56b6a8b0398119cf22f859"},
@@ -1268,7 +1268,7 @@ version = "0.13.0"
 description = "An Amazon S3 Transfer Manager"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "local", "test"]
+groups = ["local", "test"]
 files = [
     {file = "s3transfer-0.13.0-py3-none-any.whl", hash = "sha256:0148ef34d6dd964d0d8cf4311b2b21c474693e57c2e069ec708ce043d2b527be"},
     {file = "s3transfer-0.13.0.tar.gz", hash = "sha256:f5e6db74eb7776a37208001113ea7aa97695368242b364d73e91c981ac522177"},
@@ -1440,4 +1440,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.12"
-content-hash = "dc361c3aa911cf69ff0abab1748e5cb8d9926776c301d104112c5f260dc19fb8"
+content-hash = "bd93f5cf38f4a68def441c6ea564198535fc192d1f4608eea344ec982e6ad8bc"

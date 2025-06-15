@@ -20,9 +20,11 @@ provider:
     Environment: ${self:provider.stage}
   tags: ${self:provider.stackTags}
 
-  # S3 bucket where the artifact is stored
+  # deployment
   deploymentBucket:
     name: ${self:custom.configs.S3.DeploymentBucket.name}
+  iam:
+    deploymentRole: ${self:custom.configs.IAM.DeploymentRole}
 
   # config lambda functions
   runtime: python3.12

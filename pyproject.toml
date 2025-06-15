@@ -54,5 +54,5 @@ exclude_dirs = ["config", "data", "localstack", "migrations", "scripts", "tests"
 testpaths = ["tests"]
 
 # plugins ---------------------------------------------------
-# [tool.poetry.requires-plugins]
-# poetry-plugin-export = ">=1.8"
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
