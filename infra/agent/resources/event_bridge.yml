@@ -1,0 +1,16 @@
+HealthEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: "${self:service}-HealthEventRule"
+    Description: "Health event rule for monitoring system health"
+    EventBusName: "default"
+    EventPattern: |
+      {
+        "source":["aws.health"],
+        "detail-type":["AWS Health Event"]
+      }
+    State: "ENABLED"
+    RoleArn: !GetAtt EventBridgeRole.Arn
+    Targets:
+      - Arn: !GetAtt SendHealthEventsLambdaFunction.Arn
+        Id: "${self:service}-HealthEventTarget"

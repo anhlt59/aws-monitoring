@@ -1,0 +1,128 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "cloudformation:*",
+      "Resource": [
+        "arn:aws:cloudformation:us-east-1:728171922033:stack/teligent-agent/*"
+      ],
+      "Effect": "Allow",
+      "Sid": "CloudFormationLimitedAccess"
+    },
+    {
+      "Action": [
+        "iam:Get*",
+        "iam:List*",
+        "iam:PassRole",
+        "iam:CreateRole",
+        "iam:CreatePolicy",
+        "iam:AttachRolePolicy",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:PutGroupPolicy",
+        "iam:PutRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:DeleteRole",
+        "iam:DeletePolicy",
+        "iam:Tag*",
+        "iam:Untag*"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:role/teligent*",
+        "arn:aws:iam::*:policy/teligent*"
+      ],
+      "Effect": "Allow",
+      "Sid": "IAMRoleManagement"
+    },
+    {
+      "Action": [
+        "events:List*",
+        "events:Describe*",
+        "events:CreateEventBus",
+        "events:PutRule",
+        "events:DeleteRule",
+        "events:EnableRule",
+        "events:DisableRule",
+        "events:PutTargets",
+        "events:RemoveTargets",
+        "events:DeleteEventBus",
+        "events:TagResource",
+        "events:UntagResource"
+      ],
+      "Resource": [
+        "arn:aws:events:us-east-1:728171922033:rule/teligent*",
+        "arn:aws:events:us-east-1:728171922033:event-bus/teligent*"
+      ],
+      "Effect": "Allow",
+      "Sid": "EventBridgeLimitedAccess"
+    },
+    {
+      "Action": [
+        "logs:Get*",
+        "logs:List*",
+        "logs:Describe*",
+        "logs:Create*",
+        "logs:Put*",
+        "logs:DeleteLogGroup",
+        "logs:DeleteLogStream",
+        "logs:Tag*",
+        "logs:Untag*"
+      ],
+      "Resource": [
+        "arn:aws:logs:us-east-1:728171922033:log-group:/aws/lambda/teligent*:*"
+      ],
+      "Effect": "Allow",
+      "Sid": "CloudWatchLogsLimitedAccess"
+    },
+    {
+      "Action": [
+        "s3:Get*",
+        "s3:List*",
+        "s3:Describe*",
+        "s3:CreateBucket",
+        "s3:PutBucketAcl",
+        "s3:PutBucketPolicy",
+        "s3:PutEncryptionConfiguration",
+        "s3:GetBucketLocation",
+        "s3:TagResource",
+        "s3:UntagResource"
+      ],
+      "Resource": ["arn:aws:s3:::teligent*"],
+      "Effect": "Allow",
+      "Sid": "S3BucketManagement"
+    },
+    {
+      "Action": ["lambda:List*", "lambda:Get*"],
+      "Resource": [
+        "arn:aws:lambda:us-east-1:728171922033:function:*",
+        "arn:aws:lambda:us-east-1:728171922033:layer:*"
+      ],
+      "Effect": "Allow",
+      "Sid": "LambdaFunctionReadOnly"
+    },
+    {
+      "Action": [
+        "lambda:Create*",
+        "lambda:Update*",
+        "lambda:Put*",
+        "lambda:Publish*",
+        "lambda:Add*",
+        "lambda:DeleteFunction",
+        "lambda:DeleteAlias",
+        "lambda:DeleteEventSourceMapping",
+        "lambda:DeleteLayerVersion",
+        "lambda:RemoveLayerVersionPermission",
+        "lambda:RemovePermission",
+        "lambda:TagResource",
+        "lambda:UntagResource"
+      ],
+      "Resource": [
+        "arn:aws:lambda:us-east-1:728171922033:function:teligent*",
+        "arn:aws:lambda:us-east-1:728171922033:layer:teligent*"
+      ],
+      "Effect": "Allow",
+      "Sid": "LambdaFunctionManagement"
+    }
+  ]
+}

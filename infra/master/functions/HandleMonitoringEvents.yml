@@ -1,0 +1,15 @@
+function:
+  name: ${self:service}-${self:provider.stage}-HandleMonitoringEvents
+  description: Send monitoring events to Slack channel
+  handler: src.entrypoints.send_monitoring_events.main.handler
+  package:
+    patterns:
+      - src/common/*.py
+      - src/models/*.py
+      - src/adapters/db/*.py
+      - src/adapters/aws/*.py
+      - src/adapters/notifiers.py
+      - src/entrypoints/send_monitoring_events/*.py
+  environment:
+    POWERTOOLS_SERVICE_NAME: events
+    WEBHOOK_URL: ${self:custom.configs.Slack.webhookUrl}

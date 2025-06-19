@@ -2,7 +2,6 @@ from typing import Any
 
 from pynamodb.attributes import DiscriminatorAttribute, NumberAttribute, UnicodeAttribute
 from pynamodb.models import Model
-from uuid_utils._uuid_utils import uuid7
 
 from src.common.configs import DYNAMODB_ENDPOINT, DYNAMODB_REGION, DYNAMODB_TABLE_NAME
 from src.common.utils.datetime_utils import current_utc_timestamp
@@ -45,7 +44,7 @@ class DynamoModel(Model):
     pk = UnicodeAttribute(hash_key=True)
     sk = UnicodeAttribute(range_key=True)
     # Attributes
-    id = UnicodeAttribute(null=False, default_for_new=lambda: str(uuid7()))
+    # id = UnicodeAttribute(null=False, default_for_new=lambda: str(uuid7()))
     created_at = NumberAttribute(default_for_new=current_utc_timestamp)
     updated_at = NumberAttribute(default=current_utc_timestamp)
     type = DiscriminatorAttribute()

@@ -1,0 +1,24 @@
+Region: us-east-1
+Profile: neos
+
+# AWS Services
+IAM:
+  DeploymentRole: arn:aws:iam::728171922033:role/teligent-DeploymentRole
+
+S3:
+  DeploymentBucket:
+    name: teligent-neos-deployment
+
+Lambda:
+  environment:
+    LOG_LEVEL: DEBUG
+  logRetentionInDays: 7
+
+DynamoDB:
+  BillingMode: PAY_PER_REQUEST
+
+Slack:
+  webhookUrl: "https://hooks.slack.com/services/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"
+
+EventBridge:
+  EventBusArn: teligent-neos-event-bus

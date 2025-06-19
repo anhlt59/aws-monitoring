@@ -1,0 +1,55 @@
+MonitoringEventBus:
+  Type: AWS::Events::EventBus
+  DependsOn:
+    - MonitoringDLQ
+  Properties:
+    Name: ${self:service}-${self:provider.stage}-MonitoringEventBus
+    Description: Custom EventBus for monitoring events
+    Policy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Sid": "AllowLambdaToPutEvents",
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "lambda.amazonaws.com"
+            },
+            "Action": "events:PutEvents",
+            "Resource": "*"
+          }
+        ]
+      }
+    DeadLetterConfig:
+      Arn: !GetAtt MonitoringDLQ.Arn
+
+#HealthEventRule:
+#  Type: AWS::Events::Rule
+#  Properties:
+#    Name: "${self:service}-HealthEventRule"
+#    Description: "Health event rule for monitoring system health"
+#    EventBusName: !Ref MonitoringEventBus
+#    EventPattern: |
+#      {
+#        "source":["aws.health"],
+#        "detail-type":["AWS Health Event"]
+#      }
+#    State: "ENABLED"
+#    RoleArn: !GetAtt EventBridgeRole.Arn
+#    Targets:
+#      - Arn: !GetAtt SendHealthEventsLambdaFunction.Arn
+#        Id: "${self:service}-HealthEventTarget"
+
+
+MonitoringEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: "${self:service}-MonitoringEventRule"
+    Description: "Event rule for monitoring system"
+    EventBusName: !Ref MonitoringEventBus
+    EventPattern: "{}"
+    State: "ENABLED"
+    RoleArn: !GetAtt EventBridgeRole.Arn
+    Targets:
+      - Arn: !GetAtt HandleMonitoringEventsLambdaFunction.Arn
+        Id: "${self:service}-EventHandler"

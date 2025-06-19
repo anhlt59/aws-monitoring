@@ -1,0 +1,17 @@
+function:
+  name: ${self:service}-${self:provider.stage}-ListEvents
+  description: List events, triggered by API Gateway
+  handler: src.entrypoints.api.events.handler
+  events:
+    - http:
+        method: GET
+        path: /events
+  package:
+    patterns:
+      - src/common/*.py
+      - src/models/*.py
+      - src/adapters/api.py
+      - src/adapters/db/*.py
+      - src/entrypoints/api/*.py
+  environment:
+    POWERTOOLS_SERVICE_NAME: events

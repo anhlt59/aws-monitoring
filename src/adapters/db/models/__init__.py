@@ -1,10 +1,8 @@
-from .account import AccountPersistence
 from .base import DynamoMeta, DynamoModel
-from .project import ProjectPersistence
+from .event import EventPersistence
 
 __all__ = [
     "DynamoModel",
     "DynamoMeta",
-    "AccountPersistence",
-    "ProjectPersistence",
+    "EventPersistence",
 ]

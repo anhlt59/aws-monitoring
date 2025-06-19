@@ -13,8 +13,8 @@
   - [💻 Tech Stack](#-tech-stack)
   - [🧪 Testing](#-testing)
   - [Documentation](#documentation)
-    - [Database](#database)
   - [🏗️ Infrastructure](#️-infrastructure)
+    - [Master](#master)
   - [📦 Framework](#-framework)
   - [📁 Folder structure](#-folder-structure)
   - [🛠️ Development](#️-development)
@@ -47,8 +47,6 @@
 ## 🏗️ Infrastructure
 
 ![infra](docs/images/infra.png)
-
-- [AWS resources](docs/resources.md)
 
 ## 📦 Framework
 

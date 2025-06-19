@@ -1,10 +1,3 @@
-from pydantic import BaseModel
+from .event import Event
 
-from .account import Account
-from .project import Project
-
-__all__ = [
-    "BaseModel",
-    "Project",
-    "Account",
-]
+__all__ = ["Event"]

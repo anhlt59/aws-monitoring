@@ -1,9 +1,7 @@
-from .account import AccountRepository
 from .base import DynamoRepository
-from .project import ProjectRepository
+from .event import EventRepository
 
 __all__ = [
-    "AccountRepository",
     "DynamoRepository",
-    "ProjectRepository",
+    "EventRepository",
 ]

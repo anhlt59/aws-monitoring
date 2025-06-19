@@ -1,0 +1,22 @@
+DynamoDBTable:
+  Type: AWS::DynamoDB::Table
+  DeletionPolicy: Retain
+  UpdateReplacePolicy: Retain
+  Properties:
+    AttributeDefinitions:
+      - AttributeName: pk
+        AttributeType: S
+      - AttributeName: sk
+        AttributeType: S
+    KeySchema:
+      - AttributeName: pk
+        KeyType: HASH
+      - AttributeName: sk
+        KeyType: RANGE
+    BillingMode: PROVISIONED
+    PointInTimeRecoverySpecification:
+      PointInTimeRecoveryEnabled: true
+    TimeToLiveSpecification:
+      AttributeName: expired_at
+      Enabled: true
+    TableName: ${self:service}-${self:provider.stage}

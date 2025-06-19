@@ -24,31 +24,39 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 install: ## Install the packages
-	@bash ops/scripts/development/install.sh
+	@bash ops/development/install.sh
 activate: ## Activate the virtual environment
-	@bash ops/scripts/development/activate.sh
+	@bash ops/development/activate.sh
 
 # RUNNING ========================================================================
 start: ## Start the local master server
-	@bash ops/scripts/development/start.sh
+	@bash ops/development/start.sh
+
+# PREPARE ========================================================================
+prepare-neos: ## Prepare s3 and iam roles for NEOS environment
+	@bash ops/deployment/prepare.sh neos
 
 # DEPLOYMENT ========================================================================
 deploy-local: ## Deploy to the local environment
-	@bash ops/scripts/deployment/deploy.sh local
+	@bash ops/deployment/deploy.sh local agent
+	@bash ops/deployment/deploy.sh local master
 deploy-neos: ## Deploy to the NEOS environment
-	@bash ops/scripts/deployment/deploy.sh neos
+	@bash ops/deployment/deploy.sh neos agent
+	@bash ops/deployment/deploy.sh neos master
 
 # PACKAGING ========================================================================
 package-local: ## Create artifacts for local deployment
-	@bash ops/scripts/deployment/package.sh local
+	@bash ops/deployment/package.sh local
 package-neos: ## Create artifacts for NEOS deployment
-	@bash ops/scripts/deployment/package.sh neos
+	@bash ops/deployment/package.sh neos
 
 # DELETE ===========================================================================
 delete-local: ## Delete the local deployment
-	@bash ops/scripts/deployment/delete.sh local
+	@bash ops/deployment/delete.sh local agent
+	@bash ops/deployment/delete.sh local master
 delete-neos: ## Delete the NEOS deployment
-	@bash ops/scripts/deployment/delete.sh neos
+	@bash ops/deployment/delete.sh neos agent
+	@bash ops/deployment/delete.sh neos master
 
 # TESTING ==========================================================================
 test: ## Run the tests
