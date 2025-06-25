@@ -7,18 +7,26 @@ IAM:
 
 S3:
   DeploymentBucket:
-    name: teligent-neos-deployment
+    Name: teligent-neos-deployment
 
 Lambda:
-  environment:
+  Environment:
     LOG_LEVEL: DEBUG
-  logRetentionInDays: 7
+  LogRetentionInDays: 7
 
-DynamoDB:
-  BillingMode: PAY_PER_REQUEST
+MonitoringConfigs:
+  EventBusArn: arn:aws:events:us-east-1:728171922033:event-bus/teligent-master-neos-MonitoringEventBus
+  SlackWebhookUrl: "https://hooks.slack.com/services/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"
 
-Slack:
-  webhookUrl: "https://hooks.slack.com/services/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"
-
-EventBridge:
-  EventBusArn: teligent-neos-event-bus
+  MonitorOptions:
+    Health:
+      Enabled: true
+    CloudwatchLogs:
+      Enabled: true
+      LogGroups:
+        - teligent-neos-test
+      Query: |
+        fields @message, @logStream, @log
+        | filter @message like /(?i)(error|fail|exception)/
+        | sort @timestamp desc
+        | limit 200

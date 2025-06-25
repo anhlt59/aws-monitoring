@@ -1336,6 +1336,8 @@ files = [
 
 [package.dependencies]
 botocore-stubs = "*"
+types-boto3-events = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"events\""}
+types-boto3-health = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"health\""}
 types-boto3-logs = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"logs\""}
 types-boto3-ssm = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"ssm\""}
 types-s3transfer = "*"
@@ -1754,6 +1756,30 @@ workspaces-web = ["types-boto3-workspaces-web (>=1.38.0,<1.39.0)"]
 xray = ["types-boto3-xray (>=1.38.0,<1.39.0)"]
 
 [[package]]
+name = "types-boto3-events"
+version = "1.38.25"
+description = "Type annotations for boto3 EventBridge 1.38.25 service generated with mypy-boto3-builder 8.11.0"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "types_boto3_events-1.38.25-py3-none-any.whl", hash = "sha256:6988bb64f0da052911e71f5bd424bb57b328e4028b9eee0e39268ee47d2579e1"},
+    {file = "types_boto3_events-1.38.25.tar.gz", hash = "sha256:10b18783ca110fe3eb48f65b36cdfce10d3f61bc76b22e757ba704882a66a0fb"},
+]
+
+[[package]]
+name = "types-boto3-health"
+version = "1.38.0"
+description = "Type annotations for boto3 Health 1.38.0 service generated with mypy-boto3-builder 8.10.1"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "types_boto3_health-1.38.0-py3-none-any.whl", hash = "sha256:782e9a3a9dcbca94168960b114558f48c3cd9bf454c4f6c6ee8106b6a6c65af2"},
+    {file = "types_boto3_health-1.38.0.tar.gz", hash = "sha256:704bc3ed6fbbd8e36aa074ac5863af72da954a82b4db4c0e5c668da315239d5c"},
+]
+
+[[package]]
 name = "types-boto3-logs"
 version = "1.38.39"
 description = "Type annotations for boto3 CloudWatchLogs 1.38.39 service generated with mypy-boto3-builder 8.11.0"
@@ -1937,4 +1963,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.12"
-content-hash = "f7fb4e6e3f14e91cadb9959f3d65b9465ecd579d985e9ad323f6bfd8a03ec32d"
+content-hash = "309a47e0d02fe53cc86ce2585310aef68933f0ab91bd6f267998cae9972f108c"

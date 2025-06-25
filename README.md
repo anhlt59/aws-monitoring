@@ -3,24 +3,18 @@
 ![banner.png](docs/images/banner.png)
 
 🔹 Architecture: Fully serverless (AWS Lambda, API Gateway, DynamoDB, EventBridge, SNS, S3, CloudWatch)<br>
-🔹 Purpose: Monitors AWS resources and applications for performance, cost, and availability<br>
-
-[//]: # "fmt: off"
+🔹 Purpose: Monitors AWS resources and applications for performance, availability, and security issues.<br>
 
 <!-- TOC -->
-
-- [📊 Teligent 🌩️](#-teligent-️)
-  - [💻 Tech Stack](#-tech-stack)
-  - [🧪 Testing](#-testing)
-  - [Documentation](#documentation)
-  - [🏗️ Infrastructure](#️-infrastructure)
-    - [Master](#master)
-  - [📦 Framework](#-framework)
-  - [📁 Folder structure](#-folder-structure)
-  - [🛠️ Development](#️-development)
-  - [🚀 Deployment](#-deployment)
-  - [📝 Scripts](#-scripts)
-  - [🤝 Contributing](#-contributing)
+* [📊 Teligent 🌩️](#-teligent-)
+  * [💻 Tech Stack](#-tech-stack)
+  * [🧪 Testing](#-testing)
+  * [🏗️ Infrastructure](#-infrastructure)
+  * [📦 Framework](#-framework)
+  * [🛠️ Development](#-development)
+  * [🚀 Deployment](#-deployment)
+  * [🤝 Contributing](#-contributing)
+<!-- TOC -->
 
 ## 💻 Tech Stack
 
@@ -29,7 +23,6 @@
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 ![Serverless Framework](https://img.shields.io/badge/serverless%20framework-8A2BE2?style=for-the-badge)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
-![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![AmazonDynamoDB](https://img.shields.io/badge/Amazon%20DynamoDB-4053D6?style=for-the-badge&logo=Amazon%20DynamoDB&logoColor=white)
 ![Amazon S3](https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white&color=green)
@@ -42,8 +35,6 @@
 ![Pytest](https://img.shields.io/badge/pytest-%23ffffff.svg?style=for-the-badge&logo=pytest&logoColor=2f9fe3)
 ![Coverage Status](https://img.shields.io/badge/Coverage-88%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
 
-## Documentation
-
 ## 🏗️ Infrastructure
 
 ![infra](docs/images/infra.png)
@@ -54,59 +45,25 @@ This application is constructed using the Serverless Framework.
 
 - [Serverless Framework](https://www.serverless.com/)
 
-## 📁 Folder structure
-
-```
-.
-├── docs
-├── ops
-│   ├── scripts
-│   │   ├── aws
-│   │   ├── deployment
-│   │   └── development
-│   └── serverless
-│       ├── configs         # Serverless Framework configurations
-│       ├── plugins         # Serverless Framework plugins
-│       └── resources       # CloudFormation templates
-├── src
-│   ├── adapters
-│   │   ├── crawlers
-│   │   ├── db
-│   │   ├── messaging
-│   │   └── schedulers
-│   ├── common
-│   │   ├── exceptions
-│   │   ├── utils
-│   │   ├── configs.py
-│   │   └── logger.py
-│   └── handlers
-│       └── functions       # Lambda functions
-├── tests
-├── docker-compose.yaml
-├── Makefile
-├── package.json            # Node.js dependencies
-├── pyproject.toml          # Python dependencies
-├── README.md
-└── serverless.yml          # Serverless Framework template
-```
-
 ## 🛠️ Development
 
 - [Development](docs/development.md)
-
-- Lambda Functions
-  - [...](src/handlers/.../function.yml)
+- [Folder Structure](docs/folder_structure.md)
+- [Database](docs/db.md)
+- [API GW](docs/aws-api-gw.md)
+- Lambda Functions:
+  - [Master-HandleMonitoringEvent](infra/master/functions/HandleMonitoringEvents.yml)
+  - [Master-DailyReport](infra/master/functions/DailyReport.yml)
+  - [Master-GetEvent](infra/master/functions/api/GetEvent.yml)
+  - [Master-ListEvent](infra/master/functions/api/ListEvents.yml)
+  - [Master-UpdateEvent](infra/master/functions/api/UpdateEvent.yml)
+  - [Agent-DailyReport](infra/agent/functions/QueryErrorLogs.yml)
 
 ## 🚀 Deployment
 
 - AWS
   - [Prerequisite Resources](docs/aws-prerequisite-resources.md)
-  - [Environment Configs](docs/aws-configs.md)
+  - [Environment Configs](docs/aws-environment-configs.md)
   - [Deployment](docs/aws-deployment.md)
-
-## 📝 [Scripts](ops/scripts)
-
-- [deploy.sh](ops/scripts/deployment/deploy.sh)
-  - [More details](docs/aws-deployment.md)
 
 ## 🤝 [Contributing](docs/git/contributing.md)

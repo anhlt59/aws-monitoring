@@ -1,4 +1,4 @@
-from src.entrypoints.send_health_events.main import handler
+from src.handlers.master.handle_monitoring_events.main import handler
 
 event = {
     "version": "0",

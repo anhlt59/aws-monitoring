@@ -10,13 +10,13 @@
 ### MANDATORY PLANNING PHASE
 
     When working with large files (>300 lines) or complex changes:
-    	1. ALWAYS start by creating a detailed plan BEFORE making any edits
-        2. Your plan MUST include:
-          - All functions/sections that need modification
-          - The order in which changes should be applied
-          - Dependencies between changes
-          - Any potential risks or issues
-          - A summary of the overall goal of the changes
+    1. ALWAYS start by creating a detailed plan BEFORE making any edits
+    2. Your plan MUST include:
+       - All functions/sections that need modification
+       - The order in which changes should be applied
+       - Dependencies between changes
+       - Any potential risks or issues
+       - A summary of the overall goal of the changes
 
 ## PROPOSED EDIT PLAN
 
@@ -34,7 +34,7 @@
     1. [First specific change] - Purpose: [why]
     2. [Second specific change] - Purpose: [why]
     3. Do you approve this plan? I'll proceed with Edit [number] after your confirmation.
-    <!-- 4. WAIT for explicit user confirmation before making ANY edits when user ok edit [number] -->
+    4. WAIT for explicit user confirmation before making ANY edits when user ok edit [number]
 
 ### EXECUTION PHASE
 

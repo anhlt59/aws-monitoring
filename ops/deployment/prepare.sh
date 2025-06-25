@@ -19,7 +19,7 @@ export AWS_PROFILE
 
 # Read S3 deployment bucket name from CONFIG_FILE using yq
 # Then check if the S3 deployment bucket exists, create if not
-DEPLOYMENT_BUCKET=$(yq e '.S3.DeploymentBucket.name' "$CONFIG_FILE")
+DEPLOYMENT_BUCKET=$(yq e '.S3.DeploymentBucket.Name' "$CONFIG_FILE")
 if aws s3api head-bucket --bucket "$DEPLOYMENT_BUCKET" 2>/dev/null; then
   echo -e "${GREEN}S3 bucket '$DEPLOYMENT_BUCKET' already exists.${RESET}"
 else

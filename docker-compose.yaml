@@ -9,7 +9,7 @@ services:
       - AWS_ACCESS_KEY_ID=local
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_SECRET_ACCESS_KEY=local
-      - SERVICES=sts,s3,dynamodb,apigateway,cloudformation,cloudwatch,ssm,lambda,events,logs,iam
+      - SERVICES=sts,s3,dynamodb,apigateway,cloudformation,cloudwatch,ssm,lambda,events,logs,iam,sqs
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - HOSTNAME_EXTERNAL=localstack

@@ -2,8 +2,6 @@
 pythonRequirements:
   usePoetry: true
   fileName: pyproject.toml
-  poetryWithGroups:
-    - agent
   dockerizePip: non-linux
 
   slim: true

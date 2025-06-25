@@ -7,12 +7,12 @@ IAM:
 
 S3:
   DeploymentBucket:
-    name: teligent-local-deployment
+    Name: teligent-local-deployment
 
 Lambda:
-  environment:
+  Environment:
     LOG_LEVEL: DEBUG
-  logRetentionInDays: 7
+  LogRetentionInDays: 7
 
 DynamoDB:
   BillingMode: PAY_PER_REQUEST

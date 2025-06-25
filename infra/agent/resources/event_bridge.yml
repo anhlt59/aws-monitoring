@@ -12,5 +12,5 @@ HealthEventRule:
     State: "ENABLED"
     RoleArn: !GetAtt EventBridgeRole.Arn
     Targets:
-      - Arn: !GetAtt SendHealthEventsLambdaFunction.Arn
+      - Arn: ${self:custom.configs.MonitoringConfigs.EventBusArn}
         Id: "${self:service}-HealthEventTarget"

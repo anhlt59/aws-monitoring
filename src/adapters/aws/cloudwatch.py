@@ -1,7 +1,9 @@
 from datetime import datetime
+from typing import Iterable
 
 import boto3
 from types_boto3_logs.client import CloudWatchLogsClient
+from types_boto3_logs.type_defs import OutputLogEventTypeDef
 
 from src.common.logger import logger
 from src.common.meta import SingletonMeta
@@ -13,10 +15,12 @@ class CloudwatchLogService(metaclass=SingletonMeta):
     def __init__(self):
         self.client = boto3.client("logs")
 
-    def query_log_events(self, log_group: str, log_stream: str, start_time: datetime, end_time: datetime):
+    def query_logs(
+        self, log_groups: str, query: str, start_time: datetime, end_time: datetime
+    ) -> Iterable[OutputLogEventTypeDef]:
         params = {
-            "logGroupName": log_group,
-            "logStreamName": log_stream,
+            "logGroupNames": log_groups,
+            "queryString": query,
             "startTime": int(start_time.timestamp() * 1000),
             "endTime": int(end_time.timestamp() * 1000),
             "startFromHead": True,

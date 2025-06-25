@@ -1,15 +1,18 @@
 from typing import Annotated
 
 from aws_lambda_powertools.event_handler.openapi.params import Body, Query
+from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from src.adapters.api import app, handler
+from src.adapters.api import app
 from src.adapters.db.repositories import EventRepository
+from src.common.logger import correlation_paths, logger
 from src.common.utils.encoding import base64_to_json, json_to_base64
-from src.models.event import Status
+from src.models.monitoring_event import ListEventsDTO, Status, UpdateEventDTO
 
 repo = EventRepository()
 
 
+# API Routes
 @app.get("/events/<event_id>")
 def get_event(event_id: str):
     event = repo.get(event_id)
@@ -24,8 +27,14 @@ def list_events(
     direction: Annotated[str, Query] = "desc",
     cursor: Annotated[str, Query] = None,
 ):
-    decode_cursor = base64_to_json(cursor) if cursor else None
-    result = repo.list(start_date, end_date, limit, direction, decode_cursor)
+    dto = ListEventsDTO(
+        start_date=start_date,
+        end_date=end_date,
+        limit=limit,
+        direction=direction,
+        cursor=base64_to_json(cursor) if cursor else None,
+    )
+    result = repo.list(dto)
     return {
         "items": result.items,
         "limit": limit,
@@ -35,12 +44,19 @@ def list_events(
 
 
 @app.put("/events/<event_id>")
-def update_event(event_id: str, member: Annotated[str, Body] = None, status: Annotated[Status, Body] = None):
-    if member is not None:
-        repo.assign_member(event_id, member)
-    if status is not None:
-        repo.update_status(event_id, status)
+def update_event(event_id: str, assigned: Annotated[str, Body] = None, status: Annotated[Status, Body] = None):
+    dto = UpdateEventDTO(assigned=assigned, status=status)
+    repo.update(event_id, dto)
     return {"id": event_id}
 
 
-__all__ = ["handler"]
+@app.delete("/events/<event_id>")
+def delete_event(event_id: str):
+    repo.delete(event_id)
+    return {"id": event_id}
+
+
+# Entrypoint handler
+@logger.inject_lambda_context(correlation_id_path=correlation_paths.API_GATEWAY_REST)
+def handler(event: dict, context: LambdaContext) -> dict:
+    return app.resolve(event, context)

@@ -31,6 +31,10 @@ activate: ## Activate the virtual environment
 # RUNNING ========================================================================
 start: ## Start the local master server
 	@bash ops/development/start.sh
+start-master: ## Start the local master server
+	pnpm exec sls offline start --stage local --config serverless.master.local.yml
+start-agent: ## Start the local agent server
+	pnpm exec sls offline start --stage local --config serverless.agent.local.yml
 
 # PREPARE ========================================================================
 prepare-neos: ## Prepare s3 and iam roles for NEOS environment
@@ -38,11 +42,11 @@ prepare-neos: ## Prepare s3 and iam roles for NEOS environment
 
 # DEPLOYMENT ========================================================================
 deploy-local: ## Deploy to the local environment
-	@bash ops/deployment/deploy.sh local agent
 	@bash ops/deployment/deploy.sh local master
+	@bash ops/deployment/deploy.sh local agent
 deploy-neos: ## Deploy to the NEOS environment
-	@bash ops/deployment/deploy.sh neos agent
 	@bash ops/deployment/deploy.sh neos master
+	@bash ops/deployment/deploy.sh neos agent
 
 # PACKAGING ========================================================================
 package-local: ## Create artifacts for local deployment
