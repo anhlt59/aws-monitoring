@@ -95,7 +95,7 @@ This application is constructed using the Serverless Framework.
 - [Development](docs/development.md)
 
 - Lambda Functions
-  - [...](src/entrypoints/.../function.yml)
+  - [...](src/handlers/.../function.yml)
 
 ## 🚀 Deployment
 

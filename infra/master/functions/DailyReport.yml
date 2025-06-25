@@ -1,14 +1,14 @@
 function:
   name: ${self:service}-${self:provider.stage}-DailyReport
   description: Send daily report events to Slack channel
-  handler: src.entrypoints.daily_report.main.handler
+  handler: src.handlers.daily_report.main.handler
   package:
     patterns:
       - src/common/*.py
       - src/models/*.py
       - src/adapters/db/*.py
       - src/adapters/notifiers.py
-      - src/entrypoints/daily_report/*.py
+      - src/handlers/daily_report/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
     WEBHOOK_URL: ${self:custom.configs.Slack.webhookUrl}
