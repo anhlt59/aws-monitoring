@@ -4,7 +4,7 @@ from aws_lambda_powertools.event_handler.openapi.params import Body, Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.adapters.api import app
-from src.adapters.db.repositories import EventRepository
+from src.adapters.db import EventRepository
 from src.common.logger import correlation_paths, logger
 from src.common.utils.encoding import base64_to_json, json_to_base64
 from src.models.monitoring_event import ListEventsDTO, Status, UpdateEventDTO

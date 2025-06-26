@@ -25,5 +25,5 @@ class SlackNotifier(Notifier):
             "text": message.body or "",
             "attachments": message.attachments if message.attachments else [],
         }
-        response = requests.post(self.webhook_url, headers=headers, json=payload, timeout=5)
+        response = requests.post(self.webhook_url, headers=headers, json=payload, timeout=10)
         response.raise_for_status()

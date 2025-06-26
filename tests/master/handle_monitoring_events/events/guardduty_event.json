@@ -1,0 +1,183 @@
+{
+    "version": "0",
+    "id": "e86c4ac1-0e43-60fa-3278-58bf93a97933",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "500907623483",
+    "time": "2025-06-29T00:07:04Z",
+    "region": "ap-northeast-1",
+    "resources": [],
+    "detail": {
+        "schemaVersion": "2.0",
+        "accountId": "796396167521",
+        "region": "ap-northeast-1",
+        "partition": "aws",
+        "id": "becbd001573233b775d0bfa56a2b5da4",
+        "arn": "arn:aws:guardduty:ap-northeast-1:796396167521:detector/cacbcfca82951fbe2f6e2e693de42a73/finding/becbd001573233b775d0bfa56a2b5da4",
+        "type": "Recon:EC2/PortProbeUnprotectedPort",
+        "resource": {
+            "resourceType": "Instance",
+            "instanceDetails": {
+                "availabilityZone": "ap-northeast-1c",
+                "iamInstanceProfile": null,
+                "imageDescription": "Amazon Linux 2 Kernel 5.10 AMI 2.0.20211223.0 x86_64 HVM gp2",
+                "imageId": "ami-032d6db78f84e8bf5",
+                "instanceId": "i-0922103ef521fbd4b",
+                "instanceState": "running",
+                "instanceType": "t2.micro",
+                "launchTime": "2022-01-13T08:37:47.000Z",
+                "networkInterfaces": [
+                    {
+                        "ipv6Addresses": [],
+                        "networkInterfaceId": "eni-0a6090e72a77163c0",
+                        "privateDnsName": "ip-10-80-5-73.ap-northeast-1.compute.internal",
+                        "privateIpAddress": "10.80.5.73",
+                        "privateIpAddresses": [
+                            {
+                                "privateDnsName": "ip-10-80-5-73.ap-northeast-1.compute.internal",
+                                "privateIpAddress": "10.80.5.73"
+                            }
+                        ],
+                        "publicDnsName": "ec2-3-112-59-198.ap-northeast-1.compute.amazonaws.com",
+                        "publicIp": "3.112.59.198",
+                        "securityGroups": [
+                            {
+                                "groupId": "sg-0ec380531ca1de0e8",
+                                "groupName": "default"
+                            },
+                            {
+                                "groupId": "sg-026f4926820181574",
+                                "groupName": "launch-wizard-3"
+                            },
+                            {
+                                "groupId": "sg-06f131cbdd262cc97",
+                                "groupName": "menu-sg"
+                            }
+                        ],
+                        "subnetId": "subnet-068599378c496245a",
+                        "vpcId": "vpc-0b5b5b384c4beaac8"
+                    }
+                ],
+                "outpostArn": null,
+                "platform": null,
+                "productCodes": [],
+                "tags": [
+                    {
+                        "key": "Name",
+                        "value": "bastion"
+                    }
+                ]
+            }
+        },
+        "service": {
+            "serviceName": "guardduty",
+            "detectorId": "cacbcfca82951fbe2f6e2e693de42a73",
+            "action": {
+                "actionType": "PORT_PROBE",
+                "portProbeAction": {
+                    "portProbeDetails": [
+                        {
+                            "localPortDetails": {
+                                "port": 3306,
+                                "portName": "MySQL"
+                            },
+                            "remoteIpDetails": {
+                                "ipAddressV4": "199.45.154.176",
+                                "organization": {
+                                    "asn": "398722",
+                                    "asnOrg": "CENSYS-ARIN-03",
+                                    "isp": "Censys-arin-03",
+                                    "org": "Censys-arin-03"
+                                },
+                                "country": {
+                                    "countryName": "United States"
+                                },
+                                "city": {
+                                    "cityName": ""
+                                },
+                                "geoLocation": {
+                                    "lat": 37.751,
+                                    "lon": -97.822
+                                }
+                            }
+                        },
+                        {
+                            "localPortDetails": {
+                                "port": 33060,
+                                "portName": "Unknown"
+                            },
+                            "remoteIpDetails": {
+                                "ipAddressV4": "71.6.199.23",
+                                "organization": {
+                                    "asn": "10439",
+                                    "asnOrg": "CARINET",
+                                    "isp": "CariNet",
+                                    "org": "CariNet"
+                                },
+                                "country": {
+                                    "countryName": "United States"
+                                },
+                                "city": {
+                                    "cityName": ""
+                                },
+                                "geoLocation": {
+                                    "lat": 37.751,
+                                    "lon": -97.822
+                                }
+                            }
+                        },
+                        {
+                            "localPortDetails": {
+                                "port": 111,
+                                "portName": "Unknown"
+                            },
+                            "remoteIpDetails": {
+                                "ipAddressV4": "167.94.138.190",
+                                "organization": {
+                                    "asn": "398324",
+                                    "asnOrg": "CENSYS-ARIN-01",
+                                    "isp": "Censys",
+                                    "org": "Censys"
+                                },
+                                "country": {
+                                    "countryName": "United States"
+                                },
+                                "city": {
+                                    "cityName": ""
+                                },
+                                "geoLocation": {
+                                    "lat": 37.751,
+                                    "lon": -97.822
+                                }
+                            }
+                        }
+                    ],
+                    "blocked": false
+                }
+            },
+            "resourceRole": "TARGET",
+            "additionalInfo": {
+                "threatListName": "ProofPoint",
+                "value": "{\"threatListName\":\"ProofPoint\"}",
+                "type": "default"
+            },
+            "evidence": {
+                "threatIntelligenceDetails": [
+                    {
+                        "threatListName": "ProofPoint",
+                        "threatNames": []
+                    }
+                ]
+            },
+            "eventFirstSeen": "2025-06-24T03:33:43.000Z",
+            "eventLastSeen": "2025-06-28T21:15:32.000Z",
+            "archived": false,
+            "count": 34
+        },
+        "severity": 2,
+        "createdAt": "2025-06-24T03:36:59.748Z",
+        "updatedAt": "2025-06-28T21:21:00.208Z",
+        "title": "An unprotected port on EC2 instance i-0922103ef521fbd4b is being probed.",
+        "description": "An EC2 instance has an unprotected port which is being probed by a known malicious host."
+    }
+}

@@ -1,4 +1,5 @@
 HealthEventRule:
+  Condition: IsHealthEnabled
   Type: AWS::Events::Rule
   Properties:
     Name: "${self:service}-HealthEventRule"

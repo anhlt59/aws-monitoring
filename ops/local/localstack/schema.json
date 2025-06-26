@@ -1,5 +1,5 @@
 {
-  "TableName": "teligent-local",
+  "TableName": "teligent-master-local",
   "KeySchema": [
     {
       "AttributeName": "pk",
@@ -20,7 +20,5 @@
       "AttributeType": "S"
     }
   ],
-  "BillingMode": "PAY_PER_REQUEST",
-  "GlobalSecondaryIndexes": [],
-  "LocalSecondaryIndexes": []
+  "BillingMode": "PAY_PER_REQUEST"
 }

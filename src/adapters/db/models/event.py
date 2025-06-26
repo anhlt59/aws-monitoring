@@ -15,3 +15,4 @@ class EventPersistence(DynamoModel, discriminator="EVENT"):
     status = NumberAttribute(null=True)
     published_at = NumberAttribute(null=False)
     expired_at = NumberAttribute(null=True)
+    updated_at = NumberAttribute(null=False)

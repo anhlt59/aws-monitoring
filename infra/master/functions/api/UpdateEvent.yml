@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-UpdateEvent
   description: Update an event, triggered by API Gateway
-  handler: src.handlers.api.events.handler
+  handler: src.handlers.master.api.events.handler
   events:
     - http:
         method: PUT

@@ -16,7 +16,7 @@ AWS_REGIONS = {"us-east-1", "us-east-2", "us-west-1", "us-west-2", "af-south-1",
 DYNAMODB_ENDPOINT = os.getenv("AWS_ENDPOINT", "http://localhost:4566")
 DYNAMODB_REGION = os.getenv("AWS_REGION", "us-east-1")
 DYNAMODB_DEFAULT_QUERY_LIMIT = os.getenv("DYNAMODB_DEFAULT_QUERY_LIMIT", 50)
-DYNAMODB_TABLE_NAME = os.getenv("DYNAMODB_TABLE_NAME", "teligent-local")
+DYNAMODB_TABLE = os.getenv("DYNAMODB_TABLE", "teligent-master-local")
 
 # API
 CORS_ALLOW_ORIGIN = os.getenv("CORS_ALLOW_ORIGIN", "*")

@@ -20,7 +20,7 @@ provider:
     REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
-    DYNAMODB_TABLE: teligent-local
+    DYNAMODB_TABLE: teligent-master-local
 
 plugins:
   - serverless-python-requirements

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, model_validator
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 
-class Status(Enum, int):
+class Status(int, Enum):
     PENDING = 0
     IN_PROGRESS = 1
     COMPLETED = 2
@@ -23,6 +23,11 @@ class Event(BaseModel):
     assigned: str | None = None
     status: Status = Status.PENDING
     published_at: int = Field(default_factory=current_utc_timestamp)
+    updated_at: int = Field(default_factory=current_utc_timestamp)
+
+    @property
+    def persistence_id(self) -> str:
+        return f"{self.published_at}{self.id}"
 
 
 # DTOs

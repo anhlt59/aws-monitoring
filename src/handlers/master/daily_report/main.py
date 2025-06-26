@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
 
-from src.adapters.db.repositories import EventRepository
+from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier
 from src.common.logger import logger
 

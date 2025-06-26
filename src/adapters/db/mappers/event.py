@@ -11,14 +11,15 @@ class EventMapper(BaseMapper):
     def to_persistence(cls, model: Event) -> EventPersistence:
         return EventPersistence(
             pk="EVENT",
-            sk=f"{model.created_at}{model.id}",  # combine creation time and ID for sorting
+            sk=f"{model.published_at}{model.id}",  # combine creation time and ID for sorting
             account=model.account,
             source=model.source,
             detail=json.dumps(model.detail),
             assigned=model.assigned,
             status=model.status,
             published_at=model.published_at,
-            expired_at=model.created_at + 7776000,  # 3 months after creation
+            updated_at=model.updated_at,
+            expired_at=model.published_at + 7776000,  # 3 months after creation
         )
 
     @classmethod
@@ -31,4 +32,5 @@ class EventMapper(BaseMapper):
             assigned=persistence.assigned,
             status=persistence.status,
             published_at=persistence.published_at,
+            updated_at=persistence.updated_at,
         )

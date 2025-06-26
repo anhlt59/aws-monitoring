@@ -23,6 +23,7 @@ class EventRepository(DynamoRepository):
             range_key_condition = self.model_cls.pk <= dto.end_date
         else:
             range_key_condition = None
+
         result = self._query(
             hash_key="EVENT",
             range_key_condition=range_key_condition,
@@ -40,13 +41,13 @@ class EventRepository(DynamoRepository):
         model = EventMapper.to_persistence(entity)
         self._create(model)
 
-    def update(self, event_id: str, dto: UpdateEventDTO):
+    def update(self, id: str, dto: UpdateEventDTO):
         attributes = dto.model_dump(exclude_none=True)
         self._update(
             hash_key="EVENT",
-            range_key=event_id,
+            range_key=id,
             attributes=attributes,
         )
 
-    def delete(self, event_id: str):
-        self._delete(hash_key="EVENT", range_key=event_id)
+    def delete(self, id: str):
+        self._delete(hash_key="EVENT", range_key=id)

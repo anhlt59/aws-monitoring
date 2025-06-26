@@ -11,4 +11,4 @@ function:
       - src/handlers/agent/query_error_logs/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
-    WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.SlackWebhookUrl}
+    WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.WebhookUrl}

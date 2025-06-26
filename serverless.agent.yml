@@ -69,6 +69,12 @@ resources:
       Default: ${self:provider.stage}
       AllowedValues: [neos]
   # -----------------------------------------------------------------------------
+  Conditions:
+    IsHealthEnabled: !Equals [ ${self:custom.configs.MonitoringConfigs.Health.Enabled}, true ]
+    IsGuardDutyEnabled: !Equals [ ${self:custom.configs.MonitoringConfigs.GuardDuty.Enabled}, true ]
+    IsCloudwatchLogsEnabled: !Equals [ ${self:custom.configs.MonitoringConfigs.CloudwatchLogs.Enabled}, true ]
+
+  # -----------------------------------------------------------------------------
   Resources:
     # IAM
     LambdaFunctionRole: ${file(infra/agent/resources/iam.yml):LambdaFunctionRole}
