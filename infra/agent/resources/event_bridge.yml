@@ -1,5 +1,4 @@
 HealthEventRule:
-  Condition: IsHealthEnabled
   Type: AWS::Events::Rule
   Properties:
     Name: "${self:service}-HealthEventRule"
@@ -10,8 +9,26 @@ HealthEventRule:
         "source":["aws.health"],
         "detail-type":["AWS Health Event"]
       }
-    State: "ENABLED"
+    State: ${upper(self:custom.monitoringConfigs.Health.State)}
     RoleArn: !GetAtt EventBridgeRole.Arn
     Targets:
-      - Arn: ${self:custom.configs.MonitoringConfigs.EventBusArn}
+      - Arn: ${self:custom.monitoringConfigs.EventBusArn}
         Id: "${self:service}-HealthEventTarget"
+
+
+GuardDutyEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: "${self:service}-GuardDutyEventRule"
+    Description: "GuardDuty event rule for monitoring system health"
+    EventBusName: "default"
+    EventPattern: |
+      {
+        "source":["aws.guardduty"],
+        "detail-type":["GuardDuty Finding"]
+      }
+    State: ${upper(self:custom.monitoringConfigs.GuardDuty.State)}
+    RoleArn: !GetAtt EventBridgeRole.Arn
+    Targets:
+      - Arn: ${self:custom.monitoringConfigs.EventBusArn}
+        Id: "${self:service}-GuardDutyEventTarget"

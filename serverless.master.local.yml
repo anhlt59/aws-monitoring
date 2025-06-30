@@ -23,6 +23,7 @@ provider:
     DYNAMODB_TABLE: teligent-master-local
 
 plugins:
+  - serverless-plugin-utils
   - serverless-python-requirements
   - serverless-offline
   - serverless-localstack

@@ -22,6 +22,7 @@ provider:
     POWERTOOLS_LOG_LEVEL: DEBUG
 
 plugins:
+  - serverless-plugin-utils
   - serverless-python-requirements
   - serverless-offline
   - serverless-localstack
@@ -30,8 +31,8 @@ useDotenv: true
 
 custom:
   # load the configuration corresponding to a specific $stage
-  configs:
-    ${file(infra/agent/configs/${self:provider.stage}.yml)}
+  stackConfigs: ${file(infra/agent/configs/${self:provider.stage}.yml)}
+  monitoringConfigs: ${file(infra/agent/configs/${self:provider.stage}.yml):MonitoringConfigs}
     # plugins
   localstack:
     stages: [local]

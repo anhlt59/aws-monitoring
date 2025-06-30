@@ -42,7 +42,7 @@ prepare-neos: ## Prepare s3 and iam roles for NEOS environment
 
 # DEPLOYMENT ========================================================================
 deploy-local: ## Deploy to the local environment
-	@bash ops/deployment/deploy.sh local master
+	@#bash ops/deployment/deploy.sh local master
 	@bash ops/deployment/deploy.sh local agent
 deploy-neos: ## Deploy to the NEOS environment
 	@bash ops/deployment/deploy.sh neos master

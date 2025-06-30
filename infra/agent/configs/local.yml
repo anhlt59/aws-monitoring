@@ -15,13 +15,15 @@ Lambda:
   LogRetentionInDays: 7
 
 MonitoringConfigs:
-  EventBus:
-    Arn: arn:aws:events:us-east-1:000000000000:event-bus/teligent-master-local-MonitoringEventBus
+  EventBusArn: arn:aws:events:us-east-1:000000000000:event-bus/teligent-master-local-MonitoringEventBus
+  WebhookUrl: "https://hooks.slack.com/services/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"
+
   Health:
-    Enabled: true
+    State: enabled
   GuardDuty:
-    Enabled: true
+    State: enabled
   CloudwatchLogs:
+    State: enabled
     Default:
       LogGroups: # String of log group names separated by commas or *
         Match: "*"
@@ -32,12 +34,4 @@ MonitoringConfigs:
         | sort @timestamp desc
         | limit 200
       Schedule: rate(15 minutes)
-    Custom: [
-      # - LogGroups: teligent-local-test
-      #   Query: |
-      #     fields @message, @logStream, @log
-      #     | filter @message like /(?i)(error|fail|exception)/
-      #     | sort @timestamp desc
-      #     | limit 200
-      #   Schedule: rate(15 minutes)
-    ]
+    Custom: [ ]

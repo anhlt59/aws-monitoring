@@ -19,11 +19,11 @@ MonitoringConfigs:
   WebhookUrl: "https://hooks.slack.com/services/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"
 
   Health:
-    Enabled: true
+    State: enabled
   GuardDuty:
-    Enabled: true
+    State: enabled
   CloudwatchLogs:
-    Enabled: true
+    State: enabled
     Default:
       LogGroups: # String of log group names separated by commas or *
         Match: "*"

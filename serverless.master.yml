@@ -41,6 +41,7 @@ provider:
     DYNAMODB_TABLE: !Ref DynamoDBTable
 
 plugins:
+  - serverless-plugin-utils
   - serverless-python-requirements
 
 useDotenv: true
