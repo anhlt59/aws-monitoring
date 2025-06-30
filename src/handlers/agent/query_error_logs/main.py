@@ -1,101 +1,62 @@
-# import calendar
-# import json
-# import os
-# import time
-# import urllib.parse
-# import urllib.request
+import json
+import os
+from collections import defaultdict
+from datetime import UTC, datetime, timedelta
 
-# import boto3
+from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
 
+from src.adapters.aws.cloudwatch import CloudwatchLogService, StartQueryRequestTypeDef
+from src.adapters.aws.eventbridge import EventBridgeService, PutEventsRequestEntryTypeDef
+from src.common.logger import logger
+from src.common.utils import round_n_minutes
 
-# def getCurrentTime():
-#     currentTimeGMT = time.gmtime()
-#     formatMinuteCurrentTimeGMT = currentTimeGMT.tm_min
-#     stringFormatTime = "%Y-%m-%d %H:" + str(formatMinuteCurrentTimeGMT) + ":00"
-#     zeroSecond = time.strftime(stringFormatTime, currentTimeGMT)
-#     unixTime = calendar.timegm(time.gmtime(time.mktime(time.strptime(zeroSecond, "%Y-%m-%d %H:%M:%S"))))
+LOG_GROUP_NAMES = os.getenv("LOG_GROUP_NAMES", "").split(",")
+QUERY_STRING = os.getenv("QUERY_STRING")
+QUERY_DURATION = os.getenv("QUERY_DURATION", 300)  # seconds
+QUERY_DELAY = os.getenv("QUERY_DELAY", 1)  # seconds
+QUERY_TIMEOUT = os.getenv("QUERY_TIMEOUT", 15)  # seconds
 
-#     return unixTime
-
-
-# def queryCloudWatchInsight(LogGroupName, Query, TimeExecute):
-#     client = boto3.client("logs")
-#     query = Query
-#     logGroup = LogGroupName
-
-#     endTime = int(getCurrentTime() - 1)
-#     startTime = int(getCurrentTime() - int(TimeExecute))
-
-#     print("[INFO] Start time........" + str(time.ctime(startTime)))
-#     print("[INFO] End time........" + str(time.ctime(endTime)))
-
-#     start_query_response = client.start_query(
-#         logGroupName=logGroup,
-#         startTime=startTime,
-#         endTime=endTime,
-#         queryString=query,
-#     )
-
-#     query_id = start_query_response["queryId"]
-
-#     response = None
-#     while response == None or response["status"] == "Running":
-#         print("Waiting for query to complete ...")
-#         time.sleep(1)
-#         response = client.get_query_results(queryId=query_id)
-
-#     valueCustomMetric = response["results"]
-#     return response["results"]
+cloudwatch_service = CloudwatchLogService()
+event_service = EventBridgeService()
 
 
-# def resolveData(Data):
-#     results = []
-#     for item in Data:
-#         results.append(item[1]["value"])
-#     return results
+def query_logs() -> dict[str, list[dict]]:
+    """Query logs from CloudWatch based on the configured parameters."""
+    query_time = round_n_minutes(datetime.now(UTC), 5)
+    query_param = StartQueryRequestTypeDef(
+        logGroupNames=LOG_GROUP_NAMES,
+        queryString=QUERY_STRING,
+        endTime=query_time,
+        startTime=query_time - timedelta(seconds=QUERY_DURATION),
+    )
+    logs = cloudwatch_service.query_logs(
+        query_param,
+        timeout=QUERY_TIMEOUT,
+        delay=QUERY_DELAY,
+    )
+    categorized_logs = defaultdict(list)
+    for log in logs:
+        log_group_name = log.log or "unknown"  # Use "unknown" if log.log is None
+        categorized_logs[log_group_name].append(log.model_dump())
+    return dict(categorized_logs)
 
 
-# def resolveTitleAttachment(LogGroupName, Region):
-#     return "CloudWatch | LogGroupName: " + LogGroupName + " | Region: " + Region
+def publish_event(data: dict, event_bus_name: str = "default"):
+    """Publish logs as an event to the event bus."""
+    event = PutEventsRequestEntryTypeDef(
+        Source="monitoring.agent",
+        DetailType="QueryErrorLogs",
+        Detail=json.dumps(data),
+        EventBusName=event_bus_name,
+    )
+    event_service.publish_event(event)
 
 
-# def notifySlack(WebHookUrl, Message):
-#     json_data = json.dumps(Message)
-#     data = json_data.encode("ascii")
-#     headers = {"Content-Type": "application/json"}
-#     req = urllib.request.Request(WebHookUrl, data, headers)
-#     resp = urllib.request.urlopen(req)
-#     response = resp.read()
-#     print(response)
-
-
-# def pushNotifySlack(WebHookUrl, Data, Title):
-#     print(Data)
-#     for item in Data:
-#         message = {"attachments": [{"text": "```" + item + "```", "color": "#Be3125", "title": Title}]}
-#         notifySlack(WebHookUrl, message)
-
-
-# def init():
-#     queryStringApp = os.environ["QUERY_STRING_APP"]
-#     queryStringSys = os.environ["QUERY_STRING_SYS"]
-#     logGroupName = os.environ["LOG_GROUP_NAME"]
-#     timeExecute = os.environ["TIME_EXECUTE"]
-#     webhookUrl = os.environ["WEBHOOK"]
-#     region = os.environ["REGION"]
-
-#     dataApp = queryCloudWatchInsight(logGroupName, queryStringApp, timeExecute)
-#     # dataSys = queryCloudWatchInsight(logGroupName,queryStringSys,timeExecute)
-
-#     dataForMessageSlackApp = resolveData(dataApp)
-#     # dataForMessageSlackSys = resolveData(dataSys)
-
-#     dataSlackTitle = resolveTitleAttachment(logGroupName, region)
-
-#     pushNotifySlack(webhookUrl, dataForMessageSlackApp, dataSlackTitle)
-#     # pushNotifySlack(webhookUrl, dataForMessageSlackSys, dataSlackTitle)
-
-
-# def lambda_handler(event, context):
-#     init()
-#     return {"statusCode": 200, "body": json.dumps("Lambda Success")}
+@logger.inject_lambda_context(log_event=True)
+@event_source(data_class=EventBridgeEvent)
+def handler(event: EventBridgeEvent, context):
+    """Handle the incoming event."""
+    if logs := query_logs():
+        publish_event(logs)
+    else:
+        logger.debug("No logs found")

@@ -1,11 +1,13 @@
 services:
   localstack:
     platform: linux/amd64
-    image: localstack/localstack:4.4.0
+    image: localstack/localstack-pro:4.5.0
+    #image: localstack/localstack:4.5.0
     container_name: localstack
     ports:
       - "4566:4566"
     environment:
+      - LOCALSTACK_AUTH_TOKEN=ls-hAgemaTo-JAlo-0112-4627-gadIrALAb92b
       - AWS_ACCESS_KEY_ID=local
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_SECRET_ACCESS_KEY=local

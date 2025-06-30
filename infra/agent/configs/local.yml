@@ -23,15 +23,13 @@ MonitoringConfigs:
   GuardDuty:
     State: enabled
   CloudwatchLogs:
-    State: enabled
+    State: disabled
     Default:
-      LogGroups: # String of log group names separated by commas or *
-        Match: "*"
-        Exclude: ""
+      LogGroups: "/aws/lambda/test-function," # String of log group names separated by commas or *
       Query: |
         fields @message, @logStream, @log
         | filter @message like /(?i)(error|fail|exception)/
         | sort @timestamp desc
         | limit 200
       Schedule: rate(15 minutes)
-    Custom: [ ]
+    Custom: []

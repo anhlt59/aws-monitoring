@@ -39,6 +39,7 @@ provider:
     POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL}
     # references to resources in this template
     DYNAMODB_TABLE: !Ref DynamoDBTable
+    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils

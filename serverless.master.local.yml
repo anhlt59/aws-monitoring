@@ -21,6 +21,7 @@ provider:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
     DYNAMODB_TABLE: teligent-master-local
+    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils

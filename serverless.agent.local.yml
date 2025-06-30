@@ -20,6 +20,7 @@ provider:
     REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
+    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils
