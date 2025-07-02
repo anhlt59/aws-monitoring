@@ -29,9 +29,9 @@ MonitoringConfigs:
         Match: "*"
         Exclude: ""
       Query: |
-        fields @message, @logStream, @log
+        fields @message, @log, @logStream
         | filter @message like /(?i)(error|fail|exception)/
         | sort @timestamp desc
         | limit 200
       Schedule: rate(15 minutes)
-    Custom: [ ]
+    Custom: []
