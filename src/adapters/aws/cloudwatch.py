@@ -88,6 +88,6 @@ class CloudwatchLogService(metaclass=SingletonMeta):
         categorized_results = defaultdict(list)
         for result in response.get("results", []):
             cw_log = CwLog.model_validate({item.get("field", " ")[1:]: item.get("value") for item in result})
-            categorized_results[cw_log.logGroupName].append(cw_log)
+            categorized_results[cw_log.log].append(cw_log)
 
         return [CwQueryResult(logGroupName=name, logs=logs) for name, logs in categorized_results.items()]

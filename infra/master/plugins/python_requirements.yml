@@ -13,6 +13,11 @@ pythonRequirements:
     - "**/__pycache__*"
   strip: false
 
+  noDeploy:
+    - boto3
+    - botocore
+    - awscli
+
   useDownloadCache: true
   useStaticCache: true
 

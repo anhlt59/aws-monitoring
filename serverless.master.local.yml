@@ -3,7 +3,7 @@ service: teligent-master
 provider:
   name: aws
   stage: "local"
-  region: "us-east-1"
+  region: ${opt:region, self:custom.configs.Region}
   stackName: ${self:service}-${self:provider.stage}
 
   # default tags for all resources
@@ -17,11 +17,9 @@ provider:
 
   # Default environment for lambda functions
   environment:
-    REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
     DYNAMODB_TABLE: teligent-master-local
-    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils
@@ -33,7 +31,8 @@ useDotenv: true
 
 custom:
   # load the configuration corresponding to a specific $stage
-  configs: ${file(infra/master/configs/${self:provider.stage}.yml)}
+  configs:
+    ${file(infra/master/configs/${self:provider.stage}.yml)}
     # plugins
   localstack:
     stages: [local]

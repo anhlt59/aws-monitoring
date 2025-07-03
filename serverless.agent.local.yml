@@ -3,7 +3,7 @@ service: teligent-agent
 provider:
   name: aws
   stage: "local"
-  region: "us-east-1"
+  region: ${opt:region, self:custom.stackConfigs.Region}
   stackName: ${self:service}-${self:provider.stage}
 
   # default tags for all resources
@@ -20,7 +20,6 @@ provider:
     REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
-    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils
@@ -33,7 +32,8 @@ useDotenv: true
 custom:
   # load the configuration corresponding to a specific $stage
   stackConfigs: ${file(infra/agent/configs/${self:provider.stage}.yml)}
-  monitoringConfigs: ${file(infra/agent/configs/${self:provider.stage}.yml):MonitoringConfigs}
+  monitoringConfigs:
+    ${file(infra/agent/configs/${self:provider.stage}.yml):MonitoringConfigs}
     # plugins
   localstack:
     stages: [local]

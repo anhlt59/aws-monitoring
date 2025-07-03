@@ -36,16 +36,16 @@ start-master: ## Start the local master server
 start-agent: ## Start the local agent server
 	pnpm exec sls offline start --stage local --config serverless.agent.local.yml
 
-# PREPARE ========================================================================
-prepare-neos: ## Prepare s3 and iam roles for NEOS environment
-	@bash ops/deployment/prepare.sh neos
+# BOOTSTRAP ========================================================================
+bootstrap-neos: ## Prepare s3 and iam roles for NEOS environment
+	@bash ops/deployment/bootstrap.sh neos
 
 # DEPLOYMENT ========================================================================
 deploy-local: ## Deploy to the local environment
 	@bash ops/deployment/deploy.sh local master
 	@bash ops/deployment/deploy.sh local agent
 deploy-neos: ## Deploy to the NEOS environment
-	@bash ops/deployment/deploy.sh neos master
+	#@bash ops/deployment/deploy.sh neos master
 	@bash ops/deployment/deploy.sh neos agent
 
 # PACKAGING ========================================================================

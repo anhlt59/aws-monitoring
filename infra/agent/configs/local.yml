@@ -23,7 +23,7 @@ MonitoringConfigs:
   GuardDuty:
     State: enabled
   CloudwatchLogs:
-    State: disabled
+    State: enabled
     Default:
       LogGroups: "/aws/lambda/test-function," # String of log group names separated by commas or *
       Query: |

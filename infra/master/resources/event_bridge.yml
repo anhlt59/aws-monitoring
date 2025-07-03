@@ -23,33 +23,26 @@ MonitoringEventBus:
     DeadLetterConfig:
       Arn: !GetAtt MonitoringDLQ.Arn
 
-#HealthEventRule:
-#  Type: AWS::Events::Rule
-#  Properties:
-#    Name: "${self:service}-HealthEventRule"
-#    Description: "Health event rule for monitoring system health"
-#    EventBusName: !Ref MonitoringEventBus
-#    EventPattern: |
-#      {
-#        "source":["aws.health"],
-#        "detail-type":["AWS Health Event"]
-#      }
-#    State: "ENABLED"
-#    RoleArn: !GetAtt EventBridgeRole.Arn
-#    Targets:
-#      - Arn: !GetAtt SendHealthEventsLambdaFunction.Arn
-#        Id: "${self:service}-HealthEventTarget"
-
-
 MonitoringEventRule:
   Type: AWS::Events::Rule
   Properties:
     Name: "${self:service}-MonitoringEventRule"
-    Description: "Event rule for monitoring system"
+    Description: "Rule to handle monitoring events from various sources"
     EventBusName: !Ref MonitoringEventBus
-    EventPattern: "{}"
+    EventPattern: |
+      {
+        "source": [
+          "aws.cloudwatch",
+          "aws.guardduty",
+          "aws.health",
+          "monitoring.agent.cloudwatch",
+          "monitoring.agent.guardduty",
+          "monitoring.agent.health",
+          "monitoring.agent.logs"
+        ]
+      }
     State: "ENABLED"
-    RoleArn: !GetAtt EventBridgeRole.Arn
     Targets:
       - Arn: !GetAtt HandleMonitoringEventsLambdaFunction.Arn
         Id: "${self:service}-EventHandler"
+        RoleArn: !GetAtt EventBridgeRole.Arn

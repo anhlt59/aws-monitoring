@@ -8,13 +8,7 @@ from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.models import Event
 
-from .messages import (
-    create_alarm_message,
-    create_guardduty_message,
-    create_health_message,
-    create_logs_message,
-    create_unknown_message,
-)
+from .messages import create_alarm_message, create_guardduty_message, create_health_message, create_logs_message
 
 repo = EventRepository()
 notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))
@@ -36,17 +30,17 @@ def store_event(event: EventBridgeEvent):
 def push_notification(event: EventBridgeEvent):
     """Push notification based on the event source."""
     match event.source:
-        case "aws.health":
+        case "aws.health" | "monitoring.agent.health":
             message = create_health_message(event)
-        case "aws.guardduty":
+        case "aws.guardduty" | "monitoring.agent.guardduty":
             message = create_guardduty_message(event)
-        case "aws.cloudwatch":
+        case "aws.cloudwatch" | "monitoring.agent.alarm":
             message = create_alarm_message(event)
-        case "custom.logs":
+        case "monitoring.agent.logs":
             message = create_logs_message(event)
         case _:
-            message = create_unknown_message(event)
             logger.warning(f"Event<{event.get_id}>: Unknown event source '{event.source}'")
+            raise ValueError(f"Unknown event source: {event.source}")
     notifier.notify(message)
     logger.info(f"Sent Event<{event.get_id}> notification")
 

@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-DailyReport
   description: Send daily report events to Slack channel
-  handler: src.handlers.daily_report.main.handler
+  handler: src.handlers.master.daily_report.main.handler
   package:
     patterns:
       - src/common/*.py

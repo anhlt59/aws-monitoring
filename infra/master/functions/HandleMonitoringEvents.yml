@@ -1,6 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-HandleMonitoringEvents
   description: Send monitoring events to Slack channel
+  # handler: src.handlers.master.handle_monitoring_events.main.handler
   handler: src.handlers.master.handle_monitoring_events.main.handler
   package:
     patterns:

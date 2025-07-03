@@ -1,0 +1,10 @@
+function:
+  name: ${self:service}-${self:provider.stage}-Testing
+  description: Testing function for agent
+  handler: src.handlers.test.main.handler
+  package:
+    patterns:
+      - src/**
+  environment:
+    POWERTOOLS_SERVICE_NAME: events
+    WEBHOOK_URL: ${self:custom.monitoringConfigs.WebhookUrl}

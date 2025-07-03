@@ -3,15 +3,15 @@ service: teligent-master
 stages:
   default:
     resolvers:
-      aws-account:
+      aws-resolver:
         type: aws
         profile: ${self:custom.configs.Profile}
-        region: ${opt:region, self:custom.configs.Region}
 
 provider:
   name: aws
-  resolver: aws-account
+  resolver: aws-resolver
   stage: ${opt:stage, "dev"}
+  region: ${opt:region, self:custom.configs.Region}
   stackName: ${self:service}-${self:provider.stage}
 
   # default tags for all resources
@@ -39,7 +39,6 @@ provider:
     POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL}
     # references to resources in this template
     DYNAMODB_TABLE: !Ref DynamoDBTable
-    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils
@@ -62,11 +61,12 @@ package:
 functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}
   DailyReport: ${file(infra/master/functions/DailyReport.yml):function}
+  Testing: ${file(infra/master/functions/Testing.yml):function}
   # API -------------------------------------------------------------------------
   # Events
-  GetEvent: ${file(infra/master/functions/api/GetEvent.yml):function}
-  ListEvents: ${file(infra/master/functions/api/ListEvents.yml):function}
-  UpdateEvent: ${file(infra/master/functions/api/UpdateEvent.yml):function}
+  # GetEvent: ${file(infra/master/functions/api/GetEvent.yml):function}
+  # ListEvents: ${file(infra/master/functions/api/ListEvents.yml):function}
+  # UpdateEvent: ${file(infra/master/functions/api/UpdateEvent.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ resources:
     Stage:
       Type: String
       Default: ${self:provider.stage}
-      AllowedValues: [ neos ]
+      AllowedValues: [neos]
   # -----------------------------------------------------------------------------
   Resources:
     # IAM
@@ -91,4 +91,4 @@ resources:
     DynamoDBTable: ${file(infra/master/resources/dynamodb.yml):DynamoDBTable}
 
   # -----------------------------------------------------------------------------
-  Outputs: { }
+  Outputs: {}

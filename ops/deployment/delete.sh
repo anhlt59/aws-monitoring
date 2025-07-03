@@ -10,7 +10,7 @@ STACK="${2:-agent}"
 if [[ "$STAGE" == "local" ]]; then
     if ! docker ps | grep -q localstack; then
         echo -e "${RED}Warning: LocalStack is not running. Please start LocalStack before deploying to 'local'.${RESET}"
-        echo -e "${YELLOW}Use 'make start-localstack' to start LocalStack.${RESET}"
+        echo -e "${YELLOW}Use 'make start' to start LocalStack.${RESET}"
         exit 1
     fi
     TEMPLATE_FILE="serverless.${STACK}.local.yml"

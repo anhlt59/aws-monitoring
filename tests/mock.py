@@ -94,7 +94,7 @@ def mock_cloudwatch_logs(log_group_name: str = "/aws/lambda/test-function"):
     # Generate fake logs
     request_id_1 = str(uuid4())
     request_id_2 = str(uuid4())
-    timestamp = int(time.time() * 1000)
+    timestamp = int(time.time() * 1000 - 1000 * 60 * 60 * 12)  # 12 hours ago
 
     log_events = [
         # Successful invocation

@@ -26,7 +26,7 @@ class EventBridgeService(metaclass=SingletonMeta):
     def __init__(self):
         self.client = boto3.client("events", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
 
-    def publish_event(self, events: Iterable[EventsRequestEntry]):
+    def publish_events(self, events: Iterable[EventsRequestEntry]):
         """Publish an event to the AWS EventBus."""
         response = self.client.put_events(Entries=[event.model_dump() for event in events])
 
@@ -36,5 +36,7 @@ class EventBridgeService(metaclass=SingletonMeta):
             or not response.get("Entries")
         ):
             raise Exception(f"Failed to publish event: {response.get('Entries')}")
+        from pprint import pprint
 
+        pprint(response)
         logger.debug(f"Event published successfully: {response.get('Entries')}")

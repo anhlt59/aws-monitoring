@@ -1,34 +1,57 @@
 HealthEventRule:
   Type: AWS::Events::Rule
   Properties:
-    Name: "${self:service}-HealthEventRule"
-    Description: "Health event rule for monitoring system health"
-    EventBusName: "default"
+    Name: ${self:service}-HealthEventRule
+    Description: Health event rule for monitoring system health
+    EventBusName: default
     EventPattern: |
       {
-        "source":["aws.health"],
-        "detail-type":["AWS Health Event"]
+        "source":["aws.health"]
       }
-    State: ${upper(self:custom.monitoringConfigs.Health.State)}
-    RoleArn: !GetAtt EventBridgeRole.Arn
+    State: ${upper(${self:custom.monitoringConfigs.Health.State})}
     Targets:
       - Arn: ${self:custom.monitoringConfigs.EventBusArn}
-        Id: "${self:service}-HealthEventTarget"
-
+        Id: ${self:service}-MonitoringEventBusTarget
+        RoleArn: !GetAtt EventBridgeRole.Arn
 
 GuardDutyEventRule:
   Type: AWS::Events::Rule
   Properties:
-    Name: "${self:service}-GuardDutyEventRule"
-    Description: "GuardDuty event rule for monitoring system health"
-    EventBusName: "default"
+    Name: ${self:service}-GuardDutyEventRule
+    Description: GuardDuty event rule for monitoring system health
+    EventBusName: default
     EventPattern: |
       {
-        "source":["aws.guardduty"],
-        "detail-type":["GuardDuty Finding"]
+        "source":["aws.guardduty"]
       }
-    State: ${upper(self:custom.monitoringConfigs.GuardDuty.State)}
-    RoleArn: !GetAtt EventBridgeRole.Arn
+    State: ${upper(${self:custom.monitoringConfigs.GuardDuty.State})}
     Targets:
       - Arn: ${self:custom.monitoringConfigs.EventBusArn}
-        Id: "${self:service}-GuardDutyEventTarget"
+        Id: ${self:service}-MonitoringEventBusTarget
+        RoleArn: !GetAtt EventBridgeRole.Arn
+
+MonitoringEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: ${self:service}-MonitoringEventRule
+    Description: Publish monitoring events to the master EventBus
+    EventBusName: default
+    EventPattern: |
+      {
+        "source": [
+          "aws.cloudwatch",
+          "aws.guardduty",
+          "aws.health",
+          "monitoring.agent.cloudwatch",
+          "monitoring.agent.guardduty",
+          "monitoring.agent.health",
+          "monitoring.agent.logs"
+        ]
+      }
+    State: ${upper(${self:custom.monitoringConfigs.CloudwatchLogs.State})}
+    Targets:
+      - Arn: ${self:custom.monitoringConfigs.EventBusArn}
+        Id: ${self:service}-MonitoringEventBusTarget
+        RoleArn: !GetAtt EventBridgeRole.Arn
+        DeadLetterConfig:
+          Arn: !GetAtt MonitoringDLQ.Arn

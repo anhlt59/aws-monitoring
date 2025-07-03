@@ -17,6 +17,7 @@
         "iam:CreateRole",
         "iam:CreatePolicy",
         "iam:AttachRolePolicy",
+        "iam:CreatePolicyVersion",
         "iam:UpdateRole",
         "iam:UpdateRoleDescription",
         "iam:UpdateAssumeRolePolicy",
@@ -25,6 +26,7 @@
         "iam:DetachRolePolicy",
         "iam:DeleteRole",
         "iam:DeletePolicy",
+        "iam:DeletePolicyVersion",
         "iam:Tag*",
         "iam:Untag*"
       ],
@@ -123,6 +125,20 @@
       ],
       "Effect": "Allow",
       "Sid": "LambdaFunctionManagement"
+    },
+   {
+      "Sid": "SQSQueueManagement",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:Get*",
+        "sqs:List*",
+        "sqs:CreateQueue",
+        "sqs:DeleteQueue",
+        "sqs:SetQueueAttributes",
+        "sqs:Tag*",
+        "sqs:Untag*"
+      ],
+      "Resource": "arn:aws:sqs:us-east-1:728171922033:teligent*"
     }
   ]
 }

@@ -1,6 +1,6 @@
 DynamoDBTable:
   Type: AWS::DynamoDB::Table
-  DeletionPolicy: Retain
+  # DeletionPolicy: Retain
   UpdateReplacePolicy: Retain
   Properties:
     AttributeDefinitions:

@@ -62,4 +62,9 @@ EventBridgePolicy:
           Effect: Allow
           Action:
             - lambda:InvokeFunction
-          Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/teligent*:*"
+          Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:teligent*:*"
+        - Sid: AllowPublishEventsToEventBus
+          Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/teligent*"

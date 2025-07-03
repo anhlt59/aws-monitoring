@@ -3,15 +3,15 @@ service: teligent-agent
 stages:
   default:
     resolvers:
-      aws-account:
+      aws-resolver:
         type: aws
         profile: ${self:custom.stackConfigs.Profile}
-        region: ${opt:region, self:custom.stackConfigs.Region}
 
 provider:
   name: aws
-  resolver: aws-account
+  resolver: aws-resolver
   stage: ${opt:stage, "neos"}
+  region: ${opt:region, self:custom.stackConfigs.Region}
   stackName: ${self:service}-${self:provider.stage}
 
   # default tags for all resources
@@ -40,7 +40,6 @@ provider:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: ${self:custom.stackConfigs.Lambda.Environment.LOG_LEVEL}
     # references to resources in this template
-    AWS_REGION: ${aws:region}
 
 plugins:
   - serverless-plugin-utils
@@ -63,6 +62,7 @@ package:
 
 functions:
   QueryErrorLogs: ${file(infra/agent/functions/QueryErrorLogs.yml):function}
+  Testing: ${file(infra/agent/functions/Testing.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------
@@ -81,5 +81,8 @@ resources:
     # EventBridge
     HealthEventRule: ${file(infra/agent/resources/event_bridge.yml):HealthEventRule}
     GuardDutyEventRule: ${file(infra/agent/resources/event_bridge.yml):GuardDutyEventRule}
+    MonitoringEventRule: ${file(infra/agent/resources/event_bridge.yml):MonitoringEventRule}
+    # SQS
+    MonitoringDLQ: ${file(infra/agent/resources/sqs.yml):MonitoringDLQ}
   # -----------------------------------------------------------------------------
   Outputs: {}

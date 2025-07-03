@@ -38,16 +38,28 @@ POLICY_ARN=$(aws iam list-policies --scope Local --query "Policies[?PolicyName==
 if [[ -n "$POLICY_ARN" ]]; then
   echo -e "${GREEN}IAM policy '$POLICY_NAME' already exists.${RESET}"
   echo -e "${YELLOW}Updating IAM policy '$POLICY_NAME'...${RESET}"
+  # List all policy versions
+  POLICY_VERSIONS=$(aws iam list-policy-versions --policy-arn "$POLICY_ARN" --query 'Versions' --output json)
+  VERSION_COUNT=$(echo "$POLICY_VERSIONS" | jq 'length')
+
+  if [[ "$VERSION_COUNT" -ge 5 ]]; then
+    # Find the oldest non-default version
+    OLDEST_VERSION=$(echo "$POLICY_VERSIONS" | jq -r '[.[] | select(.IsDefaultVersion==false)] | sort_by(.CreateDate) | .[0].VersionId')
+    if [[ -n "$OLDEST_VERSION" ]]; then
+      echo -e "${YELLOW}Deleting oldest policy version: $OLDEST_VERSION${RESET}"
+      aws iam delete-policy-version --policy-arn "$POLICY_ARN" --version-id "$OLDEST_VERSION"
+    fi
+  fi
   aws iam create-policy-version \
     --policy-arn "$POLICY_ARN" \
-    --policy-document "file://${BASE_DIR}/infra/roles/deployment_policy.json" \
+    --policy-document "file://${BASE_DIR}/infra/roles/${STAGE}.deployment_policy.json" \
     --set-as-default
   echo -e "${GREEN}IAM policy '$POLICY_NAME' updated with new default version.${RESET}"
 else
   echo -e "${YELLOW}Creating IAM policy '$POLICY_NAME'...${RESET}"
   aws iam create-policy \
     --policy-name "$POLICY_NAME" \
-    --policy-document "file://${BASE_DIR}/infra/roles/deployment_policy.json"
+    --policy-document "file://${BASE_DIR}/infra/roles/${STAGE}.deployment_policy.json"
   echo -e "${GREEN}IAM policy '$POLICY_NAME' created.${RESET}"
 fi
 
