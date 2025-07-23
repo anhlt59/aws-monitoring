@@ -11,7 +11,7 @@ repo = EventRepository()
 notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))
 
 
-@logger.inject_lambda_context(log_event=True)
+# @logger.inject_lambda_context(log_event=True)
 @event_source(data_class=EventBridgeEvent)
 def handler(event: EventBridgeEvent, context):
     start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)

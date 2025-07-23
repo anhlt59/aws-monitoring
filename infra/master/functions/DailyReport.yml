@@ -4,10 +4,6 @@ function:
   handler: src.handlers.master.daily_report.main.handler
   package:
     patterns:
-      - src/common/*.py
-      - src/models/*.py
-      - src/adapters/db/*.py
-      - src/adapters/notifiers.py
       - src/handlers/master/daily_report/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

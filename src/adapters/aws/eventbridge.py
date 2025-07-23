@@ -36,7 +36,5 @@ class EventBridgeService(metaclass=SingletonMeta):
             or not response.get("Entries")
         ):
             raise Exception(f"Failed to publish event: {response.get('Entries')}")
-        from pprint import pprint
 
-        pprint(response)
         logger.debug(f"Event published successfully: {response.get('Entries')}")

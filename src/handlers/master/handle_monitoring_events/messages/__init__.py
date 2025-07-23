@@ -1,4 +1,4 @@
-from .alarms import create_alarm_message
+from .alarm import create_alarm_message
 from .guardduty import create_guardduty_message
 from .health import create_health_message
 from .logs import create_logs_message

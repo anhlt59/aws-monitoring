@@ -38,7 +38,7 @@ provider:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL}
     # references to resources in this template
-    DYNAMODB_TABLE: !Ref DynamoDBTable
+    AWS_DYNAMODB_TABLE: !Ref DynamoDBTable
 
 plugins:
   - serverless-plugin-utils
@@ -57,11 +57,14 @@ package:
   excludeDevDependencies: true
   patterns:
     - "!./**"
+    - src/common/**/?*.py
+    - src/models/**/?*.py
+    - src/adapters/**/?*.py
+
 
 functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}
   DailyReport: ${file(infra/master/functions/DailyReport.yml):function}
-  Testing: ${file(infra/master/functions/Testing.yml):function}
   # API -------------------------------------------------------------------------
   # Events
   # GetEvent: ${file(infra/master/functions/api/GetEvent.yml):function}
@@ -86,7 +89,7 @@ resources:
     MonitoringEventBus: ${file(infra/master/resources/event_bridge.yml):MonitoringEventBus}
     MonitoringEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringEventRule}
     # SQS
-    MonitoringDLQ: ${file(infra/master/resources/sqs.yml):MonitoringDLQ}
+    MonitoringEventRuleDLQ: ${file(infra/master/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB
     DynamoDBTable: ${file(infra/master/resources/dynamodb.yml):DynamoDBTable}
 

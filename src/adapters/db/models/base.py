@@ -3,7 +3,7 @@ from typing import Any
 from pynamodb.attributes import DiscriminatorAttribute, UnicodeAttribute
 from pynamodb.models import Model
 
-from src.common.configs import DYNAMODB_ENDPOINT, DYNAMODB_REGION, DYNAMODB_TABLE
+from src.common.configs import AWS_DYNAMODB_TABLE, AWS_ENDPOINT, AWS_REGION
 
 
 # Attributes -----------------------------------------------------------
@@ -32,9 +32,9 @@ class KeyAttribute(UnicodeAttribute):
 
 # Model --------------------------------------------------------------
 class DynamoMeta:
-    table_name: str = DYNAMODB_TABLE
-    host: str | None = DYNAMODB_ENDPOINT
-    region: str | None = DYNAMODB_REGION
+    table_name: str = AWS_DYNAMODB_TABLE
+    host: str | None = AWS_ENDPOINT
+    region: str | None = AWS_REGION
 
 
 class DynamoModel(Model):

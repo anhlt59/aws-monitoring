@@ -59,10 +59,12 @@ package:
   excludeDevDependencies: true
   patterns:
     - "!./**"
+    - src/common/**/?*.py
+    - src/models/**/?*.py
+    - src/adapters/**/?*.py
 
 functions:
   QueryErrorLogs: ${file(infra/agent/functions/QueryErrorLogs.yml):function}
-  Testing: ${file(infra/agent/functions/Testing.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------
@@ -70,7 +72,7 @@ resources:
     Stage:
       Type: String
       Default: ${self:provider.stage}
-      AllowedValues: [neos]
+      AllowedValues: [ neos ]
   # -----------------------------------------------------------------------------
   Resources:
     # IAM
@@ -83,6 +85,6 @@ resources:
     GuardDutyEventRule: ${file(infra/agent/resources/event_bridge.yml):GuardDutyEventRule}
     MonitoringEventRule: ${file(infra/agent/resources/event_bridge.yml):MonitoringEventRule}
     # SQS
-    MonitoringDLQ: ${file(infra/agent/resources/sqs.yml):MonitoringDLQ}
+    MonitoringEventRuleDLQ: ${file(infra/agent/resources/sqs.yml):MonitoringEventRuleDLQ}
   # -----------------------------------------------------------------------------
-  Outputs: {}
+  Outputs: { }

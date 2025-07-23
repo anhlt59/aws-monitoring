@@ -8,10 +8,6 @@ function:
 #        enabled: ${ternary(self:custom.monitoringConfigs.CloudwatchLogs.State, enabled, true, false)}
   package:
     patterns:
-      - src/common/*.py
-      - src/models/*.py
-      - src/adapters/db/*.py
-      - src/adapters/notifiers.py
       - src/handlers/agent/query_error_logs/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

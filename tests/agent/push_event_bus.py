@@ -11,13 +11,14 @@ def handle_monitoring_events():
     from tests.mock import load_events
 
     service = EventBridgeService()
-    for event in load_events(file_path=TEST_DIR / "events" / "health_event.json"):
+    for event in load_events(file_path=TEST_DIR / "data" / "alarm_event.json"):
         service.publish_events(
             [
                 EventsRequestEntry(
-                    Source="monitoring.agent.health",
+                    Source=event.source.replace("aws.", "monitoring.agent."),
                     DetailType=event.detail_type,
-                    Detail=json.dumps(event.raw_event),
+                    Detail=json.dumps(event.detail),
+                    Resources=event.resources,
                 )
             ]
         )

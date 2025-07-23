@@ -5,12 +5,7 @@ function:
   handler: src.handlers.master.handle_monitoring_events.main.handler
   package:
     patterns:
-      - src/common/*.py
-      - src/models/*.py
-      - src/adapters/db/*.py
-      - src/adapters/aws/*.py
-      - src/adapters/notifiers.py
-      - src/handlers/master/handle_monitoring_events/*.py
+      - src/handlers/master/handle_monitoring_events/**/?*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
     WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.WebhookUrl}

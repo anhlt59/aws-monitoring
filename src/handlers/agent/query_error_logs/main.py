@@ -18,7 +18,7 @@ cloudwatch_service = CloudwatchLogService()
 event_service = EventBridgeService()
 
 
-@logger.inject_lambda_context(log_event=True)
+# @logger.inject_lambda_context(log_event=True)
 @event_source(data_class=EventBridgeEvent)
 def handler(event: EventBridgeEvent, context):
     """Handle the incoming event."""

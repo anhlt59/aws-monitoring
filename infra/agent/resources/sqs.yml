@@ -1,4 +1,4 @@
-MonitoringDLQ:
+MonitoringEventRuleDLQ:
   Type: AWS::SQS::Queue
   Properties:
-    QueueName: ${self:service}-${self:provider.stage}-MonitoringDLQ
+    QueueName: ${self:service}-${self:provider.stage}-MonitoringEventRuleDLQ

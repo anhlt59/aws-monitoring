@@ -9,13 +9,14 @@ def test_handle_monitoring_events():
     truncate_event_table()
 
     service = EventBridgeService()
-    for event in load_events(file_path=TEST_DIR / "events" / "health_event.json"):
+    for event in load_events(file_path=TEST_DIR / "data" / "guardduty_event.json"):
         service.publish_events(
             [
                 EventsRequestEntry(
-                    Source=event.source,
+                    Source="monitoring.agent.health",
                     DetailType=event.detail_type,
-                    Detail=json.dumps(event.raw_event),
+                    Detail=json.dumps(event.detail),
+                    Resources=event.resources,
                 )
             ]
         )

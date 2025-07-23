@@ -45,7 +45,7 @@ deploy-local: ## Deploy to the local environment
 	@bash ops/deployment/deploy.sh local master
 	@bash ops/deployment/deploy.sh local agent
 deploy-neos: ## Deploy to the NEOS environment
-	#@bash ops/deployment/deploy.sh neos master
+	@bash ops/deployment/deploy.sh neos master
 	@bash ops/deployment/deploy.sh neos agent
 
 # PACKAGING ========================================================================

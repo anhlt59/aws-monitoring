@@ -72,8 +72,13 @@ EventBridgePolicy:
     PolicyDocument:
       Version: "2012-10-17"
       Statement:
-        - Sid: AllowPublishEvents
+        - Sid: AllowInvokeLambdaFunctions
+          Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:teligent*"
+        - Sid: AllowPublishEventsToEventBus
           Effect: Allow
           Action:
             - events:PutEvents
-          Resource: "*"
+          Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/teligent*"

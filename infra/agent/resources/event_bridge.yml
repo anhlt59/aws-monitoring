@@ -54,4 +54,4 @@ MonitoringEventRule:
         Id: ${self:service}-MonitoringEventBusTarget
         RoleArn: !GetAtt EventBridgeRole.Arn
         DeadLetterConfig:
-          Arn: !GetAtt MonitoringDLQ.Arn
+          Arn: !GetAtt MonitoringEventRuleDLQ.Arn

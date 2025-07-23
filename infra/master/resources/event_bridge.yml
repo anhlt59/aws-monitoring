@@ -1,7 +1,5 @@
 MonitoringEventBus:
   Type: AWS::Events::EventBus
-  DependsOn:
-    - MonitoringDLQ
   Properties:
     Name: ${self:service}-${self:provider.stage}-MonitoringEventBus
     Description: Custom EventBus for monitoring events
@@ -13,15 +11,13 @@ MonitoringEventBus:
             "Sid": "AllowLambdaToPutEvents",
             "Effect": "Allow",
             "Principal": {
-              "Service": "lambda.amazonaws.com"
+              "AWS": "*"
             },
             "Action": "events:PutEvents",
             "Resource": "*"
           }
         ]
       }
-    DeadLetterConfig:
-      Arn: !GetAtt MonitoringDLQ.Arn
 
 MonitoringEventRule:
   Type: AWS::Events::Rule
@@ -46,3 +42,5 @@ MonitoringEventRule:
       - Arn: !GetAtt HandleMonitoringEventsLambdaFunction.Arn
         Id: "${self:service}-EventHandler"
         RoleArn: !GetAtt EventBridgeRole.Arn
+        DeadLetterConfig:
+          Arn: !GetAtt MonitoringEventRuleDLQ.Arn

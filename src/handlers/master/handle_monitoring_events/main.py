@@ -34,7 +34,7 @@ def push_notification(event: EventBridgeEvent):
             message = create_health_message(event)
         case "aws.guardduty" | "monitoring.agent.guardduty":
             message = create_guardduty_message(event)
-        case "aws.cloudwatch" | "monitoring.agent.alarm":
+        case "aws.cloudwatch" | "monitoring.agent.cloudwatch":
             message = create_alarm_message(event)
         case "monitoring.agent.logs":
             message = create_logs_message(event)
@@ -49,5 +49,6 @@ def push_notification(event: EventBridgeEvent):
 @event_source(data_class=EventBridgeEvent)
 def handler(event: EventBridgeEvent, context):
     """Handle the incoming event."""
+    logger.debug(event.raw_event)
     store_event(event)
     push_notification(event)

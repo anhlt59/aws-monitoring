@@ -8,10 +8,6 @@ function:
         path: /events
   package:
     patterns:
-      - src/common/*.py
-      - src/models/*.py
-      - src/adapters/api.py
-      - src/adapters/db/*.py
       - src/handlers/master/api/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
