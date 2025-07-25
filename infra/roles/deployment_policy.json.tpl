@@ -4,7 +4,7 @@
     {
       "Action": "cloudformation:*",
       "Resource": [
-        "arn:aws:cloudformation:${AWS_REGION}:${AWS_ACCOUNT_ID}:stack/teligent-agent/*"
+        "arn:aws:cloudformation:${AWS_REGION}:${AWS_ACCOUNT_ID}:stack/monitoring-agent/*"
       ],
       "Effect": "Allow",
       "Sid": "CloudFormationLimitedAccess"
@@ -31,8 +31,8 @@
         "iam:Untag*"
       ],
       "Resource": [
-        "arn:aws:iam::*:role/teligent*",
-        "arn:aws:iam::*:policy/teligent*"
+        "arn:aws:iam::*:role/monitoring*",
+        "arn:aws:iam::*:policy/monitoring*"
       ],
       "Effect": "Allow",
       "Sid": "IAMRoleManagement"
@@ -53,8 +53,8 @@
         "events:UntagResource"
       ],
       "Resource": [
-        "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT_ID}:rule/teligent*",
-        "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT_ID}:event-bus/teligent*"
+        "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT_ID}:rule/monitoring*",
+        "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT_ID}:event-bus/monitoring*"
       ],
       "Effect": "Allow",
       "Sid": "EventBridgeLimitedAccess"
@@ -72,7 +72,7 @@
         "logs:Untag*"
       ],
       "Resource": [
-        "arn:aws:logs:${AWS_REGION}:${AWS_ACCOUNT_ID}:log-group:/aws/lambda/teligent*:*"
+        "arn:aws:logs:${AWS_REGION}:${AWS_ACCOUNT_ID}:log-group:/aws/lambda/monitoring*:*"
       ],
       "Effect": "Allow",
       "Sid": "CloudWatchLogsLimitedAccess"
@@ -90,7 +90,7 @@
         "s3:TagResource",
         "s3:UntagResource"
       ],
-      "Resource": ["arn:aws:s3:::teligent*"],
+      "Resource": ["arn:aws:s3:::monitoring*"],
       "Effect": "Allow",
       "Sid": "S3BucketManagement"
     },
@@ -120,8 +120,8 @@
         "lambda:UntagResource"
       ],
       "Resource": [
-        "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:function:teligent*",
-        "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:layer:teligent*"
+        "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:function:monitoring*",
+        "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:layer:monitoring*"
       ],
       "Effect": "Allow",
       "Sid": "LambdaFunctionManagement"
@@ -138,7 +138,7 @@
         "sqs:Tag*",
         "sqs:Untag*"
       ],
-      "Resource": "arn:aws:sqs:${AWS_REGION}:${AWS_ACCOUNT_ID}:teligent*"
+      "Resource": "arn:aws:sqs:${AWS_REGION}:${AWS_ACCOUNT_ID}:monitoring*"
     }
   ]
 }

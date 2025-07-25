@@ -23,5 +23,5 @@ put_object() {
   awslocal s3 cp "$FILE_PATH" "s3://${BUCKET_NAME}/${S3_OBJECT_KEY}" --region "$AWS_REGION"
 }
 
-create_bucket teligent-local
-create_bucket teligent-local-deployment
+create_bucket monitoring-local
+create_bucket monitoring-local-deployment

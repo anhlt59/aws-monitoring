@@ -1,5 +1,5 @@
 {
-  "TableName": "teligent-master-local",
+  "TableName": "monitoring-master-local",
   "KeySchema": [
     {
       "AttributeName": "pk",

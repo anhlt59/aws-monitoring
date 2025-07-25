@@ -3,11 +3,11 @@ Profile: local
 
 # AWS Services
 IAM:
-  DeploymentRole: arn:aws:iam::728171922033:role/teligent-DeploymentRole
+  DeploymentRole: arn:aws:iam::728171922033:role/monitoring-DeploymentRole
 
 S3:
   DeploymentBucket:
-    Name: teligent-local-deployment
+    Name: monitoring-local-deployment
 
 Lambda:
   Environment:
@@ -18,5 +18,5 @@ DynamoDB:
   BillingMode: PAY_PER_REQUEST
 
 MonitoringConfigs:
-  EventBusArn: arn:aws:events:us-east-1:000000000000:event-bus/teligent-master-local-MonitoringEventBus
+  EventBusArn: arn:aws:events:us-east-1:000000000000:event-bus/monitoring-master-local-MonitoringEventBus
   WebhookUrl: "https://hooks.slack.com/services/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"

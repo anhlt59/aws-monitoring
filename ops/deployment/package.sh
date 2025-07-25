@@ -13,7 +13,7 @@ else
     TEMPLATE_FILE="serverless.${STACK}.yml"
 fi
 
-echo -e "${GREEN}${BOLD}Packaging 'teligent-${STACK}' in stage '${STAGE}'...${RESET}"
+echo -e "${GREEN}${BOLD}Packaging 'monitoring-${STACK}' in stage '${STAGE}'...${RESET}"
 
 echo -e "${BLUE}pnpm exec sls package --stage ${STAGE} --config ${TEMPLATE_FILE}${RESET}"
 pnpm exec sls package --stage "$STAGE" --config "$TEMPLATE_FILE"

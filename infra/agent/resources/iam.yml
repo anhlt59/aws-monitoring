@@ -25,7 +25,7 @@ LambdaFunctionPolicy:
             - logs:CreateLogStream
             - logs:CreateLogGroup
             - logs:PutLogEvents
-          Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/teligent*:*"
+          Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/monitoring*:*"
         - Sid: AllowSendMessagesToSQS
           Effect: Allow
           Action:
@@ -34,7 +34,7 @@ LambdaFunctionPolicy:
             - sqs:ReceiveMessage
             - sqs:DeleteMessage
             - sqs:ChangeMessageVisibility
-          Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:teligent*"
+          Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:monitoring*"
 
 # EventBridgeRole, that allows the Lambda function to be triggered by EventBridge events
 EventBridgeRole:
@@ -62,9 +62,9 @@ EventBridgePolicy:
           Effect: Allow
           Action:
             - lambda:InvokeFunction
-          Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:teligent*:*"
+          Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:monitoring*:*"
         - Sid: AllowPublishEventsToEventBus
           Effect: Allow
           Action:
             - events:PutEvents
-          Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/teligent*"
+          Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/monitoring*"

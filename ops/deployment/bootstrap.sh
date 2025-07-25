@@ -29,8 +29,8 @@ else
 fi
 
 # Create or update IAM role & policy for deployment
-ROLE_NAME="teligent-DeploymentRole"
-POLICY_NAME="teligent-DeploymentPolicy"
+ROLE_NAME="monitoring-DeploymentRole"
+POLICY_NAME="monitoring-DeploymentPolicy"
 
 # Search for the policy by name
 POLICY_ARN=$(aws iam list-policies --scope Local --query "Policies[?PolicyName=='$POLICY_NAME'].Arn" --output text)

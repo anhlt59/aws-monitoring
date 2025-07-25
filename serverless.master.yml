@@ -1,4 +1,4 @@
-service: teligent-master
+service: monitoring-master
 
 stages:
   default:

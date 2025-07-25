@@ -3,11 +3,11 @@ Profile: neos
 
 # AWS Services
 IAM:
-  DeploymentRole: arn:aws:iam::728171922033:role/teligent-DeploymentRole
+  DeploymentRole: arn:aws:iam::728171922033:role/monitoring-DeploymentRole
 
 S3:
   DeploymentBucket:
-    Name: teligent-neos-deployment
+    Name: monitoring-neos-deployment
 
 Lambda:
   Environment:

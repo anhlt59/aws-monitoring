@@ -1,4 +1,4 @@
-service: teligent-agent
+service: monitoring-agent
 
 stages:
   default:

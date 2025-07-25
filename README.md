@@ -1,4 +1,4 @@
-# 📊 Teligent 🌩️
+# 📊 AWS Monitoring 🌩️
 
 ![banner.png](docs/images/banner.png)
 
@@ -6,7 +6,7 @@
 🔹 Purpose: Monitors AWS resources and applications for performance, availability, and security issues.<br>
 
 <!-- TOC -->
-* [📊 Teligent 🌩️](#-teligent-)
+* [📊 AWS Monitoring 🌩️](#-aws-monitoring-)
   * [💻 Tech Stack](#-tech-stack)
   * [🧪 Testing](#-testing)
   * [🏗️ Infrastructure](#-infrastructure)
