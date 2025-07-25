@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-
+# ==================================================================================
+# Deployment script for AWS monitoring project
+#
+# Usage:
+#   $ deploy.sh [stage] [stack]
+# Arguments:
+#   - stage: The deployment stage (e.g., 'cmplus', 'local')
+#   - stack: The stack to bootstrap (e.g., 'master', 'agent')
+# ==================================================================================
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
@@ -18,6 +26,10 @@ else
     TEMPLATE_FILE="serverless.${STACK}.yml"
 fi
 
-echo -e "${GREEN}${BOLD}Deploying 'monitoring-${STACK}' in stage '${STAGE}'...${RESET}"
+echo -e "${BLUE}===============================${RESET}"
+echo -e "${BLUE}Deploy 'monitoring-${STACK}'${RESET}"
+echo -e "${BLUE}* Stage ${STAGE}${RESET}"
+echo -e "${BLUE}===============================${RESET}\n"
+
 echo -e "${BLUE}pnpm exec sls deploy --stage ${STAGE} --config ${TEMPLATE_FILE}${RESET}"
 pnpm exec sls deploy --stage "$STAGE" --config "$TEMPLATE_FILE"

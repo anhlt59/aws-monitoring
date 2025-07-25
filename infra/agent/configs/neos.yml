@@ -7,7 +7,7 @@ IAM:
 
 S3:
   DeploymentBucket:
-    Name: neos-monitoring-deployment
+    Name: monitoring-neos-deployment
 
 Lambda:
   Environment:

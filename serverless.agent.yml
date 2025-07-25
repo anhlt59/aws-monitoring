@@ -37,6 +37,7 @@ provider:
 
   # Default environment for lambda functions
   environment:
+    SERVICE: ${self:service}
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: ${self:custom.stackConfigs.Lambda.Environment.LOG_LEVEL}
     # references to resources in this template
@@ -72,7 +73,7 @@ resources:
     Stage:
       Type: String
       Default: ${self:provider.stage}
-      AllowedValues: [ neos ]
+      AllowedValues: [ neos, cmplus-stg ]
   # -----------------------------------------------------------------------------
   Resources:
     # IAM

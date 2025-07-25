@@ -4,7 +4,7 @@ import json
 def handle_monitoring_events():
     import boto3
 
-    boto3.setup_default_session(profile_name="neos")
+    boto3.setup_default_session(profile_name="lc-stg")
 
     from src.adapters.aws.eventbridge import EventBridgeService, EventsRequestEntry
     from tests.conftest import TEST_DIR

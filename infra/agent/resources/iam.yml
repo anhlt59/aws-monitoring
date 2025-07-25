@@ -67,4 +67,4 @@ EventBridgePolicy:
           Effect: Allow
           Action:
             - events:PutEvents
-          Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/monitoring*"
+          Resource: !Sub "arn:aws:events:${AWS::Region}:*:event-bus/monitoring*"

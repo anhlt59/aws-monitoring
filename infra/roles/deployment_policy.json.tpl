@@ -4,7 +4,7 @@
     {
       "Action": "cloudformation:*",
       "Resource": [
-        "arn:aws:cloudformation:${AWS_REGION}:${AWS_ACCOUNT_ID}:stack/monitoring-agent/*"
+        "arn:aws:cloudformation:${AWS_REGION}:${AWS_ACCOUNT_ID}:stack/monitoring-*/*"
       ],
       "Effect": "Allow",
       "Sid": "CloudFormationLimitedAccess"

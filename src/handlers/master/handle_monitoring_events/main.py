@@ -19,8 +19,11 @@ def store_event(event: EventBridgeEvent):
     model = Event(
         id=event.get_id,
         account=event.account,
+        region=event.region,
         source=event.source,
         detail=event.detail,
+        detail_type=event.detail_type,
+        resources=event.resources,
         published_at=datetime_str_to_timestamp(event.time),
     )
     repo.create(model)

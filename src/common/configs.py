@@ -14,6 +14,7 @@ AWS_ENDPOINT = "http://localhost:4566" if STAGE == "local" else None
 # DynamoDB
 AWS_DYNAMODB_DEFAULT_QUERY_LIMIT = os.getenv("AWS_DYNAMODB_DEFAULT_QUERY_LIMIT", 50)
 AWS_DYNAMODB_TABLE = os.getenv("AWS_DYNAMODB_TABLE", "monitoring-master-local")
+AWS_DYNAMODB_TTL = int(os.getenv("AWS_DYNAMODB_TTL", 604800))  # 7 days in seconds
 
 # API
 CORS_ALLOW_ORIGIN = os.getenv("CORS_ALLOW_ORIGIN", "*")

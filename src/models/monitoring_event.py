@@ -18,8 +18,11 @@ class Status(int, Enum):
 class Event(BaseModel):
     id: str
     account: str
+    region: str | None = None
     source: str
     detail: dict
+    detail_type: str | None = None
+    resources: list[str] = []
     assigned: str | None = None
     status: Status = Status.PENDING
     published_at: int = Field(default_factory=current_utc_timestamp)

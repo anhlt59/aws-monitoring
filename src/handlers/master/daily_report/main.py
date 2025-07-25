@@ -6,6 +6,7 @@ from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event
 from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier
 from src.common.logger import logger
+from src.models.monitoring_event import ListEventsDTO
 
 repo = EventRepository()
 notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))
@@ -19,9 +20,11 @@ def handler(event: EventBridgeEvent, context):
 
     # Fetch events from the repository
     events = repo.list(
-        start_date=int(start_date.timestamp()),
-        end_date=int(end_date.timestamp()),
-        limit=100,
+        ListEventsDTO(
+            start_date=int(start_date.timestamp()),
+            end_date=int(end_date.timestamp()),
+            limit=100,
+        )
     )
     logger.debug(f"Fetched {len(events.items)} events for daily report")
 

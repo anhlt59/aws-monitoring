@@ -1,4 +1,4 @@
-from pynamodb.attributes import NumberAttribute, UnicodeAttribute
+from pynamodb.attributes import ListAttribute, NumberAttribute, UnicodeAttribute
 
 from .base import DynamoModel, KeyAttribute
 
@@ -9,8 +9,11 @@ class EventPersistence(DynamoModel, discriminator="EVENT"):
     sk = KeyAttribute(range_key=True, prefix="EVENT#")
     # Attributes
     account = UnicodeAttribute(null=False)
+    region = UnicodeAttribute(null=True)
     source = UnicodeAttribute(null=False)
     detail = UnicodeAttribute(null=False)
+    detail_type = UnicodeAttribute(null=True)
+    resources = ListAttribute(null=True, default=lambda: [])
     assigned = UnicodeAttribute(null=True)
     status = NumberAttribute(null=True)
     published_at = NumberAttribute(null=False)

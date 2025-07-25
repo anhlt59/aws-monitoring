@@ -3,11 +3,11 @@ Profile: lc-stg
 
 # AWS Services
 IAM:
-  DeploymentRole: arn:aws:iam::728171922033:role/monitoring-DeploymentRole
+  DeploymentRole: arn:aws:iam::746166211068:role/monitoring-DeploymentRole
 
 S3:
   DeploymentBucket:
-    Name: cmplus-teligent-deployment
+    Name: monitoring-cmplus-stg-deployment
 
 Lambda:
   Environment:
@@ -15,7 +15,7 @@ Lambda:
   LogRetentionInDays: 7
 
 MonitoringConfigs:
-  EventBusArn: arn:aws:events:us-east-1:728171922033:event-bus/monitoring-master-neos-MonitoringEventBus
+  EventBusArn: arn:aws:events:ap-northeast-1:772468693720:event-bus/monitoring-master-cmplus-MonitoringEventBus
   WebhookUrl: "https://hooks.slack.com/services/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"
 
   Health:

@@ -1,4 +1,8 @@
-.PHONY: help active install coverage test start-master start-agent deploy-agent deploy-master
+.PHONY: help active install coverage test start-master start-agent \
+	bootstrap-neos bootstrap-cmplus \
+	deploy-local deploy-neos deploy-cmplus \
+	package-local package-neos package-cmplus \
+	destroy-local destroy-neos destroy-cmplus
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -38,29 +42,39 @@ start-agent: ## Start the local agent server
 
 # BOOTSTRAP ========================================================================
 bootstrap-neos: ## Prepare s3 and iam roles for NEOS environment
-	@bash ops/deployment/bootstrap.sh neos
+	@bash ops/deployment/bootstrap.sh neos agent
+bootstrap-cmplus: ## Prepare s3 and iam roles for CM+ environment
+	@bash ops/deployment/bootstrap.sh cmplus master
+	@bash ops/deployment/bootstrap.sh cmplus-stg agent
 
 # DEPLOYMENT ========================================================================
 deploy-local: ## Deploy to the local environment
 	@bash ops/deployment/deploy.sh local master
 	@bash ops/deployment/deploy.sh local agent
 deploy-neos: ## Deploy to the NEOS environment
-	@bash ops/deployment/deploy.sh neos master
 	@bash ops/deployment/deploy.sh neos agent
+deploy-cmplus: ## Deploy to the CM+ environment
+	@bash ops/deployment/deploy.sh cmplus master
+	@bash ops/deployment/deploy.sh cmplus-stg agent
 
 # PACKAGING ========================================================================
 package-local: ## Create artifacts for local deployment
 	@bash ops/deployment/package.sh local
 package-neos: ## Create artifacts for NEOS deployment
 	@bash ops/deployment/package.sh neos
+package-cmplus: ## Create artifacts for CM+ deployment
+	@bash ops/deployment/package.sh cmplus
 
-# DELETE ===========================================================================
-delete-local: ## Delete the local deployment
-	@bash ops/deployment/delete.sh local agent
-	@bash ops/deployment/delete.sh local master
-delete-neos: ## Delete the NEOS deployment
-	@bash ops/deployment/delete.sh neos agent
-	@bash ops/deployment/delete.sh neos master
+# DESTROY ===========================================================================
+destroy-local: ## Destroy the local deployment
+	@bash ops/deployment/destroy.sh local agent
+	@bash ops/deployment/destroy.sh local master
+destroy-neos: ## Destroy the NEOS deployment
+	@bash ops/deployment/destroy.sh neos agent
+	@bash ops/deployment/destroy.sh neos master
+destroy-cmplus: ## Destroy the CM+ deployment
+	@bash ops/deployment/destroy.sh cmplus-stg agent
+	@bash ops/deployment/destroy.sh cmplus master
 
 # TESTING ==========================================================================
 test: ## Run the tests

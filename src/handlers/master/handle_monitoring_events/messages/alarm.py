@@ -13,7 +13,7 @@ def create_alarm_message(event: EventBridgeEvent):
     dim_text = "\n".join([f"• *{k}*: `{v}`" for k, v in metric_info.get("dimensions", {}).items()]) or ">N/A"
 
     # Emoji and color
-    state_emoji = {"ALARM": ":red_circle:", "OK": ":green_circle:", "INSUFFICIENT_DATA": ":orange_circle:"}.get(
+    state_emoji = {"ALARM": ":red_circle:", "OK": ":recycle:", "INSUFFICIENT_DATA": ":heavy_exclamation_mark:"}.get(
         state_value, ":grey_question:"
     )
     color = {"ALARM": "#FF0000", "OK": "#36A64F", "INSUFFICIENT_DATA": "#FFA500"}.get(state_value, "#CCCCCC")

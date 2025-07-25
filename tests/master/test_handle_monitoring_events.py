@@ -5,6 +5,6 @@ from tests.mock import load_events, mock_lambda_context, truncate_event_table
 
 def test_handle_monitoring_events():
     truncate_event_table()
-    for event in load_events(TEST_DIR / "events"):
+    for event in load_events(TEST_DIR / "data"):
         response = handler(event, mock_lambda_context("handle_monitoring_events"))
         print(response)

@@ -1,8 +1,6 @@
 import os
 from datetime import UTC, datetime, timedelta
 
-from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
-
 from src.adapters.aws.cloudwatch import CloudwatchLogService, CwQueryParam
 from src.adapters.aws.eventbridge import EventBridgeService, EventsRequestEntry
 from src.common.logger import logger
@@ -19,8 +17,7 @@ event_service = EventBridgeService()
 
 
 # @logger.inject_lambda_context(log_event=True)
-@event_source(data_class=EventBridgeEvent)
-def handler(event: EventBridgeEvent, context):
+def handler(event, context):
     """Handle the incoming event."""
     end_time = round_n_minutes(datetime.now(UTC), 5)
     start_time = end_time - timedelta(seconds=QUERY_DURATION)

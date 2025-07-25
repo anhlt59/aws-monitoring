@@ -6,6 +6,7 @@
 🔹 Purpose: Monitors AWS resources and applications for performance, availability, and security issues.<br>
 
 <!-- TOC -->
+
 * [📊 AWS Monitoring 🌩️](#-aws-monitoring-)
   * [💻 Tech Stack](#-tech-stack)
   * [🧪 Testing](#-testing)
@@ -14,6 +15,7 @@
   * [🛠️ Development](#-development)
   * [🚀 Deployment](#-deployment)
   * [🤝 Contributing](#-contributing)
+
 <!-- TOC -->
 
 ## 💻 Tech Stack

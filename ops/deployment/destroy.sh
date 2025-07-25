@@ -18,6 +18,10 @@ else
     TEMPLATE_FILE="serverless.${STACK}.yml"
 fi
 
-echo -e "${GREEN}${BOLD}Deleting 'monitoring-${STACK}' in stage '${STAGE}'...${RESET}"
+echo -e "${BLUE}===============================${RESET}"
+echo -e "${BLUE}Destroying 'monitoring-${STACK}'${RESET}"
+echo -e "${BLUE}* Stage ${STAGE}${RESET}"
+echo -e "${BLUE}===============================${RESET}\n"
+
 echo -e "${BLUE}pnpm exec sls remove --stage ${STAGE} --config ${TEMPLATE_FILE}${RESET}"
 pnpm exec sls remove --stage "$STAGE" --config "$TEMPLATE_FILE"

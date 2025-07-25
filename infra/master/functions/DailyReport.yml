@@ -2,6 +2,10 @@ function:
   name: ${self:service}-${self:provider.stage}-DailyReport
   description: Send daily report events to Slack channel
   handler: src.handlers.master.daily_report.main.handler
+  events:
+    - schedule:
+        rate: cron(0 0 * * ? *)
+        enabled: true
   package:
     patterns:
       - src/handlers/master/daily_report/*.py
