@@ -15,7 +15,7 @@ class Account(BaseModel):
 
 # DTOs
 class UpdateAccountDTO(BaseModel):
-    name: str
-    stage: str
-    region: str
-    deployed_at: int
+    name: str | None = None
+    stage: str | None = None
+    region: str | None = None
+    deployed_at: int | None = None

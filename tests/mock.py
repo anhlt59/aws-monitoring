@@ -11,7 +11,7 @@ from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent
 from src.adapters.db import EventRepository
 from src.common.configs import AWS_ENDPOINT, AWS_REGION
 from src.common.utils.files import list_files
-from src.models.monitoring_event import ListEventsDTO
+from src.models.event import ListEventsDTO
 
 
 @dataclass

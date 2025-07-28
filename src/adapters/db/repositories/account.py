@@ -16,19 +16,19 @@ class AccountRepository(DynamoRepository):
 
     def list(self) -> AccountQueryResult:
         result = self._query(hash_key="ACCOUNT", limit=100)
-        return AccountQueryResult(items=(self.mapper.to_model(project) for project in result))
+        return AccountQueryResult(items=(self.mapper.to_model(item) for item in result))
 
     def create(self, entity: Account):
         model = AccountMapper.to_persistence(entity)
         self._create(model)
 
     def update(self, id: str, dto: UpdateAccountDTO):
-        attributes = dto.model_dump(exclude_none=True)
-        self._update(
-            hash_key="ACCOUNT",
-            range_key=id,
-            attributes=attributes,
-        )
+        if attributes := dto.model_dump(exclude_none=True):
+            self._update(
+                hash_key="ACCOUNT",
+                range_key=id,
+                attributes=attributes,
+            )
 
     def delete(self, id: str):
         self._delete(hash_key="ACCOUNT", range_key=id)

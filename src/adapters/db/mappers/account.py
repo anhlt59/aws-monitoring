@@ -9,7 +9,7 @@ class AccountMapper(BaseMapper):
     def to_persistence(cls, model: Account) -> AccountPersistence:
         return AccountPersistence(
             # Keys
-            pk="PROJECT",
+            pk="ACCOUNT",
             sk=model.id,
             # Attributes
             name=model.name,

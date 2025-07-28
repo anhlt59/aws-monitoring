@@ -52,7 +52,7 @@ line-length = 119
 exclude_dirs = ["config", "data", "localstack", "migrations", "scripts", "tests"]
 
 [tool.pytest.ini_options]
-#addopts = "-ra --cov=app"
+addopts = "-ra --cov=app"
 testpaths = ["tests"]
 
 # plugins ---------------------------------------------------
