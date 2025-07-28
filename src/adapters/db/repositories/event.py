@@ -1,7 +1,7 @@
 from src.adapters.db.mappers import EventMapper
 from src.adapters.db.models import EventPersistence
 from src.adapters.db.repositories.base import DynamoRepository, QueryResult
-from src.models.event import Event, ListAccountEventsDTO, ListEventsDTO, UpdateEventDTO
+from src.models.event import Event, ListEventsDTO
 
 EventQueryResult = QueryResult[Event]
 
@@ -37,41 +37,9 @@ class EventRepository(DynamoRepository):
             cursor=result.last_evaluated_key,
         )
 
-    def list_by_account(self, dto: ListAccountEventsDTO) -> EventQueryResult:
-        if dto.start_date and dto.end_date:
-            range_key_condition = self.model_cls.gsi1sk.between(dto.start_date, dto.end_date)
-        elif dto.start_date:
-            range_key_condition = self.model_cls.gsi1sk >= dto.start_date
-        elif dto.end_date:
-            range_key_condition = self.model_cls.gsi1sk <= dto.end_date
-        else:
-            range_key_condition = None
-
-        result = self._query(
-            hash_key="EVENT",
-            range_key_condition=range_key_condition,
-            last_evaluated_key=dto.cursor,
-            scan_index_forward="asc" == dto.direction,
-            limit=dto.limit,
-            index=self.model_cls.gsi1,
-        )
-        return EventQueryResult(
-            items=[self.mapper.to_model(item) for item in result],
-            limit=dto.limit,
-            cursor=result.last_evaluated_key,
-        )
-
     def create(self, entity: Event):
         model = EventMapper.to_persistence(entity)
         self._create(model)
-
-    def update(self, id: str, dto: UpdateEventDTO):
-        attributes = dto.model_dump(exclude_none=True)
-        self._update(
-            hash_key="EVENT",
-            range_key=id,
-            attributes=attributes,
-        )
 
     def delete(self, id: str):
         self._delete(hash_key="EVENT", range_key=id)

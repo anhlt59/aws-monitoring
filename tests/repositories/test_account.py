@@ -21,6 +21,8 @@ def test_create_account(account_repo):
 
 
 def test_update_account(account_repo, dummy_account):
+    account_repo.get(dummy_account.id)
+
     update_dto = UpdateAccountDTO(name="UpdatedName", stage="updated-stage", region="ap-northeast-1")
     account_repo.update(dummy_account.id, update_dto)
 

@@ -1,19 +1,16 @@
-from enum import Enum
-
 from pydantic import BaseModel, Field, model_validator
 
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 from .base import PaginatedInputDTO
 
-
-class EventStatus(int, Enum):
-    PENDING = 0
-    IN_PROGRESS = 1
-    COMPLETED = 2
-    FAILED = 3
-    CANCELLED = 4
-    UNKNOWN = 5
+# class EventStatus(int, Enum):
+#     PENDING = 0
+#     IN_PROGRESS = 1
+#     COMPLETED = 2
+#     FAILED = 3
+#     CANCELLED = 4
+#     UNKNOWN = 5
 
 
 # Model
@@ -25,23 +22,15 @@ class Event(BaseModel):
     detail: dict
     detail_type: str | None = None
     resources: list[str] = []
-    assigned: str | None = None
-    status: EventStatus = EventStatus.PENDING
     published_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
 
     @property
     def persistence_id(self) -> str:
-        return f"{self.published_at}{self.id}"
+        return f"{self.published_at}#{self.id}"
 
 
 # DTOs
-class UpdateEventDTO(BaseModel):
-    assigned: str | None = None
-    status: EventStatus | None = None
-    updated_at: int = Field(default_factory=current_utc_timestamp)
-
-
 class ListEventsDTO(PaginatedInputDTO):
     start_date: int | None = None
     end_date: int | None = None
@@ -51,7 +40,3 @@ class ListEventsDTO(PaginatedInputDTO):
         if self.start_date and self.end_date and self.start_date > self.end_date:
             raise ValueError("start_date must be less than or equal to end_date.")
         return self
-
-
-class ListAccountEventsDTO(ListEventsDTO):
-    account: str
