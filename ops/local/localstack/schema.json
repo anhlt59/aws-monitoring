@@ -20,20 +20,24 @@
       "AttributeType": "S"
     },
     {
-      "AttributeName": "lsi1sk",
+      "AttributeName": "gsi1pk",
+      "AttributeType": "S"
+    },
+	 {
+      "AttributeName": "gsi1sk",
       "AttributeType": "S"
     }
   ],
-  "LocalSecondaryIndexes": [
+  "GlobalSecondaryIndexes": [
     {
-      "IndexName": "lsi1",
+      "IndexName": "gsi1",
       "KeySchema": [
         {
-          "AttributeName": "pk",
+          "AttributeName": "gsi1pk",
           "KeyType": "HASH"
         },
         {
-          "AttributeName": "lsi1sk",
+          "AttributeName": "gsi1sk",
           "KeyType": "RANGE"
         }
       ],

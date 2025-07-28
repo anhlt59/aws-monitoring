@@ -8,5 +8,5 @@ class BaseMapper[P: DynamoModel, M: BaseModel]:
         raise NotImplementedError
 
     @classmethod
-    def to_entity(cls, persistence: P) -> M:
+    def to_model(cls, persistence: P) -> M:
         raise NotImplementedError

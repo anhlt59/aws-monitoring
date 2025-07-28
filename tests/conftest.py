@@ -10,9 +10,9 @@ sys.path.append(str(BASE_DIR))
 load_dotenv(BASE_DIR / ".env.local")
 
 # fmt: off
-from src.adapters.db.repositories.event import EventRepository  # noqa
+from src.adapters.db.repositories import AccountRepository, EventRepository  # noqa
 from src.models import Event  # noqa
-from src.models.monitoring_event import ListEventsDTO  # noqa
+from src.models.event import ListEventsDTO  # noqa
 
 # fmt: on
 
@@ -27,11 +27,20 @@ def event_repo():
         repo.delete(event.persistence_id)
 
 
+@pytest.fixture()
+def project_repo():
+    repo = AccountRepository()
+    yield repo
+    # Cleanup
+    for event in repo.list().items:
+        repo.delete(event.persistence_id)
+
+
 @pytest.fixture
 def dummy_event(event_repo):
     event = Event(
         id="111111111111",
-        account="test-account",
+        account="000000000000",
         source="test-source",
         detail={"key": "value"},
     )

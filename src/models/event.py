@@ -4,8 +4,10 @@ from pydantic import BaseModel, Field, model_validator
 
 from src.common.utils.datetime_utils import current_utc_timestamp
 
+from .base import PaginatedInputDTO
 
-class Status(int, Enum):
+
+class EventStatus(int, Enum):
     PENDING = 0
     IN_PROGRESS = 1
     COMPLETED = 2
@@ -24,7 +26,7 @@ class Event(BaseModel):
     detail_type: str | None = None
     resources: list[str] = []
     assigned: str | None = None
-    status: Status = Status.PENDING
+    status: EventStatus = EventStatus.PENDING
     published_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
 
@@ -36,25 +38,20 @@ class Event(BaseModel):
 # DTOs
 class UpdateEventDTO(BaseModel):
     assigned: str | None = None
-    status: Status | None = None
+    status: EventStatus | None = None
     updated_at: int = Field(default_factory=current_utc_timestamp)
 
-    @model_validator(mode="after")
-    def validate_model(self):
-        if self.status is None and self.assigned is None:
-            raise ValueError("At least one of 'status' or 'assigned' must be provided.")
-        return self
 
-
-class ListEventsDTO(BaseModel):
+class ListEventsDTO(PaginatedInputDTO):
     start_date: int | None = None
     end_date: int | None = None
-    limit: int = 50
-    direction: str = "desc"
-    cursor: dict | None = None
 
     @model_validator(mode="after")
     def validate_model(self):
         if self.start_date and self.end_date and self.start_date > self.end_date:
             raise ValueError("start_date must be less than or equal to end_date.")
         return self
+
+
+class ListAccountEventsDTO(ListEventsDTO):
+    account: str

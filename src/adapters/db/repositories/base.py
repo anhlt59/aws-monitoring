@@ -13,8 +13,8 @@ M = TypeVar("M", bound=BaseModel)
 
 class QueryResult(BaseModel, Generic[M]):
     items: list[M]
-    limit: int = 20
-    cursor: Any = None
+    limit: int = 50
+    cursor: dict | None = None
 
 
 class DynamoRepository[M: DynamoModel]:

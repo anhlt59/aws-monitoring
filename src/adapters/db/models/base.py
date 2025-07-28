@@ -43,7 +43,4 @@ class DynamoModel(Model):
     pk = UnicodeAttribute(hash_key=True)
     sk = UnicodeAttribute(range_key=True)
     # Attributes
-    # id = UnicodeAttribute(null=False, default_for_new=lambda: str(uuid7()))
-    # created_at = NumberAttribute(default_for_new=current_utc_timestamp)
-    # updated_at = NumberAttribute(default=current_utc_timestamp)
     type = DiscriminatorAttribute()

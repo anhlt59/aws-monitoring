@@ -6,7 +6,7 @@ from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event
 from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier
 from src.common.logger import logger
-from src.models.monitoring_event import ListEventsDTO
+from src.models.event import ListEventsDTO
 
 repo = EventRepository()
 notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))

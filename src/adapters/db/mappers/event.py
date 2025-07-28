@@ -1,8 +1,8 @@
 import json
 
-from src.adapters.db.models.event import EventPersistence
+from src.adapters.db.models import EventPersistence
 from src.common.configs import AWS_DYNAMODB_TTL
-from src.models.monitoring_event import Event
+from src.models import Event
 
 from .base import BaseMapper
 
@@ -11,8 +11,13 @@ class EventMapper(BaseMapper):
     @classmethod
     def to_persistence(cls, model: Event) -> EventPersistence:
         return EventPersistence(
+            # Keys
             pk="EVENT",
-            sk=f"{model.published_at}{model.id}",  # combine creation time and ID for sorting
+            sk=model.persistence_id,  # combine creation time and ID for sorting
+            gsi1sk=model.account,
+            gsi1pk=model.published_at,
+            # Attributes
+            id=model.id,
             account=model.account,
             region=model.region,
             source=model.source,
@@ -23,13 +28,13 @@ class EventMapper(BaseMapper):
             status=model.status,
             published_at=model.published_at,
             updated_at=model.updated_at,
-            expired_at=model.published_at + AWS_DYNAMODB_TTL,  # 3 months after creation
+            expired_at=model.published_at + AWS_DYNAMODB_TTL,
         )
 
     @classmethod
-    def to_entity(cls, persistence: EventPersistence) -> Event:
+    def to_model(cls, persistence: EventPersistence) -> Event:
         return Event(
-            id=persistence.sk[10:],  # Extract the ID from the sort key
+            id=persistence.id,
             account=persistence.account,
             source=persistence.source,
             detail=json.loads(persistence.detail),

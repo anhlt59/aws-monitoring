@@ -1,3 +1,4 @@
-from .monitoring_event import BaseModel, Event
+from .account import Account
+from .event import BaseModel, Event
 
-__all__ = ["Event", "BaseModel"]
+__all__ = ["BaseModel", "Event", "Account"]
