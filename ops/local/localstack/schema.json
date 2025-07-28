@@ -18,6 +18,28 @@
     {
       "AttributeName": "sk",
       "AttributeType": "S"
+    },
+    {
+      "AttributeName": "lsi1sk",
+      "AttributeType": "S"
+    }
+  ],
+  "LocalSecondaryIndexes": [
+    {
+      "IndexName": "lsi1",
+      "KeySchema": [
+        {
+          "AttributeName": "pk",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "lsi1sk",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
     }
   ],
   "BillingMode": "PAY_PER_REQUEST"

@@ -19,3 +19,22 @@ DynamoDB:
 
 MonitoringConfigs:
   WebhookUrl: "https://hooks.slack.com/services/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"
+
+Metadata: |
+  [
+    {
+        "name": "LocalStack",
+        "stage": "local",
+        "account_id": "000000000000",
+    },
+    {
+        "name": "Wellmira CM+",
+        "stage": "staging",
+        "account_id": "746166211068",
+    },
+    {
+        "name": "Neos",
+        "stage": "staging",
+        "account_id": "728171922033",
+    }
+]

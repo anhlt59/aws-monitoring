@@ -3,7 +3,7 @@ Profile: local
 
 # AWS Services
 IAM:
-  DeploymentRole: arn:aws:iam::728171922033:role/monitoring-DeploymentRole
+  DeploymentRole: arn:aws:iam::000000000000:role/monitoring-DeploymentRole
 
 S3:
   DeploymentBucket:
