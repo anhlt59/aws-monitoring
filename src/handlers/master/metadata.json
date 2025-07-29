@@ -1,0 +1,17 @@
+  [
+    {
+        "name": "LocalStack",
+        "stage": "local",
+        "account_id": "000000000000",
+    },
+    {
+        "name": "Wellmira CM+",
+        "stage": "staging",
+        "account_id": "746166211068",
+    },
+    {
+        "name": "Neos",
+        "stage": "staging",
+        "account_id": "728171922033",
+    }
+]

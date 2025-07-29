@@ -23,6 +23,8 @@ provider:
   # S3 bucket where the artifact is stored
   deploymentBucket:
     name: ${self:custom.configs.S3.DeploymentBucket.Name}
+  iam:
+    deploymentRole: ${self:custom.configs.IAM.DeploymentRole}
 
   # config lambda functions
   runtime: python3.12
@@ -37,8 +39,8 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL}
-    METADATA: |
-      ${file(infra/master/metadata.json)}
+    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}
+    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.DeploymentWebhookUrl}
     # references to resources in this template
     AWS_DYNAMODB_TABLE: !Ref DynamoDBTable
 
@@ -66,6 +68,7 @@ package:
 
 functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}
+  UpdateAgentDeployment: ${file(infra/master/functions/UpdateAgentDeployment.yml):function}
   DailyReport: ${file(infra/master/functions/DailyReport.yml):function}
   # API -------------------------------------------------------------------------
   # Events
@@ -90,6 +93,7 @@ resources:
     # EventBridge
     MonitoringEventBus: ${file(infra/master/resources/event_bridge.yml):MonitoringEventBus}
     MonitoringEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringEventRule}
+    DeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):DeploymentEventRule}
     # SQS
     MonitoringEventRuleDLQ: ${file(infra/master/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB

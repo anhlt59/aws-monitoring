@@ -19,6 +19,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
+    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}
     DYNAMODB_TABLE: monitoring-master-local
 
 plugins:

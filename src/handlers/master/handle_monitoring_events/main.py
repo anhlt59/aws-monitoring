@@ -11,10 +11,10 @@ from src.models import Event
 from .messages import create_alarm_message, create_guardduty_message, create_health_message, create_logs_message
 
 repo = EventRepository()
-notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))
+notifier = SlackNotifier(os.environ.get("MONITORING_WEBHOOK_URL"))
 
 
-def store_event(event: EventBridgeEvent):
+def create_event(event: EventBridgeEvent):
     """Store the event in the database."""
     model = Event(
         id=event.get_id,
@@ -48,10 +48,10 @@ def push_notification(event: EventBridgeEvent):
     logger.info(f"Sent Event<{event.get_id}> notification")
 
 
-@logger.inject_lambda_context(log_event=True)
+# @logger.inject_lambda_context(log_event=True)
 @event_source(data_class=EventBridgeEvent)
 def handler(event: EventBridgeEvent, context):
     """Handle the incoming event."""
     logger.debug(event.raw_event)
-    store_event(event)
+    create_event(event)
     push_notification(event)

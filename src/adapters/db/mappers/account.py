@@ -12,9 +12,8 @@ class AccountMapper(BaseMapper):
             pk="ACCOUNT",
             sk=model.id,
             # Attributes
-            name=model.name,
-            stage=model.stage,
             region=model.region,
+            status=model.status,
             deployed_at=model.deployed_at,
             created_at=model.created_at,
         )
@@ -23,9 +22,8 @@ class AccountMapper(BaseMapper):
     def to_model(cls, persistence: AccountPersistence) -> Account:
         return Account(
             id=persistence.sk,
-            name=persistence.name,
-            stage=persistence.stage,
             region=persistence.region,
+            status=persistence.status,
             deployed_at=persistence.deployed_at,
             created_at=persistence.created_at,
         )

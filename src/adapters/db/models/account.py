@@ -10,8 +10,7 @@ class AccountPersistence(DynamoModel, discriminator="ACCOUNT"):
     pk = KeyAttribute(hash_key=True, default="ACCOUNT")
     sk = KeyAttribute(range_key=True, prefix="ACCOUNT#")
     # Attributes
-    name = UnicodeAttribute(null=False)
-    stage = UnicodeAttribute(null=True)
     region = UnicodeAttribute(null=False)
+    status = UnicodeAttribute(null=True)
     deployed_at = NumberAttribute(null=False)
     created_at = NumberAttribute(default_for_new=current_utc_timestamp)

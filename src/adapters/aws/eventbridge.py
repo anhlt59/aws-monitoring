@@ -20,6 +20,7 @@ class EventsRequestEntry(BaseModel):
     Time: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
+# Service -----------------------------------
 class EventBridgeService(metaclass=SingletonMeta):
     client: EventBridgeClient
 

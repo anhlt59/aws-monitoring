@@ -2,14 +2,16 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "CloudFormationLimitedAccess",
+      "Effect": "Allow",
       "Action": "cloudformation:*",
       "Resource": [
         "arn:aws:cloudformation:${AWS_REGION}:${AWS_ACCOUNT_ID}:stack/monitoring-*/*"
-      ],
-      "Effect": "Allow",
-      "Sid": "CloudFormationLimitedAccess"
+      ]
     },
     {
+      "Sid": "IAMRoleManagement",
+      "Effect": "Allow",
       "Action": [
         "iam:Get*",
         "iam:List*",
@@ -33,11 +35,11 @@
       "Resource": [
         "arn:aws:iam::*:role/monitoring*",
         "arn:aws:iam::*:policy/monitoring*"
-      ],
-      "Effect": "Allow",
-      "Sid": "IAMRoleManagement"
+      ]
     },
     {
+      "Sid": "EventBridgeLimitedAccess",
+      "Effect": "Allow",
       "Action": [
         "events:List*",
         "events:Describe*",
@@ -55,11 +57,11 @@
       "Resource": [
         "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT_ID}:rule/monitoring*",
         "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT_ID}:event-bus/monitoring*"
-      ],
-      "Effect": "Allow",
-      "Sid": "EventBridgeLimitedAccess"
+      ]
     },
     {
+      "Sid": "CloudWatchLogsLimitedAccess",
+      "Effect": "Allow",
       "Action": [
         "logs:Get*",
         "logs:List*",
@@ -73,11 +75,11 @@
       ],
       "Resource": [
         "arn:aws:logs:${AWS_REGION}:${AWS_ACCOUNT_ID}:log-group:/aws/lambda/monitoring*:*"
-      ],
-      "Effect": "Allow",
-      "Sid": "CloudWatchLogsLimitedAccess"
+      ]
     },
     {
+      "Sid": "S3BucketManagement",
+      "Effect": "Allow",
       "Action": [
         "s3:Get*",
         "s3:List*",
@@ -90,20 +92,20 @@
         "s3:TagResource",
         "s3:UntagResource"
       ],
-      "Resource": ["arn:aws:s3:::monitoring*"],
-      "Effect": "Allow",
-      "Sid": "S3BucketManagement"
+      "Resource": ["arn:aws:s3:::monitoring*"]
     },
     {
+      "Sid": "LambdaFunctionReadOnly",
+      "Effect": "Allow",
       "Action": ["lambda:List*", "lambda:Get*"],
       "Resource": [
         "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:function:*",
         "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:layer:*"
-      ],
-      "Effect": "Allow",
-      "Sid": "LambdaFunctionReadOnly"
+      ]
     },
     {
+      "Sid": "LambdaFunctionManagement",
+      "Effect": "Allow",
       "Action": [
         "lambda:Create*",
         "lambda:Update*",
@@ -122,9 +124,7 @@
       "Resource": [
         "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:function:monitoring*",
         "arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:layer:monitoring*"
-      ],
-      "Effect": "Allow",
-      "Sid": "LambdaFunctionManagement"
+      ]
     },
    {
       "Sid": "SQSQueueManagement",
@@ -139,6 +139,12 @@
         "sqs:Untag*"
       ],
       "Resource": "arn:aws:sqs:${AWS_REGION}:${AWS_ACCOUNT_ID}:monitoring*"
+    },
+   {
+      "Sid": "AllowPublishSNSMessages",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:*:*:monitoring*"
     }
   ]
 }

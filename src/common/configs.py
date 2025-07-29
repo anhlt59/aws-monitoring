@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 
 # Common
 SERVICE = os.getenv("SERVICE", "monitoring")
 STAGE = os.getenv("STAGE", "dev")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")

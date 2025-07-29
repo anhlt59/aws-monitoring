@@ -1,0 +1,9 @@
+function:
+  name: ${self:service}-${self:provider.stage}-UpdateAgentDeployment
+  description: Update agent deployment status in DynamoDB
+  handler: src.handlers.master.update_agent_deployment.main.handler
+  package:
+    patterns:
+      - src/handlers/master/update_agent_deployment/*.(py|json)
+  environment:
+    POWERTOOLS_SERVICE_NAME: events

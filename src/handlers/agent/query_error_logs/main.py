@@ -42,4 +42,5 @@ def handler(event, context):
             )
             for item in logs
         )
-        event_service.publish_events(event_entries)
+        # event_service.publish_events(event_entries)
+        print(event_entries)

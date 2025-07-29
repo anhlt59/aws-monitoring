@@ -7,4 +7,3 @@ function:
       - src/handlers/master/handle_monitoring_events/**/?*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
-    WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.WebhookUrl}

@@ -28,6 +28,7 @@ MonitoringEventRule:
     EventPattern: |
       {
         "source": [
+          "aws.cloudformation",
           "aws.cloudwatch",
           "aws.guardduty",
           "aws.health",
@@ -40,6 +41,29 @@ MonitoringEventRule:
     State: "ENABLED"
     Targets:
       - Arn: !GetAtt HandleMonitoringEventsLambdaFunction.Arn
+        Id: "${self:service}-EventHandler"
+        RoleArn: !GetAtt EventBridgeRole.Arn
+        DeadLetterConfig:
+          Arn: !GetAtt MonitoringEventRuleDLQ.Arn
+
+
+DeploymentEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: "${self:service}-DeploymentEventRule"
+    Description: "Rule to handle cloudformation deployment events"
+    EventBusName: !Ref MonitoringEventBus
+    EventPattern: |
+      {
+        "source": ["aws.cloudformation"],
+        "detail-type": ["CloudFormation Stack Status Change"],
+        "detail": {
+          "stack-id": [{ "wildcard": "*stack/monitoring-agent*"}]
+        }
+      }
+    State: "ENABLED"
+    Targets:
+      - Arn: !GetAtt UpdateAgentDeploymentLambdaFunction.Arn
         Id: "${self:service}-EventHandler"
         RoleArn: !GetAtt EventBridgeRole.Arn
         DeadLetterConfig:

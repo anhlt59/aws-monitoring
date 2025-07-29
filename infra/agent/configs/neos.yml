@@ -16,7 +16,6 @@ Lambda:
 
 MonitoringConfigs:
   EventBusArn: arn:aws:events:us-east-1:728171922033:event-bus/monitoring-master-neos-MonitoringEventBus
-  WebhookUrl: "https://hooks.slack.com/services/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"
 
   Health:
     State: enabled

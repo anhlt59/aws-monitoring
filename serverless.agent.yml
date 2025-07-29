@@ -82,8 +82,7 @@ resources:
     EventBridgeRole: ${file(infra/agent/resources/iam.yml):EventBridgeRole}
     EventBridgePolicy: ${file(infra/agent/resources/iam.yml):EventBridgePolicy}
     # EventBridge
-    HealthEventRule: ${file(infra/agent/resources/event_bridge.yml):HealthEventRule}
-    GuardDutyEventRule: ${file(infra/agent/resources/event_bridge.yml):GuardDutyEventRule}
+    DeploymentEventRule: ${file(infra/agent/resources/event_bridge.yml):DeploymentEventRule}
     MonitoringEventRule: ${file(infra/agent/resources/event_bridge.yml):MonitoringEventRule}
     # SQS
     MonitoringEventRuleDLQ: ${file(infra/agent/resources/sqs.yml):MonitoringEventRuleDLQ}
