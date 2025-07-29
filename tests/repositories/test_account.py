@@ -2,7 +2,8 @@ import time
 
 import pytest
 
-from src.common.configs import AWS_REGION, STAGE
+from src.adapters.aws.cloudformation import CfnStackStatus
+from src.common.configs import AWS_REGION
 from src.common.exceptions.http import NotFoundError
 from src.models.account import Account, UpdateAccountDTO
 
@@ -10,9 +11,8 @@ from src.models.account import Account, UpdateAccountDTO
 def test_create_account(account_repo):
     account = Account(
         id="000000000000",
-        name="TestAccount",
-        stage=STAGE,
         region=AWS_REGION,
+        status=CfnStackStatus.CREATE_COMPLETE,
         deployed_at=int(time.time()),
     )
     account_repo.create(account)
@@ -23,12 +23,11 @@ def test_create_account(account_repo):
 def test_update_account(account_repo, dummy_account):
     account_repo.get(dummy_account.id)
 
-    update_dto = UpdateAccountDTO(name="UpdatedName", stage="updated-stage", region="ap-northeast-1")
+    update_dto = UpdateAccountDTO(status=CfnStackStatus.UPDATE_COMPLETE, region="ap-northeast-1")
     account_repo.update(dummy_account.id, update_dto)
 
     updated_account = account_repo.get(dummy_account.id)
-    assert updated_account.name == update_dto.name
-    assert updated_account.stage == update_dto.stage
+    assert updated_account.status == update_dto.status
     assert updated_account.region == update_dto.region
 
 

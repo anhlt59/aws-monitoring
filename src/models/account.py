@@ -11,6 +11,10 @@ class Account(BaseModel):
     deployed_at: int
     created_at: int = Field(default_factory=current_utc_timestamp)
 
+    @property
+    def persistence_id(self) -> str:
+        return self.id
+
 
 # DTOs
 class UpdateAccountDTO(BaseModel):

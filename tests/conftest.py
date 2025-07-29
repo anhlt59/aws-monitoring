@@ -10,8 +10,11 @@ TEST_DIR = BASE_DIR / "tests"
 sys.path.append(str(BASE_DIR))
 load_dotenv(BASE_DIR / ".env.local")
 
+from src.adapters.aws.cloudformation import CfnStackStatus  # noqa
+
 # fmt: off
 from src.adapters.db import AccountRepository, EventRepository  # noqa
+from src.common.configs import AWS_REGION  # noqa
 from src.models import Account, Event  # noqa
 from src.models.event import ListEventsDTO  # noqa
 
@@ -25,7 +28,7 @@ def event_repo():
     yield repo
     # Cleanup
     for event in repo.list(ListEventsDTO()).items:
-        repo.delete(event.id)
+        repo.delete(event.persistence_id)
 
 
 @pytest.fixture()
@@ -54,9 +57,8 @@ def dummy_account(account_repo):
     now = int(time.time())
     account = Account(
         id="000000000000",
-        name="Test Account",
-        stage="test",
-        region="us-west-2",
+        region=AWS_REGION,
+        status=CfnStackStatus.CREATE_COMPLETE,
         deployed_at=now,
         created_at=now,
     )
