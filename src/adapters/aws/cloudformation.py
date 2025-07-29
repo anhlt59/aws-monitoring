@@ -20,8 +20,7 @@ class CfnStackEvent(EventBridgeEvent):
 
     @property
     def stack_id(self) -> str:
-        groups = self.arn_compiler.search(self["detail"]["stack-id"])
-        return groups.group("id")
+        return self["detail"]["stack-id"]
 
     @property
     def stack_name(self) -> str:
@@ -32,5 +31,6 @@ class CfnStackEvent(EventBridgeEvent):
     def stack_status(self) -> str:
         return self["detail"].get("status-details", {}).get("status", "")
 
+    @property
     def stack_status_reason(self) -> str:
-        return self["detail"].get("status-details", {}).get("reason", "")
+        return self["detail"].get("status-details", {}).get("status-reason", "")

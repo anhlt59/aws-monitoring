@@ -4,7 +4,10 @@ from pathlib import Path
 # Common
 SERVICE = os.getenv("SERVICE", "monitoring")
 STAGE = os.getenv("STAGE", "dev")
+
+# Path & Directory
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+TEMPLATE_DIR = BASE_DIR / "templates"
 
 # Logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")

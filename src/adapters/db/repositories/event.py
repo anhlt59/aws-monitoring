@@ -14,7 +14,10 @@ class EventRepository(DynamoRepository):
         model = self._get(hash_key="EVENT", range_key=id)
         return self.mapper.to_model(model)
 
-    def list(self, dto: ListEventsDTO) -> EventQueryResult:
+    def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
+        if dto is None:
+            dto = ListEventsDTO()
+
         if dto.start_date and dto.end_date:
             range_key_condition = self.model_cls.sk.between(dto.start_date, dto.end_date)
         elif dto.start_date:
@@ -31,6 +34,7 @@ class EventRepository(DynamoRepository):
             scan_index_forward="asc" == dto.direction,
             limit=dto.limit,
         )
+
         return EventQueryResult(
             items=[self.mapper.to_model(item) for item in result],
             limit=dto.limit,

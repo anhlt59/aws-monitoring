@@ -4,7 +4,7 @@ from src.common.utils.datetime_utils import current_utc_timestamp
 
 
 # Model
-class Account(BaseModel):
+class Agent(BaseModel):
     id: str
     region: str
     status: str | None = None
@@ -17,7 +17,7 @@ class Account(BaseModel):
 
 
 # DTOs
-class UpdateAccountDTO(BaseModel):
+class UpdateAgentDTO(BaseModel):
     region: str | None = None
     status: str | None = None
     deployed_at: int | None = None

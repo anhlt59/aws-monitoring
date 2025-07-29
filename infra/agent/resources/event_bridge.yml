@@ -6,50 +6,27 @@ MonitoringEventRule:
     EventBusName: default
     EventPattern: |
       {
-        "source": [
-          "aws.guardduty",
-          "aws.health",
-          "monitoring.agent.cloudwatch",
-          "monitoring.agent.guardduty",
-          "monitoring.agent.health",
-          "monitoring.agent.logs"
+        "$or": [
+          {
+            "source": ["aws.guardduty", "aws.health"],
+            "detail-type": ["GuardDuty Finding", "AWS Health Event"]
+          },
+          {
+            "source": ["aws.cloudformation"],
+            "detail-type": ["CloudFormation Stack Status Change"],
+            "detail": {
+              "status-details": {
+                "status": [ { "wildcard": "*COMPLETE" }, { "wildcard": "*FAILED" }]
+              },
+              "stack-id": [{ "wildcard": "*stack/monitoring-agent*"}]
+            }
+          },
+          {
+            "source": [ { "wildcard": "monitoring.agent*" } ]
+          }
         ]
       }
     State: ${upper(${self:custom.monitoringConfigs.CloudwatchLogs.State})}
-    Targets:
-      - Arn: ${self:custom.monitoringConfigs.EventBusArn}
-        Id: ${self:service}-MonitoringEventBusTarget
-        RoleArn: !GetAtt EventBridgeRole.Arn
-        DeadLetterConfig:
-          Arn: !GetAtt MonitoringEventRuleDLQ.Arn
-
-
-DeploymentEventRule:
-  Type: AWS::Events::Rule
-  Properties:
-    Name: ${self:service}-DeploymentEventRule
-    Description: Publish cloudformation deployment events to the master EventBus
-    EventBusName: default
-    EventPattern: |
-      {
-        "source": ["aws.cloudformation"],
-        "detail-type": ["CloudFormation Stack Status Change"],
-        "detail": {
-          "status-details": {
-            "status": [
-              "CREATE_COMPLETE",
-              "UPDATE_COMPLETE",
-              "DELETE_COMPLETE",
-              "UPDATE_ROLLBACK_COMPLETE",
-              "CREATE_FAILED",
-              "UPDATE_ROLLBACK_FAILED",
-              "DELETE_FAILED",
-              "UPDATE_ROLLBACK_FAILED",
-            ]
-          },
-          "stack-id": [{ "wildcard": "*stack/monitoring-agent*"}]
-        }
-      }
     Targets:
       - Arn: ${self:custom.monitoringConfigs.EventBusArn}
         Id: ${self:service}-MonitoringEventBusTarget

@@ -27,6 +27,11 @@ def datetime_str_to_timestamp(dt_str: str, dt_format="%Y-%m-%dT%H:%M:%SZ") -> in
     return int(datetime.strptime(dt_str, dt_format).replace(tzinfo=timezone.utc).timestamp())
 
 
+def format_datetime_str(dt_str: str, dt_format="%Y-%m-%dT%H:%M:%SZ", new_format="%d %B %Y at %I:%M %p") -> str:
+    """Convert a datetime string from one format to another."""
+    return datetime.strptime(dt_str, dt_format).strftime(new_format)
+
+
 def round_n_minutes(dt: datetime, n: int = 5) -> datetime:
     """
     Rounds down to the nearest n-minute interval

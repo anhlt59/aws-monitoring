@@ -28,7 +28,6 @@ MonitoringEventRule:
     EventPattern: |
       {
         "source": [
-          "aws.cloudformation",
           "aws.cloudwatch",
           "aws.guardduty",
           "aws.health",

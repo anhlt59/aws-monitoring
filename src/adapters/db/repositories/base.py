@@ -1,12 +1,12 @@
-from typing import Any, Generic, List, Sequence, Type, TypeVar
+from typing import Any, Generic, List, Type, TypeVar
 
 from pydantic import BaseModel
 from pynamodb.attributes import Attribute
-from pynamodb.exceptions import DeleteError, DoesNotExist, GetError, PutError, QueryError
-from pynamodb.models import Action, Condition, Index, ResultIterator
+from pynamodb.exceptions import DeleteError, DoesNotExist, GetError, PutError, QueryError, UpdateError
+from pynamodb.models import Condition, Index, ResultIterator
 
 from src.adapters.db.models.base import DynamoModel
-from src.common.exceptions.http import InternalServerError, NotFoundError, UnprocessedError
+from src.common.exceptions.http import ConflictError, InternalServerError, NotFoundError, UnprocessedError
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -64,28 +64,23 @@ class DynamoRepository[M: DynamoModel]:
         except Exception as err:
             raise InternalServerError(f"{self.__class__.__name__}: {err}")
 
-    def _create(self, model: M, condition: Condition | None = None):
-        condition &= self.hash_key_attr.does_not_exist()
+    def _create(self, model: M):
+        condition = self.hash_key_attr.does_not_exist()
         if self.range_key_attr is not None:
             condition &= self.range_key_attr.does_not_exist()
 
         try:
             model.save(condition=condition)
         except PutError as err:
+            if err.cause_response_code == "ConditionalCheckFailedException":
+                raise ConflictError(f"{self.__class__.__name__}: {err}")
             raise UnprocessedError(f"{self.__class__.__name__}: {err}")
         except Exception as err:
             raise InternalServerError(f"{self.__class__.__name__}: {err}")
 
-    def _update(
-        self,
-        hash_key: Any,
-        range_key: Any = None,
-        attributes: dict | None = None,
-        actions: Sequence[Action] | None = None,
-        condition: Condition | None = None,
-    ):
+    def _update(self, hash_key: Any, range_key: Any = None, attributes: dict | None = None):
         # build actions
-        actions = list(actions) if actions else []
+        actions = []
         if attributes is not None:
             for key, value in attributes.items():
                 if attr := getattr(self.model_cls, key):
@@ -94,7 +89,7 @@ class DynamoRepository[M: DynamoModel]:
                     raise ValueError(f"{self.__class__.__name__}: Attribute {key} does not exist")
 
         # raise error if item does not exist
-        condition &= self.hash_key_attr.exists()
+        condition = self.hash_key_attr.exists()
         if self.range_key_attr is not None:
             condition &= self.range_key_attr.exists()
 
@@ -102,19 +97,16 @@ class DynamoRepository[M: DynamoModel]:
 
         try:
             model.update(actions=actions, condition=condition)
-        except PutError as err:
+        except UpdateError as err:
+            if err.cause_response_code == "ConditionalCheckFailedException":
+                raise NotFoundError(f"{self.__class__.__name__}: {err}")
             raise UnprocessedError(f"{self.__class__.__name__}: {err}")
         except Exception as err:
             raise InternalServerError(f"{self.__class__.__name__}: {err}")
 
-    def _delete(
-        self,
-        hash_key: Any,
-        range_key: Any = None,
-        condition: Condition | None = None,
-    ):
+    def _delete(self, hash_key: Any, range_key: Any = None):
         # raise error if item does not exist
-        condition &= self.hash_key_attr.exists()
+        condition = self.hash_key_attr.exists()
         if self.range_key_attr is not None:
             condition &= self.range_key_attr.exists()
 

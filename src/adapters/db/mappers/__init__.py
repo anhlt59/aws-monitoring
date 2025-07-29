@@ -1,4 +1,4 @@
-from .account import AccountMapper
+from .agent import AgentMapper
 from .event import EventMapper
 
-__all__ = ["EventMapper", "AccountMapper"]
+__all__ = ["AgentMapper", "EventMapper"]

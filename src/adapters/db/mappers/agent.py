@@ -1,15 +1,15 @@
-from src.adapters.db.models import AccountPersistence
-from src.models import Account
+from src.adapters.db.models import AgentPersistence
+from src.models import Agent
 
 from .base import BaseMapper
 
 
-class AccountMapper(BaseMapper):
+class AgentMapper(BaseMapper):
     @classmethod
-    def to_persistence(cls, model: Account) -> AccountPersistence:
-        return AccountPersistence(
+    def to_persistence(cls, model: Agent) -> AgentPersistence:
+        return AgentPersistence(
             # Keys
-            pk="ACCOUNT",
+            pk="AGENT",
             sk=model.id,
             # Attributes
             region=model.region,
@@ -19,8 +19,8 @@ class AccountMapper(BaseMapper):
         )
 
     @classmethod
-    def to_model(cls, persistence: AccountPersistence) -> Account:
-        return Account(
+    def to_model(cls, persistence: AgentPersistence) -> Agent:
+        return Agent(
             id=persistence.sk,
             region=persistence.region,
             status=persistence.status,

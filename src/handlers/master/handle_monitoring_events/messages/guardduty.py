@@ -45,10 +45,10 @@ def create_guardduty_message(event: EventBridgeEvent):
                     {
                         "type": "section",
                         "fields": [
-                            {"type": "mrkdwn", "text": f"*:label: Type:*\n{finding_type}"},
-                            {"type": "mrkdwn", "text": f"*:beginner: Severity:*\n{severity_label}"},
-                            {"type": "mrkdwn", "text": f"*:chart_with_upwards_trend: Count:*\n{count}"},
-                            {"type": "mrkdwn", "text": f"*:alarm_clock: Time:*\n{created_at}"},
+                            {"type": "mrkdwn", "text": f":label:*Type:*\n{finding_type}"},
+                            {"type": "mrkdwn", "text": f":beginner:*Severity:*\n{severity_label}"},
+                            {"type": "mrkdwn", "text": f":chart_with_upwards_trend:*Count:*\n{count}"},
+                            {"type": "mrkdwn", "text": f":alarm_clock:*Time:*\n{created_at}"},
                         ],
                     },
                     {
@@ -57,7 +57,7 @@ def create_guardduty_message(event: EventBridgeEvent):
                     },
                     {
                         "type": "section",
-                        "text": {"type": "mrkdwn", "text": f"*Resource ID:*\n* `{instance_id}`"},
+                        "text": {"type": "mrkdwn", "text": f"*Resource ID:*\n• `{instance_id}`"},
                     },
                 ],
             }

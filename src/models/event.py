@@ -4,14 +4,6 @@ from src.common.utils.datetime_utils import current_utc_timestamp
 
 from .base import PaginatedInputDTO
 
-# class EventStatus(int, Enum):
-#     PENDING = 0
-#     IN_PROGRESS = 1
-#     COMPLETED = 2
-#     FAILED = 3
-#     CANCELLED = 4
-#     UNKNOWN = 5
-
 
 # Model
 class Event(BaseModel):

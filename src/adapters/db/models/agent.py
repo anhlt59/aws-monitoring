@@ -5,10 +5,10 @@ from src.common.utils.datetime_utils import current_utc_timestamp
 from .base import DynamoModel, KeyAttribute
 
 
-class AccountPersistence(DynamoModel, discriminator="ACCOUNT"):
+class AgentPersistence(DynamoModel, discriminator="AGENT"):
     # Keys
-    pk = KeyAttribute(hash_key=True, default="ACCOUNT")
-    sk = KeyAttribute(range_key=True, prefix="ACCOUNT#")
+    pk = KeyAttribute(hash_key=True, default="AGENT")
+    sk = KeyAttribute(range_key=True, prefix="AGENT#")
     # Attributes
     region = UnicodeAttribute(null=False)
     status = UnicodeAttribute(null=True)

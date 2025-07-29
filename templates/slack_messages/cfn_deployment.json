@@ -1,0 +1,51 @@
+{
+  "attachments": [
+    {
+      "color": "{{color}}",
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": "{{emoji}} CloudFormation: {{stack_name}}",
+            "emoji": true
+          }
+        },
+        {
+          "type": "context",
+          "elements": [
+            {
+              "type": "mrkdwn",
+              "text": "*Account:* {{account}}  |  *Region:* {{region}}"
+            }
+          ]
+        },
+        { "type": "divider" },
+        {
+          "type": "section",
+          "fields": [
+            {
+              "type": "mrkdwn",
+              "text": ":beginner:*Status:*\n`{{stack_status}}`"
+            },
+            { "type": "mrkdwn", "text": ":alarm_clock:*Time:*\n{{time}}" }
+          ]
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "*Reason:*\n{{stack_status_reason}}"
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "*Stack:*\n• <{{console_link}}|{{stack_name}}>"
+          }
+        }
+      ]
+    }
+  ]
+}

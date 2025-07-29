@@ -15,7 +15,6 @@ class EventMapper(BaseMapper):
             pk="EVENT",
             sk=model.persistence_id,
             # Attributes
-            id=model.id,
             account=model.account,
             region=model.region,
             source=model.source,

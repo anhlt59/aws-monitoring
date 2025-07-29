@@ -1,0 +1,52 @@
+{
+  "attachments": [
+    {
+      "color": "{{color}}",
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": "{{emoji}} CloudWatch Alarm: {{name}}",
+            "emoji": true
+          }
+        },
+        {
+          "type": "context",
+          "elements": [
+            { "type": "mrkdwn", "text": "*Account: {{account}}  |  {{region}}*" }
+          ]
+        },
+        { "type": "divider" },
+        {
+          "type": "section",
+          "fields": [
+            {
+              "type": "mrkdwn",
+              "text": "* :bar_chart: Metric:*\n{{metric_namespace}}/{{metric_name}}"
+            },
+            { "type": "mrkdwn", "text": "* :alarm_clock: Time:*\n{{time}}" }
+          ]
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "* Description:*\n{{description}}"
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "* Reason:*\n{{alarm_reason}}"
+          }
+        },
+        {
+          "type": "section",
+          "text": { "type": "mrkdwn", "text": "* Dimensions:*\n{{dimensions}}" }
+        }
+      ]
+    }
+  ]
+}

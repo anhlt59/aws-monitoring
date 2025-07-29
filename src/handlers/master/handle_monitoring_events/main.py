@@ -1,17 +1,35 @@
 import os
 
-from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent, event_source
-
+from src.adapters.aws.data_classes import EventBridgeEvent, event_source
 from src.adapters.db import EventRepository
-from src.adapters.notifiers import SlackNotifier
+from src.adapters.notifiers import SlackNotifier, render_message
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.models import Event
 
 from .messages import create_alarm_message, create_guardduty_message, create_health_message, create_logs_message
 
+CW_ALARM_TEMPLATE_FILE = "slack_messages/cloudwatch_alarm.json"
+CW_LOG_TEMPLATE_FILE = "slack_messages/cloudwatch_log.json"
+GUARDDUTY_TEMPLATE_FILE = "slack_messages/guardduty.json"
+HEALTH_TEMPLATE_FILE = "slack_messages/health.json"
+
 repo = EventRepository()
 notifier = SlackNotifier(os.environ.get("MONITORING_WEBHOOK_URL"))
+
+
+# Slack Messages
+def render_health_message(event: EventBridgeEvent):
+    return render_message(
+        HEALTH_TEMPLATE_FILE,
+        context={
+            "event": event,
+            "account": event.account,
+            "region": event.region,
+            "source": event.source,
+            "detail": event.detail,
+        },
+    )
 
 
 def create_event(event: EventBridgeEvent):

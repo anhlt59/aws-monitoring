@@ -1,4 +1,4 @@
-from .account import AccountPersistence
+from .agent import AgentPersistence
 from .base import DynamoMeta, DynamoModel
 from .event import EventPersistence
 
@@ -6,5 +6,5 @@ __all__ = [
     "DynamoModel",
     "DynamoMeta",
     "EventPersistence",
-    "AccountPersistence",
+    "AgentPersistence",
 ]
