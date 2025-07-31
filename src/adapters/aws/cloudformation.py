@@ -2,6 +2,7 @@ import re
 from enum import Enum
 
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent
+from aws_lambda_powertools.utilities.data_classes.common import DictWrapper
 
 
 class CfnStackStatus(str, Enum):
@@ -15,22 +16,32 @@ class CfnStackStatus(str, Enum):
     UPDATE_ROLLBACK_FAILED = "UPDATE_ROLLBACK_FAILED"
 
 
-class CfnStackEvent(EventBridgeEvent):
+# EventBridge Event --------------------------
+class CfnStackData(DictWrapper):
     arn_compiler = re.compile(r"^arn:aws:cloudformation.*stack/(?P<name>[^/]+)/(?P<id>[^/]+)$")
 
     @property
-    def stack_id(self) -> str:
-        return self["detail"]["stack-id"]
+    def id(self) -> str:
+        return self["stack-id"]
 
     @property
-    def stack_name(self) -> str:
-        groups = self.arn_compiler.search(self["detail"]["stack-id"])
-        return groups.group("name")
+    def name(self) -> str:
+        try:
+            groups = self.arn_compiler.search(self["stack-id"])
+            return groups.group("name")
+        except Exception:
+            return "Unknown"
 
     @property
-    def stack_status(self) -> str:
-        return self["detail"].get("status-details", {}).get("status", "")
+    def status(self) -> str:
+        return self["status-details"]["status"]
 
     @property
-    def stack_status_reason(self) -> str:
-        return self["detail"].get("status-details", {}).get("status-reason", "")
+    def status_reason(self) -> str:
+        return self["status-details"]["status-reason"]
+
+
+class CfnStackEvent(EventBridgeEvent):
+    @property
+    def stack_data(self) -> CfnStackData:
+        return CfnStackData(self["detail"])

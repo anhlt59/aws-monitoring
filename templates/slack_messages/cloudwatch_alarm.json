@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": "{{emoji}} CloudWatch Alarm: {{name}}",
+            "text": "{{emoji}} CloudWatch Alarm: {{alarm_name}}",
             "emoji": true
           }
         },
@@ -32,7 +32,7 @@
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": "* Description:*\n{{description}}"
+            "text": "* Description:*\n{{alarm_description}}"
           }
         },
         {
@@ -44,7 +44,7 @@
         },
         {
           "type": "section",
-          "text": { "type": "mrkdwn", "text": "* Dimensions:*\n{{dimensions}}" }
+          "text": { "type": "mrkdwn", "text": "* Dimensions:*\n{% for k, v in metric_dimensions.items() %}• *{{k}}*: `{{v}}`{%endfor%}" }
         }
       ]
     }

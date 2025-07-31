@@ -1,14 +1,14 @@
 {
   "version": "0",
-  "id": "7bf73129-1428-4cd3-a780-95db273d1602",
+  "id": "00000000-0000-0000-0000-000000000000",
   "detail-type": "AWS Health Event",
   "source": "aws.health",
-  "account": "123456789012",
-  "time": "2023-01-27T01:43:21Z",
-  "region": "us-west-2",
+  "account": "000000000000",
+  "time": "2025-01-01T00:00:00Z",
+  "region": "us-east-1",
   "resources": ["arn:ec2-1-101002929", "arn:ec2-1-101002930", "arn:ec2-1-101002931", "arn:ec2-1-101002932"],
   "detail": {
-    "eventArn": "arn:aws:health:us-west-2::event/AWS_EC2_INSTANCE_STORE_DRIVE_PERFORMANCE_DEGRADED_90353408594353980",
+    "eventArn": "arn:aws:health:us-east-1::event/AWS_EC2_INSTANCE_STORE_DRIVE_PERFORMANCE_DEGRADED_90353408594353980",
     "service": "EC2",
     "eventTypeCode": "AWS_EC2_INSTANCE_STORE_DRIVE_PERFORMANCE_DEGRADED",
     "eventTypeCategory": "issue",
@@ -17,7 +17,7 @@
     "startTime": "Thu, 27 Jan 2023 13:19:03 GMT",
     "lastUpdatedTime": "Thu, 27 Jan 2023 13:44:13 GMT",
     "statusCode": "open",
-    "eventRegion": "us-west-2",
+    "eventRegion": "us-east-1",
     "eventDescription": [{
       "language": "en_US",
       "latestDescription": "A description of the event will be provided here"
@@ -46,7 +46,7 @@
       "lastUpdatedTime": "Thu, 26 Jan 2023 19:10:59 GMT",
       "status": "RESOLVED"
     }],
-    "affectedAccount": "123456789012",
+    "affectedAccount": "000000000000",
     "page": "1",
     "totalPages": "10"
   }

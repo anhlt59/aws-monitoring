@@ -2,7 +2,6 @@ import json
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 from uuid import uuid4
 
 import boto3
@@ -10,7 +9,6 @@ from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent
 
 from src.adapters.db import EventRepository
 from src.common.configs import AWS_ENDPOINT, AWS_REGION
-from src.common.utils.files import list_files
 from src.models.event import ListEventsDTO
 
 
@@ -54,19 +52,14 @@ def get_rest_api_endpoint(api_name: str, region="us-east-1", endpoint="http://lo
     return f"http://{api_id}.execute-api.localhost.localstack.cloud:4566/{stage_name}"
 
 
-def load_events(dir_path: Path = None, file_path: Path = None) -> Iterable[EventBridgeEvent]:
-    files: list[Path] = []
-    if dir_path is not None and dir_path.is_dir():
-        files.extend(list(list_files(dir_path)))
-    if file_path is not None and file_path.is_file():
-        files.append(file_path)
-    if len(files) == 0:
-        raise Exception("No events found.")
+def load_event(file: Path) -> EventBridgeEvent:
+    if not file.exists():
+        raise FileNotFoundError(f"Event file {file} does not exist.")
 
-    for file in files:
-        with open(file) as f:
-            data = json.load(f)
-            yield EventBridgeEvent(data)
+    with open(file) as f:
+        data = json.load(f)
+
+    return EventBridgeEvent(data)
 
 
 def truncate_event_table():

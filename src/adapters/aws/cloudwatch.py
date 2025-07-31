@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 
 import boto3
+from aws_lambda_powertools.utilities.data_classes import CloudWatchAlarmData, EventBridgeEvent
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from types_boto3_logs.client import CloudWatchLogsClient
 
@@ -91,3 +92,10 @@ class CloudwatchLogService(metaclass=SingletonMeta):
             categorized_results[cw_log.log].append(cw_log)
 
         return [CwQueryResult(logGroupName=name, logs=logs) for name, logs in categorized_results.items()]
+
+
+# EventBridge Event --------------------------
+class CwAlarmEvent(EventBridgeEvent):
+    @property
+    def detail(self) -> CloudWatchAlarmData:
+        return CloudWatchAlarmData(self["detail"])

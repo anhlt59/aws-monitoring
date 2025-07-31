@@ -20,7 +20,7 @@ def upsert_account(event: CfnStackEvent):
             event.account,
             UpdateAgentDTO(
                 region=event.region,
-                status=event.stack_status,
+                status=event.stack_data.status,
                 deployed_at=datetime_str_to_timestamp(event.time),
             ),
         )
@@ -29,7 +29,7 @@ def upsert_account(event: CfnStackEvent):
             Agent(
                 id=event.account,
                 region=event.region,
-                status=event.stack_status,
+                status=event.stack_data.status,
                 deployed_at=datetime_str_to_timestamp(event.time),
             )
         )
@@ -38,7 +38,7 @@ def upsert_account(event: CfnStackEvent):
 
 
 def push_notification(event: CfnStackEvent):
-    match event.stack_status:
+    match event.stack_data.status:
         case CfnStackStatus.CREATE_COMPLETE | CfnStackStatus.UPDATE_COMPLETE:
             emoji = ":rocket:"
             color = "#36A64F"
@@ -56,13 +56,13 @@ def push_notification(event: CfnStackEvent):
             "emoji": emoji,
             "account": event.account,
             "region": event.region,
-            "stack_name": event.stack_name,
-            "stack_status": event.stack_status,
-            "stack_status_reason": event.stack_status_reason,
+            "stack_name": event.stack_data.name,
+            "stack_status": event.stack_data.status,
+            "stack_status_reason": event.stack_data.status_reason,
             "time": event.time,
             "console_link": (
-                f"https://console.aws.amazon.com/cloudformation/home?region={event.region}#/stacks/stackinfo?"
-                f"filteringStatus=active&filteringText={event.stack_name}&viewNested=true&stackId={event.stack_id}"
+                f"https://console.aws.amazon.com/cloudformation/home?region={event.region}#/stacks/stackinfo?filtering"
+                f"Status=active&filteringText={event.stack_data.name}&viewNested=true&stackId={event.stack_data.id}"
             ),
         },
     )

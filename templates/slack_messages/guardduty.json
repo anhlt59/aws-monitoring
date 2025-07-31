@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": ":shield: GuardDuty: {{name}}",
+            "text": ":shield: GuardDuty: {{title}}",
             "emoji": true
           }
         },

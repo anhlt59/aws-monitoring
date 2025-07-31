@@ -31,8 +31,11 @@ class EventMapper(BaseMapper):
         return Event(
             id=persistence.sk.rsplit("#", 1)[-1],
             account=persistence.account,
+            region=persistence.region,
             source=persistence.source,
             detail=json.loads(persistence.detail),
+            detail_type=persistence.detail_type,
+            resources=persistence.resources,
             published_at=persistence.published_at,
             updated_at=persistence.updated_at,
         )

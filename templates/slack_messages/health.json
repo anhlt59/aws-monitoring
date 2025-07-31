@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": "{emoji} Health Event: {{event_type_code}}",
+            "text": "{{emoji}} Health Event: {{event_type_code}}",
             "emoji": true
           }
         },
@@ -41,7 +41,7 @@
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": "*Affected Entities:*\n{{entities_text}}"
+            "text": "*Affected Entities:*\n{% for e in affected_entities %}\n• `{{e['entityValue']}}` — *{{e['status'].capitalize()}}*{% endfor %}"
           }
         }
       ]
