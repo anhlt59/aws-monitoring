@@ -1,4 +1,5 @@
 from .agent import Agent
-from .event import BaseModel, Event
+from .base import BaseModel, PaginatedInputDTO, PaginatedOutputDTO
+from .event import Event
 
-__all__ = ["BaseModel", "Event", "Agent"]
+__all__ = ["BaseModel", "Event", "Agent", "PaginatedInputDTO", "PaginatedOutputDTO"]

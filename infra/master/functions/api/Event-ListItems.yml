@@ -8,6 +8,6 @@ function:
         path: /events
   package:
     patterns:
-      - src/handlers/master/api/*.py
+      - src/handlers/master/api/events/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

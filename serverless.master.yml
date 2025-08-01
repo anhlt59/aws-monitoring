@@ -65,16 +65,20 @@ package:
     - src/models/**/?*.py
     - src/adapters/**/?*.py
 
-
 functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}
   UpdateAgentDeployment: ${file(infra/master/functions/UpdateAgentDeployment.yml):function}
   DailyReport: ${file(infra/master/functions/DailyReport.yml):function}
   # API -------------------------------------------------------------------------
   # Events
-  # GetEvent: ${file(infra/master/functions/api/GetEvent.yml):function}
-  # ListEvents: ${file(infra/master/functions/api/ListEvents.yml):function}
-  # UpdateEvent: ${file(infra/master/functions/api/UpdateEvent.yml):function}
+  # GetEvent: ${file(infra/master/functions/api/Event-GetItem.yml):function}
+  # ListEvents: ${file(infra/master/functions/api/Event-ListItem.yml):function}
+  # UpdateEvent: ${file(infra/master/functions/api/Event-UpdateItem.yml):function}
+
+  # Agents
+  # GetAgent: ${file(infra/master/functions/api/Agent-GetItem.yml):function}
+  # ListAgents: ${file(infra/master/functions/api/Agent-ListItem.yml):function}
+  # UpdateAgent: ${file(infra/master/functions/api/Agent-UpdateItem.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------

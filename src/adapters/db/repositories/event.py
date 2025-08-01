@@ -1,6 +1,7 @@
 from src.adapters.db.mappers import EventMapper
 from src.adapters.db.models import EventPersistence
 from src.adapters.db.repositories.base import DynamoRepository, QueryResult
+from src.common.utils.encoding import base64_to_json
 from src.models.event import Event, ListEventsDTO
 
 EventQueryResult = QueryResult[Event]
@@ -27,11 +28,14 @@ class EventRepository(DynamoRepository):
         else:
             range_key_condition = None
 
+        last_evaluated_key = base64_to_json(dto.cursor) if dto.cursor else None
+        scan_index_forward = "asc" == dto.direction
+
         result = self._query(
             hash_key="EVENT",
             range_key_condition=range_key_condition,
-            last_evaluated_key=dto.cursor,
-            scan_index_forward="asc" == dto.direction,
+            last_evaluated_key=last_evaluated_key,
+            scan_index_forward=scan_index_forward,
             limit=dto.limit,
         )
 

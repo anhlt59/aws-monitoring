@@ -1,6 +1,6 @@
 function:
   name: ${self:service}-${self:provider.stage}-UpdateEvent
-  description: Update an event, triggered by API Gateway
+  description: Update event, triggered by API Gateway
   handler: src.handlers.api.events.main.handler
   events:
     - http:
@@ -8,6 +8,6 @@ function:
         path: /events/{event_id}
   package:
     patterns:
-      - src/handlers/master/api/*.py
+      - src/handlers/master/api/events/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

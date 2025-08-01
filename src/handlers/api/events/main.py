@@ -5,7 +5,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.adapters.api import app
 from src.adapters.db import EventRepository
-from src.common.utils.encoding import base64_to_json, json_to_base64
+from src.common.utils.encoding import json_to_base64
 from src.models.event import ListEventsDTO
 
 repo = EventRepository()
@@ -31,7 +31,7 @@ def list_events(
         end_date=end_date,
         limit=limit,
         direction=direction,
-        cursor=base64_to_json(cursor) if cursor else None,
+        cursor=cursor,
     )
     result = repo.list(dto)
     return {

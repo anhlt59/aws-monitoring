@@ -1,0 +1,13 @@
+function:
+  name: ${self:service}-${self:provider.stage}-ListAgents
+  description: List agents, triggered by API Gateway
+  handler: src.handlers.api.agents.main.handler
+  events:
+    - http:
+        method: GET
+        path: /agents
+  package:
+    patterns:
+      - src/handlers/master/api/agents/*.py
+  environment:
+    POWERTOOLS_SERVICE_NAME: agents

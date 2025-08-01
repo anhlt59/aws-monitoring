@@ -1,0 +1,13 @@
+function:
+  name: ${self:service}-${self:provider.stage}-UpdateAgent
+  description: Update an agent, triggered by API Gateway
+  handler: src.handlers.api.agents.main.handler
+  events:
+    - http:
+        method: PUT
+        path: /agents/{agent_id}
+  package:
+    patterns:
+      - src/handlers/master/api/agents/*.py
+  environment:
+    POWERTOOLS_SERVICE_NAME: agents
