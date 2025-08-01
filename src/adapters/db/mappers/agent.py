@@ -1,10 +1,8 @@
 from src.adapters.db.models import AgentPersistence
 from src.models import Agent
 
-from .base import BaseMapper
 
-
-class AgentMapper(BaseMapper):
+class AgentMapper:
     @classmethod
     def to_persistence(cls, model: Agent) -> AgentPersistence:
         return AgentPersistence(

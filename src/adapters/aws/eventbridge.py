@@ -1,5 +1,4 @@
 from datetime import UTC, datetime
-from typing import Iterable
 
 import boto3
 from pydantic import BaseModel, Field
@@ -11,25 +10,36 @@ from src.common.meta import SingletonMeta
 
 
 # Models ------------------------------------
-class EventsRequestEntry(BaseModel):
-    Source: str
-    DetailType: str | None = None
-    Detail: str
-    EventBusName: str = "default"
-    Resources: list[str] = []
-    Time: datetime = Field(default_factory=lambda: datetime.now(UTC))
+class Event(BaseModel):
+    source: str
+    detail_type: str | None = None
+    detail: str | None = None
+    resources: list[str] = []
+    time: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 # Service -----------------------------------
 class EventBridgeService(metaclass=SingletonMeta):
     client: EventBridgeClient
 
-    def __init__(self):
+    def __init__(self, bus_name: str = "default"):
         self.client = boto3.client("events", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
+        self.bus_name = bus_name
 
-    def publish_events(self, events: Iterable[EventsRequestEntry]):
+    def publish(self, *events: Event):
         """Publish an event to the AWS EventBus."""
-        response = self.client.put_events(Entries=[event.model_dump() for event in events])
+        entries = [
+            {
+                "Source": event.source,
+                "DetailType": event.detail_type,
+                "Detail": event.detail,
+                "EventBusName": self.bus_name,
+                "Resources": event.resources,
+                "Time": event.time,
+            }
+            for event in events
+        ]
+        response = self.client.put_events(Entries=entries)
 
         if (
             response.get("FailedEntryCount", 0) > 0
@@ -37,5 +47,4 @@ class EventBridgeService(metaclass=SingletonMeta):
             or not response.get("Entries")
         ):
             raise Exception(f"Failed to publish event: {response.get('Entries')}")
-
         logger.debug(f"Event published successfully: {response.get('Entries')}")

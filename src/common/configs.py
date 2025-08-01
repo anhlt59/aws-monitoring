@@ -7,7 +7,8 @@ STAGE = os.getenv("STAGE", "dev")
 
 # Path & Directory
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-TEMPLATE_DIR = BASE_DIR / "templates"
+STATIC_DIR = BASE_DIR / "statics"
+TEMPLATE_DIR = STATIC_DIR / "templates"
 
 # Logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")

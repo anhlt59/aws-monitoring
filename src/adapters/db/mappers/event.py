@@ -4,10 +4,8 @@ from src.adapters.db.models import EventPersistence
 from src.common.configs import AWS_DYNAMODB_TTL
 from src.models import Event
 
-from .base import BaseMapper
 
-
-class EventMapper(BaseMapper):
+class EventMapper:
     @classmethod
     def to_persistence(cls, model: Event) -> EventPersistence:
         return EventPersistence(
@@ -29,7 +27,7 @@ class EventMapper(BaseMapper):
     @classmethod
     def to_model(cls, persistence: EventPersistence) -> Event:
         return Event(
-            id=persistence.sk.rsplit("#", 1)[-1],
+            id=persistence.sk.split("-", 1)[-1],
             account=persistence.account,
             region=persistence.region,
             source=persistence.source,

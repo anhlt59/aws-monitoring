@@ -19,7 +19,7 @@ class Event(BaseModel):
 
     @property
     def persistence_id(self) -> str:
-        return f"{self.published_at}#{self.id}"
+        return f"{self.published_at}-{self.id}"
 
 
 # DTOs

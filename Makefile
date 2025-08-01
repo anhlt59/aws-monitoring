@@ -5,13 +5,6 @@
 	destroy-local destroy-neos destroy-cmplus
 .DEFAULT_GOAL := help
 
-define BROWSER_PYSCRIPT
-import os, webbrowser, sys
-from urllib.request import pathname2url
-webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
-endef
-export BROWSER_PYSCRIPT
-
 define PRINT_HELP_PYSCRIPT
 import re, sys
 for line in sys.stdin:
@@ -21,8 +14,6 @@ for line in sys.stdin:
 		print("%-20s %s" % (target, help))
 endef
 export PRINT_HELP_PYSCRIPT
-
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 # =================================================================================
 help:
@@ -81,6 +72,4 @@ test: ## Run the tests
 	@pytest --cov=src tests/
 
 coverage: ## Check code coverage
-	@coverage run --source src -m pytest
-	@coverage report -m
-	#@coverage html && $(BROWSER) htmlcov/index.html
+	@bash ops/development/coverage.sh

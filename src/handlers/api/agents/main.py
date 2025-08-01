@@ -7,7 +7,7 @@ repo = AgentRepository()
 
 
 # API Routes
-@app.get("/agent/<agent_id>")
+@app.get("/agents/<agent_id>")
 def get_agent(agent_id: str):
     agent = repo.get(agent_id)
     return agent.model_dump()

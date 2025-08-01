@@ -1,6 +1,6 @@
 import pytest
 
-from src.common.exceptions.http import NotFoundError
+from src.common.exceptions import NotFoundError
 from src.models import Event
 
 

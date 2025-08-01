@@ -10,7 +10,7 @@ def test_handle_health_event(event_repo):
     notifier.notify = MagicMock(side_effect=lambda *a, **kw: None)
     handler(health_event, None)
 
-    event = event_repo.get("1735689600#00000000-0000-0000-0000-000000000000")
+    event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")
     assert event is not None
     assert event.account == "000000000000"
     assert event.region == "us-east-1"
@@ -23,7 +23,7 @@ def test_handle_guardduty_event(event_repo):
     notifier.notify = MagicMock(side_effect=lambda *a, **kw: None)
     handler(guardduty_event, None)
 
-    event = event_repo.get("1735689600#00000000-0000-0000-0000-000000000000")
+    event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")
     assert event is not None
     assert event.account == "000000000000"
     assert event.region == "us-east-1"
@@ -36,7 +36,7 @@ def test_handle_alarm_event(event_repo):
     notifier.notify = MagicMock(side_effect=lambda *a, **kw: None)
     handler(alarm_event, None)
 
-    event = event_repo.get("1735689600#00000000-0000-0000-0000-000000000000")
+    event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")
     assert event is not None
     assert event.account == "000000000000"
     assert event.region == "us-east-1"

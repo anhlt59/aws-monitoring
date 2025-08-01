@@ -8,6 +8,6 @@ function:
         path: /agents
   package:
     patterns:
-      - src/handlers/master/api/agents/*.py
+      - src/handlers/api/agents/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: agents

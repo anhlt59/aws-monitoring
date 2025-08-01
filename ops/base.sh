@@ -24,3 +24,15 @@ export BOLD='\033[1m'
 # LocalStack configuration
 export LOCALSTACK_ENDPOINT=http://localhost:4566
 export LOCALSTACK_REGION=us-east-1
+
+
+function start_localstack() {
+    # Start LocalStack if not already running
+    if ! docker ps --format '{{.Names}}' | grep -q '^localstack$'; then
+        echo -e "${YELLOW}LocalStack is not running. Starting...${RESET}"
+        docker compose up localstack -d
+        echo -e "${GREEN}LocalStack started successfully.${RESET}"
+    else
+        echo -e "${GREEN}LocalStack is already running.${RESET}"
+    fi
+}

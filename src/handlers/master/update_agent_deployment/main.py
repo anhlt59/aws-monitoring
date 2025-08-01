@@ -4,12 +4,12 @@ from src.adapters.aws.cloudformation import CfnStackStatus
 from src.adapters.aws.data_classes import CfnStackEvent, event_source
 from src.adapters.db import AgentRepository
 from src.adapters.notifiers import SlackNotifier, render_message
-from src.common.exceptions.http import NotFoundError
+from src.common.exceptions import NotFoundError
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.models.agent import Agent, UpdateAgentDTO
 
-TEMPLATE_FILE = "slack_messages/cfn_deployment.json"
+TEMPLATE_FILE = "cfn_deployment.json"
 notifier = SlackNotifier(os.environ.get("DEPLOYMENT_WEBHOOK_URL"))
 repo = AgentRepository()
 

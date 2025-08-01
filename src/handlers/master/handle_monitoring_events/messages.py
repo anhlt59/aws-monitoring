@@ -8,10 +8,10 @@ from src.adapters.aws.data_classes import (
 from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier, render_message
 
-CW_ALARM_TEMPLATE_FILE = "slack_messages/cloudwatch_alarm.json"
-CW_LOG_TEMPLATE_FILE = "slack_messages/cloudwatch_log.json"
-GUARDDUTY_TEMPLATE_FILE = "slack_messages/guardduty.json"
-HEALTH_TEMPLATE_FILE = "slack_messages/health.json"
+CW_ALARM_TEMPLATE_FILE = "cloudwatch_alarm.json"
+CW_LOG_TEMPLATE_FILE = "cloudwatch_log.json"
+GUARDDUTY_TEMPLATE_FILE = "guardduty.json"
+HEALTH_TEMPLATE_FILE = "health.json"
 
 repo = EventRepository()
 notifier = SlackNotifier(os.environ.get("MONITORING_WEBHOOK_URL"))

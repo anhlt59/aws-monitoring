@@ -1,7 +1,6 @@
 import os
 from datetime import datetime, timedelta
 
-from src.adapters.aws.data_classes import EventBridgeEvent, event_source
 from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier
 from src.common.logger import logger
@@ -12,8 +11,7 @@ notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))
 
 
 # @logger.inject_lambda_context(log_event=True)
-@event_source(data_class=EventBridgeEvent)
-def handler(event: EventBridgeEvent, context):
+def handler(event, context):
     start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     end_date = start_date + timedelta(days=1)
 

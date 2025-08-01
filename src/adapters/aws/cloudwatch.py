@@ -14,15 +14,15 @@ from src.common.meta import SingletonMeta
 
 # Models ------------------------------------
 class CwQueryParam(BaseModel):
-    logGroupNames: list[str]
-    queryString: str
-    startTime: int
-    endTime: int
+    log_group_names: list[str]
+    query_string: str
+    start_time: int
+    end_time: int
     timeout: int = 15
     delay: int = 1
     model_config = ConfigDict(validate_assignment=True, str_strip_whitespace=True)
 
-    @field_validator("queryString", mode="after")
+    @field_validator("query_string", mode="after")
     @classmethod
     def validate_query_string(cls, value: str, info: ValidationInfo) -> str:
         if not value:
@@ -35,10 +35,10 @@ class CwQueryParam(BaseModel):
             logger.warning("Query string should include '@logStream' for better results")
         return value
 
-    @field_validator("endTime", mode="after")
+    @field_validator("end_time", mode="after")
     @classmethod
     def validate_end_time(cls, value: datetime, info: ValidationInfo) -> datetime:
-        start_time = info.data.get("startTime")
+        start_time = info.data.get("start_time")
         if start_time and value < start_time:
             raise ValueError("End time must be greater than or equal to start time")
         return value
@@ -48,12 +48,12 @@ class CwLog(BaseModel):
     timestamp: int | None = None
     message: str
     log: str
-    logStream: str | None = None
+    log_stream: str | None = None
     model_config = ConfigDict(extra="ignore")
 
 
 class CwQueryResult(BaseModel):
-    logGroupName: str
+    log_group_name: str
     logs: list[CwLog] = []
 
 
@@ -65,14 +65,14 @@ class CloudwatchLogService(metaclass=SingletonMeta):
         self.client = boto3.client("logs", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
 
     def query_logs(self, param: CwQueryParam) -> list[CwQueryResult]:
-        logger.debug(f"Querying logs for groups: {param.logGroupNames} from {param.startTime} to {param.endTime}")
+        logger.debug(f"Querying logs for groups: {param.log_group_names} from {param.start_time} to {param.end_time}")
         query_time = time.time()
         # start the query
         start_query_response = self.client.start_query(
-            logGroupNames=param.logGroupNames,
-            queryString=param.queryString,
-            startTime=param.startTime,
-            endTime=param.endTime,
+            logGroupNames=param.log_group_names,
+            queryString=param.query_string,
+            startTime=param.start_time,
+            endTime=param.end_time,
         )
         query_id = start_query_response.get("queryId")
 
@@ -91,7 +91,7 @@ class CloudwatchLogService(metaclass=SingletonMeta):
             cw_log = CwLog.model_validate({item.get("field", " ")[1:]: item.get("value") for item in result})
             categorized_results[cw_log.log].append(cw_log)
 
-        return [CwQueryResult(logGroupName=name, logs=logs) for name, logs in categorized_results.items()]
+        return [CwQueryResult(log_group_name=name, logs=logs) for name, logs in categorized_results.items()]
 
 
 # EventBridge Event --------------------------

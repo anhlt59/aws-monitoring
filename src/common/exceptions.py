@@ -11,6 +11,7 @@ from aws_lambda_powertools.event_handler.exceptions import (
     ServiceUnavailableError,
     UnauthorizedError,
 )
+from pydantic_core._pydantic_core import ValidationError
 
 
 class UnprocessedError(ServiceError):
@@ -27,6 +28,10 @@ class ConflictError(ServiceError):
         super().__init__(HTTPStatus.CONFLICT, msg)
 
 
+class CommandFailureError(Exception):
+    pass
+
+
 __all__ = [
     "BadRequestError",
     "ForbiddenError",
@@ -39,4 +44,6 @@ __all__ = [
     "UnauthorizedError",
     "UnprocessedError",
     "ConflictError",
+    "ValidationError",
+    "CommandFailureError",
 ]

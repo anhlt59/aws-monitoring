@@ -5,8 +5,9 @@ from pynamodb.attributes import Attribute
 from pynamodb.exceptions import DeleteError, DoesNotExist, GetError, PutError, QueryError, UpdateError
 from pynamodb.models import Condition, Index, ResultIterator
 
+from src.adapters.db.mappers.base import Mapper
 from src.adapters.db.models.base import DynamoModel
-from src.common.exceptions.http import ConflictError, InternalServerError, NotFoundError, UnprocessedError
+from src.common.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -19,6 +20,7 @@ class QueryResult(BaseModel, Generic[M]):
 
 class DynamoRepository[M: DynamoModel]:
     model_cls: Type[M]
+    mapper: Type[Mapper]
     hash_key_attr: Attribute
     range_key_attr: Attribute
 
