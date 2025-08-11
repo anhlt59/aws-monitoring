@@ -74,7 +74,6 @@ functions:
 #  # Events
 #  GetEvent: ${file(infra/master/functions/api/Event-GetItem.yml):function}
 #  ListEvents: ${file(infra/master/functions/api/Event-ListItems.yml):function}
-#  UpdateEvent: ${file(infra/master/functions/api/Event-UpdateItem.yml):function}
 #
 #  # Agents
 #  GetAgent: ${file(infra/master/functions/api/Agent-GetItem.yml):function}

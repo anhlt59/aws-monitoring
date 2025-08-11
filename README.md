@@ -7,14 +7,14 @@
 
 <!-- TOC -->
 
-* [📊 AWS Monitoring 🌩️](#-aws-monitoring-)
-  * [💻 Tech Stack](#-tech-stack)
-  * [🧪 Testing](#-testing)
-  * [🏗️ Infrastructure](#-infrastructure)
-  * [📦 Framework](#-framework)
-  * [🛠️ Development](#-development)
-  * [🚀 Deployment](#-deployment)
-  * [🤝 Contributing](#-contributing)
+- [📊 AWS Monitoring 🌩️](#-aws-monitoring-)
+  - [💻 Tech Stack](#-tech-stack)
+  - [🧪 Testing](#-testing)
+  - [🏗️ Infrastructure](#-infrastructure)
+  - [📦 Framework](#-framework)
+  - [🛠️ Development](#-development)
+  - [🚀 Deployment](#-deployment)
+  - [🤝 Contributing](#-contributing)
 
 <!-- TOC -->
 
@@ -55,11 +55,13 @@ This application is constructed using the Serverless Framework.
 - [API GW](docs/aws-api-gw.md)
 - Lambda Functions:
   - [Master-HandleMonitoringEvent](infra/master/functions/HandleMonitoringEvents.yml)
+  - [Master-UpdateAgentDevelopment](infra/master/functions/UpdateAgentDevelopment.yml)
   - [Master-DailyReport](infra/master/functions/DailyReport.yml)
-  - [Master-GetEvent](infra/master/functions/api/GetEvent.yml)
-  - [Master-ListEvent](infra/master/functions/api/ListEvents.yml)
-  - [Master-UpdateEvent](infra/master/functions/api/UpdateEvent.yml)
-  - [Agent-DailyReport](infra/agent/functions/QueryErrorLogs.yml)
+  - [Master-GetEvent](infra/master/functions/api/Event-GetItem.yml)
+  - [Master-ListEvent](infra/master/functions/api/Event-ListItems.yml)
+  - [Master-GetAgent](infra/master/functions/api/Agent-GetItem.yml)
+  - [Master-ListAgents](infra/master/functions/api/Agent-ListItems.yml)
+  - [Master-UpdateAgents](infra/master/functions/api/Agent-UpdateItem.yml)
 
 ## 🚀 Deployment
 

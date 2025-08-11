@@ -12,8 +12,8 @@ from src.common.meta import SingletonMeta
 # Models ------------------------------------
 class Event(BaseModel):
     source: str
-    detail_type: str | None = None
-    detail: str | None = None
+    detail_type: str
+    detail: str
     resources: list[str] = []
     time: datetime = Field(default_factory=lambda: datetime.now(UTC))
 

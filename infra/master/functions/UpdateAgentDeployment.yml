@@ -1,6 +1,6 @@
 function:
   name: ${self:service}-${self:provider.stage}-UpdateAgentDeployment
-  description: Update agent deployment status in DynamoDB
+  description: Update agent deployment status when agent's cloudformation stack is updated
   handler: src.handlers.master.update_agent_deployment.main.handler
   package:
     patterns:
