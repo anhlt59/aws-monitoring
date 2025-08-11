@@ -86,7 +86,7 @@ resources:
     Stage:
       Type: String
       Default: ${self:provider.stage}
-      AllowedValues: [ neos, cmplus ]
+      AllowedValues: [ neos, cm ]
   # -----------------------------------------------------------------------------
   Resources:
     # IAM

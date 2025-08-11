@@ -1,0 +1,22 @@
+Region: ap-northeast-1
+Profile: cm
+
+# AWS Services
+IAM:
+  DeploymentRole: arn:aws:iam::772468693720:role/monitoring-DeploymentRole
+
+S3:
+  DeploymentBucket:
+    Name: monitoring-cm-deployment
+
+Lambda:
+  Environment:
+    LOG_LEVEL: DEBUG
+  LogRetentionInDays: 7
+
+DynamoDB:
+  BillingMode: PAY_PER_REQUEST
+
+MonitoringConfigs:
+  MonitoringWebhookUrl: "https://hooks.slack.com/services/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"
+  DeploymentWebhookUrl: "https://hooks.slack.com/services/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"

@@ -45,6 +45,7 @@
         "events:Describe*",
         "events:CreateEventBus",
         "events:PutRule",
+        "events:PutPermission",
         "events:DeleteRule",
         "events:EnableRule",
         "events:DisableRule",
@@ -145,6 +146,29 @@
       "Effect": "Allow",
       "Action": "sns:Publish",
       "Resource": "arn:aws:sns:*:*:monitoring*"
+    },
+    {
+      "Sid": "DynamoDBReadOnlyAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:List*",
+        "dynamodb:Describe*",
+        "dynamodb:Get*"
+      ],
+      "Resource": "arn:aws:dynamodb:${AWS_REGION}:${AWS_ACCOUNT_ID}:table/*"
+    },
+    {
+      "Sid": "DynamoDBLimitedAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:UpdateTable",
+        "dynamodb:DeleteTable",
+        "dynamodb:TagResource",
+        "dynamodb:UpdateTimeToLive",
+        "dynamodb:UpdateContinuousBackups"
+      ],
+      "Resource": "arn:aws:dynamodb:${AWS_REGION}:${AWS_ACCOUNT_ID}:table/monitoring*"
     }
   ]
 }

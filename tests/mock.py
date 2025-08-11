@@ -12,22 +12,19 @@ from src.models.event import ListEventsDTO
 
 @dataclass
 class LambdaContext:
-    aws_request_id: str
-    function_name: str
-    function_version: str
-    invoked_function_arn: str
-    memory_limit_in_mb: int
     log_group_name: str
     log_stream_name: str
+    function_name: str
+    invoked_function_arn: str
+    aws_request_id: str = "1234567890abcdef"
+    memory_limit_in_mb: int = 128
+    function_version: str = "$LATEST"
 
 
 def mock_lambda_context(function_name: str) -> LambdaContext:
     return LambdaContext(
-        aws_request_id="1234567890abcdef",
         function_name=function_name,
-        function_version="$LATEST",
         invoked_function_arn=f"arn:aws:lambda:us-east-1:000000000000:function:{function_name}",
-        memory_limit_in_mb=128,
         log_group_name=f"/aws/lambda/{function_name}",
         log_stream_name="2025/01/01/[$LATEST]1234567890abcdef1234567890abcdef",
     )

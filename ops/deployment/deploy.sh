@@ -5,7 +5,7 @@
 # Usage:
 #   $ deploy.sh [stage] [stack]
 # Arguments:
-#   - stage: The deployment stage (e.g., 'cmplus', 'local')
+#   - stage: The deployment stage (e.g., 'cm', 'local')
 #   - stack: The stack to bootstrap (e.g., 'master', 'agent')
 # ==================================================================================
 set -euo pipefail

@@ -5,6 +5,11 @@
         "account_id": "000000000000",
     },
     {
+        "name": "CM",
+        "stage": "staging",
+        "account_id": "746166211068",
+    },
+    {
         "name": "Neos",
         "stage": "staging",
         "account_id": "728171922033",

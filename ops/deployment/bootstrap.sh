@@ -6,7 +6,7 @@
 # Usage:
 #   $ bootstrap.sh [stage] [stack]
 # Arguments:
-#   - stage: The deployment stage (e.g., 'cmplus', 'local')
+#   - stage: The deployment stage (e.g., 'cm', 'local')
 #   - stack: The stack to bootstrap (e.g., 'master', 'agent')
 # ==================================================================================
 
@@ -14,7 +14,7 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
-STAGE="${1:-cmplus}"
+STAGE="${1:-cm}"
 STACK="${2:-agent}"
 
 if [[ "$STAGE" == "local" ]]; then
