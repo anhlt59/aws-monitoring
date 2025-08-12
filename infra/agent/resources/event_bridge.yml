@@ -26,7 +26,7 @@ MonitoringEventRule:
           }
         ]
       }
-    State: ${upper(${self:custom.monitoringConfigs.CloudwatchLogs.State})}
+    State: enabled
     Targets:
       - Arn: ${self:custom.monitoringConfigs.EventBusArn}
         Id: ${self:service}-MonitoringEventBusTarget

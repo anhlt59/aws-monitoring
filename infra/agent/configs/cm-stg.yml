@@ -16,21 +16,13 @@ Lambda:
 
 MonitoringConfigs:
   EventBusArn: arn:aws:events:ap-northeast-1:772468693720:event-bus/monitoring-master-cm-MonitoringEventBus
-
   Health:
     State: enabled
   GuardDuty:
     State: enabled
-  CloudwatchLogs:
+  Lambda:
     State: enabled
-    Default:
-      LogGroups: # String of log group names separated by commas or *
-        Match: "*"
-        Exclude: ""
-      Query: |
-        fields @message, @log, @logStream
-        | filter @message like /(?i)(error|fail|exception)/
-        | sort @timestamp desc
-        | limit 200
-      Schedule: rate(15 minutes)
-    Custom: []
+    Schedule: rate(15 minutes)
+  ECS:
+    State: enabled
+    Schedule: rate(15 minutes)

@@ -16,19 +16,13 @@ Lambda:
 
 MonitoringConfigs:
   EventBusArn: arn:aws:events:us-east-1:000000000000:event-bus/monitoring-master-local-MonitoringEventBus
-
   Health:
     State: enabled
   GuardDuty:
     State: enabled
-  CloudwatchLogs:
+  Lambda:
     State: enabled
-    Default:
-      LogGroups: "/aws/lambda/test-function," # String of log group names separated by commas or *
-      Query: |
-        fields @message, @logStream, @log
-        | filter @message like /(?i)(error|fail|exception)/
-        | sort @timestamp desc
-        | limit 200
-      Schedule: rate(15 minutes)
-    Custom: [ ]
+    Schedule: rate(15 minutes)
+  ECS:
+    State: enabled
+    Schedule: rate(15 minutes)

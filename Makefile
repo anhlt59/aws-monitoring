@@ -54,7 +54,7 @@ package-local: ## Create artifacts for local deployment
 package-neos: ## Create artifacts for NEOS deployment
 	@bash ops/deployment/package.sh neos
 package-cm: ## Create artifacts for CM+ deployment
-	@bash ops/deployment/package.sh cm
+	@bash ops/deployment/package.sh cm-stg
 
 # DESTROY ===========================================================================
 destroy-local: ## Destroy the local deployment
