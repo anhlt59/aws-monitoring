@@ -12,3 +12,5 @@ Before deploying, you need to set up the following prerequisite resources in AWS
     **Create an S3 Bucket**:
     Create an S3 bucket in the same region as your application to store the artifacts for your serverless application.
     For example `neos-monitoring-deployment`.
+
+> Use  `make bootstrap-${env}` to create the necessary resources in your AWS account.

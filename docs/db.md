@@ -9,18 +9,19 @@ table is optimized for querying events within a specific time range.
 
 ### Schema
 
-| Field        | Type   | Description                                                                  |
-|--------------|--------|------------------------------------------------------------------------------|
-| `pk`         | String | Partition key: `EVENT`                                                       |
-| `sk`         | String | Sort key: `EVENT#{created_at}{event_id}`                                     |
-| `account`    | String | Account ID (e.g., `123456789012`)                                            |
-| `source`     | String | Source of the event (e.g., CloudWatch, Lambda)                               |
-| `detail`     | String | JSON payload with raw event data                                             |
-| `assigned`   | String | User or team assigned to the issue                                           |
-| `status`     | Number | Represents the issue status  (e.g., in_review, in_progress, ignored, done)   |
-| `created_at` | String | ISO timestamp of when the event was created                                  |
-| `updated_at` | String | ISO timestamp of when the event was last updated                             |
-| `expired_at` | String | ISO timestamp of when the event expires (defaults to 90 days after creation) |
+| Field          | Type   | Description                                                                  |
+|----------------|--------|------------------------------------------------------------------------------|
+| `pk`           | String | Partition key: `EVENT`                                                       |
+| `sk`           | String | Sort key: `EVENT#{created_at}{event_id}`                                     |
+| `account`      | String | AWS Account ID (e.g., `123456789012`)                                        |
+| `region`       | String | AWS Region (e.g., `us-east-1`)                                               |
+| `source`       | String | Source of the event (e.g., CloudWatch, Lambda)                               |
+| `detail`       | String | JSON payload with raw event data                                             |
+| `detail_type`  | String | Type of the event detail                                                     |
+| `resources`    | String | List of resources affected by the event (e.g., ECS task ARN)                 |
+| `published_at` | String | ISO timestamp of when the event was created                                  |
+| `updated_at`   | String | ISO timestamp of when the event was last updated                             |
+| `expired_at`   | String | ISO timestamp of when the event expires (defaults to 90 days after creation) |
 
 ### Example Item
 

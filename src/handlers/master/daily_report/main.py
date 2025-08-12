@@ -25,5 +25,5 @@ def handler(event, context):
     )
     logger.debug(f"Fetched {len(events.items)} events for daily report")
 
-    # Push notification to Slack
-    # push_report_notification(event, notifier)
+    # TODO: Push notification to Slack
+    #
