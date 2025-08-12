@@ -3,9 +3,10 @@ import time
 from uuid import uuid4
 
 import boto3
+from mock import MagicMock
 
-from src.common.configs import AWS_ENDPOINT, AWS_REGION
-from src.handlers.agent.query_error_logs.main import handler
+from src.handlers.agent.query_error_logs.main import ecs_service, handler
+from src.libs.configs import AWS_ENDPOINT, AWS_REGION
 
 
 def mock_cloudwatch_logs(log_group_name: str):
@@ -26,7 +27,7 @@ def mock_cloudwatch_logs(log_group_name: str):
     # Generate fake logs
     request_id_1 = str(uuid4())
     request_id_2 = str(uuid4())
-    timestamp = int(time.time() * 1000 - 1000 * 60 * 60 * 12)  # 12 hours ago
+    timestamp = int(time.time() * 1000 - 1000 * 60 * 5)  # 5 minutes ago
 
     log_events = [
         # Successful invocation
@@ -35,7 +36,7 @@ def mock_cloudwatch_logs(log_group_name: str):
         {"timestamp": timestamp + 20, "message": f"END RequestId: {request_id_1}"},
         {
             "timestamp": timestamp + 30,
-            "message": f"REPORT RequestId: {request_id_1}  Duration: 5.32 ms  Memory Size: 128 MB  Max Memory Used: 34 MB",
+            "message": f"REPORT RequestId: {request_id_1} Duration: 5.32 ms  Memory Size: 128 MB  Max Memory Used: 34 MB",
         },
         # Failed invocation
         {"timestamp": timestamp + 100, "message": f"START RequestId: {request_id_2} Version: $LATEST"},
@@ -50,7 +51,7 @@ def mock_cloudwatch_logs(log_group_name: str):
         {"timestamp": timestamp + 160, "message": f"END RequestId: {request_id_2}"},
         {
             "timestamp": timestamp + 170,
-            "message": f"REPORT RequestId: {request_id_2}  Duration: 7.12 ms  Memory Size: 128 MB  Max Memory Used: 40 MB",
+            "message": f"REPORT RequestId: {request_id_2} Duration: 7.12 ms  Memory Size: 128 MB  Max Memory Used: 40 MB",
         },
     ]
     # Send log events
@@ -59,7 +60,8 @@ def mock_cloudwatch_logs(log_group_name: str):
 
 
 def test_query_logs():
-    log_group_name = "/aws/lambda/test-function"
+    log_group_name = "/aws/lambda/monitoring-master-local-HandleMonitoringEvents"
     mock_cloudwatch_logs(log_group_name)
+    ecs_service.list_monitoring_clusters = MagicMock(return_value=[])
 
     handler(None, None)

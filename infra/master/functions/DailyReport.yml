@@ -12,3 +12,5 @@ function:
   environment:
     POWERTOOLS_SERVICE_NAME: events
     REPORT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.ReportWebhookUrl}
+  tags:
+    monitoring: true

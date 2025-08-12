@@ -16,8 +16,8 @@ provider:
 
   # default tags for all resources
   stackTags:
-    Owner: ${self:service}
-    Environment: ${self:provider.stage}
+    owner: ${self:service}
+    environment: ${self:provider.stage}
   tags: ${self:provider.stackTags}
 
   # deployment
@@ -45,6 +45,7 @@ provider:
 plugins:
   - serverless-plugin-utils
   - serverless-python-requirements
+  - ./infra/agent/plugins/jsonUtil.js
 
 useDotenv: true
 

@@ -2,7 +2,7 @@ import json
 import time
 from uuid import uuid4
 
-from src.handlers.api.events.main import handler
+from src.master.api.events.main import handler
 from src.models import Event
 from tests.mock import mock_api_gateway_event, mock_lambda_context
 

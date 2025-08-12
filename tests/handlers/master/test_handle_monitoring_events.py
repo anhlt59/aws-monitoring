@@ -1,6 +1,6 @@
 from mock import MagicMock
 
-from src.handlers.master.handle_monitoring_events.main import handler, notifier
+from src.master.handlers.handle_monitoring_events.main import handler, notifier
 from tests.conftest import TEST_DIR
 from tests.mock import load_event
 

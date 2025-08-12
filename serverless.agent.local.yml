@@ -8,8 +8,8 @@ provider:
 
   # default tags for all resources
   stackTags:
-    Owner: ${self:service}
-    Environment: ${self:provider.stage}
+    owner: ${self:service}
+    environment: ${self:provider.stage}
   tags: ${self:provider.stackTags}
 
   # config lambda functions

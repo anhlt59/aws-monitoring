@@ -35,7 +35,7 @@
 ## 🧪 [Testing](tests)
 
 ![Pytest](https://img.shields.io/badge/pytest-%23ffffff.svg?style=for-the-badge&logo=pytest&logoColor=2f9fe3)
-![Coverage Status](https://img.shields.io/badge/Coverage-80%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
+![Coverage Status](https://img.shields.io/badge/Coverage-88%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
 
 ## 🏗️ Infrastructure
 
