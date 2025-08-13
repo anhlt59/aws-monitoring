@@ -1,7 +1,6 @@
 import os
 
-from src.adapters.aws.cloudformation import CfnStackStatus
-from src.adapters.aws.data_classes import CfnStackEvent, event_source
+from src.adapters.aws.data_classes import CfnStackEvent, CfnStackStatus, event_source
 from src.adapters.db import AgentRepository
 from src.adapters.notifiers import SlackNotifier, render_message
 from src.common.exceptions import NotFoundError

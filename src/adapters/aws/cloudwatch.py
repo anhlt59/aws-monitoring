@@ -3,7 +3,6 @@ from collections import defaultdict
 from datetime import datetime
 
 import boto3
-from aws_lambda_powertools.utilities.data_classes import CloudWatchAlarmData, EventBridgeEvent
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from types_boto3_logs.client import CloudWatchLogsClient
 
@@ -24,7 +23,7 @@ class CwQueryParam(BaseModel):
 
     @field_validator("query_string", mode="after")
     @classmethod
-    def validate_query_string(cls, value: str, info: ValidationInfo) -> str:
+    def validate_query_string(cls, value: str, info) -> str:
         if not value:
             raise ValueError("Query string cannot be empty")
         if not value.startswith("fields"):
@@ -92,10 +91,3 @@ class CloudwatchLogService(metaclass=SingletonMeta):
             categorized_results[cw_log.log].append(cw_log)
 
         return [CwQueryResult(log_group_name=name, logs=logs) for name, logs in categorized_results.items()]
-
-
-# EventBridge Event --------------------------
-class CwAlarmEvent(EventBridgeEvent):
-    @property
-    def detail(self) -> CloudWatchAlarmData:
-        return CloudWatchAlarmData(self["detail"])

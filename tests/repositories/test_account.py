@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from src.adapters.aws.cloudformation import CfnStackStatus
+from src.adapters.aws.data_classes import CfnStackStatus
 from src.common.configs import AWS_REGION
 from src.common.exceptions import NotFoundError
 from src.models.agent import Agent, UpdateAgentDTO

@@ -28,7 +28,7 @@ class ConflictError(ServiceError):
         super().__init__(HTTPStatus.CONFLICT, msg)
 
 
-class CommandFailureError(Exception):
+class AWSClientException(InternalServerError):
     pass
 
 
@@ -45,5 +45,5 @@ __all__ = [
     "UnprocessedError",
     "ConflictError",
     "ValidationError",
-    "CommandFailureError",
+    "AWSClientException",
 ]

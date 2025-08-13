@@ -1373,8 +1373,10 @@ files = [
 
 [package.dependencies]
 botocore-stubs = "*"
+types-boto3-ecs = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"ecs\""}
 types-boto3-events = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"events\""}
 types-boto3-health = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"health\""}
+types-boto3-lambda = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"lambda\""}
 types-boto3-logs = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"logs\""}
 types-boto3-ssm = {version = ">=1.38.0,<1.39.0", optional = true, markers = "extra == \"ssm\""}
 types-s3transfer = "*"
@@ -1793,6 +1795,18 @@ workspaces-web = ["types-boto3-workspaces-web (>=1.38.0,<1.39.0)"]
 xray = ["types-boto3-xray (>=1.38.0,<1.39.0)"]
 
 [[package]]
+name = "types-boto3-ecs"
+version = "1.38.44"
+description = "Type annotations for boto3 ECS 1.38.44 service generated with mypy-boto3-builder 8.11.0"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "types_boto3_ecs-1.38.44-py3-none-any.whl", hash = "sha256:5ef4ab27d93bce6f53f7831e6a61ebfee62586c4d69ce27edaf01ada429654a7"},
+    {file = "types_boto3_ecs-1.38.44.tar.gz", hash = "sha256:fba50ad6ad7e033d46048aece44b780fc1ddb59da92288fc72ab5f8f2042b3ed"},
+]
+
+[[package]]
 name = "types-boto3-events"
 version = "1.38.25"
 description = "Type annotations for boto3 EventBridge 1.38.25 service generated with mypy-boto3-builder 8.11.0"
@@ -1814,6 +1828,18 @@ groups = ["main"]
 files = [
     {file = "types_boto3_health-1.38.0-py3-none-any.whl", hash = "sha256:782e9a3a9dcbca94168960b114558f48c3cd9bf454c4f6c6ee8106b6a6c65af2"},
     {file = "types_boto3_health-1.38.0.tar.gz", hash = "sha256:704bc3ed6fbbd8e36aa074ac5863af72da954a82b4db4c0e5c668da315239d5c"},
+]
+
+[[package]]
+name = "types-boto3-lambda"
+version = "1.38.40"
+description = "Type annotations for boto3 Lambda 1.38.40 service generated with mypy-boto3-builder 8.11.0"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "types_boto3_lambda-1.38.40-py3-none-any.whl", hash = "sha256:c829fdf0d634a67405acdabf0cb2ccdcd02c0efd3e888cf7f5a2a0436ecebbd9"},
+    {file = "types_boto3_lambda-1.38.40.tar.gz", hash = "sha256:a4dd945774c01d4dd4723bf87ae3491e314a72d83224f7cfae72f38f142b4935"},
 ]
 
 [[package]]
@@ -2000,4 +2026,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.12"
-content-hash = "e711387248c4ca7dfef6552770672abe2fa4ce3f76bc72ea6521d1a632dac8b8"
+content-hash = "f45b0502d9f8155c4194c0456f61c691923875e26656332026607846dbc0011b"
