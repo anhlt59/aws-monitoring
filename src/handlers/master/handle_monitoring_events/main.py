@@ -41,8 +41,14 @@ def create_event(event: EventBridgeEvent):
         resources=event.resources,
         published_at=datetime_str_to_timestamp(event.time),
     )
-    repo.create(model)
-    logger.info(f"Event<{model.id}> inserted")
+
+    try:
+        repo.create(model)
+        logger.info(f"Event<{model.id}> inserted")
+    except Exception as e:
+        logger.debug(model.model_dump())
+        logger.error(f"Failed to insert event: {e}")
+        raise e
 
 
 def push_notification(event: EventBridgeEvent):

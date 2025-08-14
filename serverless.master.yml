@@ -39,8 +39,6 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL}
-    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}
-    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.DeploymentWebhookUrl}
     # references to resources in this template
     AWS_DYNAMODB_TABLE: !Ref DynamoDBTable
 
@@ -97,7 +95,8 @@ resources:
     # EventBridge
     MonitoringEventBus: ${file(infra/master/resources/event_bridge.yml):MonitoringEventBus}
     MonitoringEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringEventRule}
-    DeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):DeploymentEventRule}
+    AgentDeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):AgentDeploymentEventRule}
+    MasterDeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):MasterDeploymentEventRule}
     # SQS
     MonitoringEventRuleDLQ: ${file(infra/master/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB

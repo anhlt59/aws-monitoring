@@ -5,5 +5,7 @@ function:
   package:
     patterns:
       - src/handlers/master/handle_monitoring_events/**/?*.py
+      - statics/templates/*
   environment:
     POWERTOOLS_SERVICE_NAME: events
+    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}

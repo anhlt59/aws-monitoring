@@ -7,7 +7,7 @@ from src.common.logger import logger
 from src.models.event import ListEventsDTO
 
 repo = EventRepository()
-notifier = SlackNotifier(os.environ.get("WEBHOOK_URL"))
+notifier = SlackNotifier(os.environ.get("REPORT_WEBHOOK_URL"))
 
 
 # @logger.inject_lambda_context(log_event=True)

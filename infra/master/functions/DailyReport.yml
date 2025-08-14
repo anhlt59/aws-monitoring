@@ -11,3 +11,4 @@ function:
       - src/handlers/master/daily_report/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
+    REPORT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.ReportWebhookUrl}

@@ -9,14 +9,14 @@ def handle_monitoring_events():
     from src.adapters.aws.eventbridge import Event, EventBridgeService
     from tests.conftest import TEST_DIR
 
-    service = EventBridgeService()
+    service = EventBridgeService("monitoring-master-cm-MonitoringEventBus")
     with open(TEST_DIR / "data" / "logs_event.json") as f:
         data = json.load(f)
 
     service.publish(
         Event(
             source=data["source"],
-            detail_type=data["detail_type"],
+            detail_type=data["detail-type"],
             detail=data["detail"],
         )
     )

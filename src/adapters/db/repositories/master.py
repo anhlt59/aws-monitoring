@@ -1,0 +1,36 @@
+from src.adapters.db.mappers import MasterMapper
+from src.adapters.db.models import MasterPersistence
+from src.adapters.db.repositories.base import DynamoRepository
+from src.common.exceptions import NotFoundError
+from src.models.master import Master, UpdateMasterDTO
+
+
+class MasterRepository(DynamoRepository):
+    model_cls = MasterPersistence
+    mapper = MasterMapper
+
+    def get(self, id: str) -> Master:
+        model = self._get(hash_key="MASTER", range_key=id)
+        return self.mapper.to_model(model)
+
+    def create(self, entity: Master):
+        model = MasterMapper.to_persistence(entity)
+        self._create(model)
+
+    def update(self, id: str, dto: UpdateMasterDTO):
+        if attributes := dto.model_dump(exclude_none=True):
+            self._update(
+                hash_key="MASTER",
+                range_key=id,
+                attributes=attributes,
+            )
+
+    def delete(self, id: str):
+        self._delete(hash_key="MASTER", range_key=id)
+
+    def exists(self, id: str) -> bool:
+        try:
+            self._get(hash_key="MASTER", range_key=id, attributes_to_get=["pk", "sk"])
+            return True
+        except NotFoundError:
+            return False

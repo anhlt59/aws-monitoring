@@ -46,6 +46,7 @@
         "events:CreateEventBus",
         "events:PutRule",
         "events:PutPermission",
+        "events:UpdateEventBus",
         "events:DeleteRule",
         "events:EnableRule",
         "events:DisableRule",

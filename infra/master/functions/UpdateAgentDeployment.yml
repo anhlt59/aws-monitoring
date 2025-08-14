@@ -5,5 +5,7 @@ function:
   package:
     patterns:
       - src/handlers/master/update_agent_deployment/*.(py|json)
+      - statics/templates/*
   environment:
     POWERTOOLS_SERVICE_NAME: events
+    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.DeploymentWebhookUrl}

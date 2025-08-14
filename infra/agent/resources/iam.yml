@@ -26,6 +26,15 @@ LambdaFunctionPolicy:
             - logs:CreateLogGroup
             - logs:PutLogEvents
           Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/monitoring*:*"
+        - Sid: AllowQueryLogsInsights
+          Effect: Allow
+          Action:
+            - logs:StartQuery
+            - logs:GetQueryResults
+          Resource: [
+            !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*",
+            !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*"
+          ]
         - Sid: AllowSendMessagesToSQS
           Effect: Allow
           Action:
@@ -35,6 +44,23 @@ LambdaFunctionPolicy:
             - sqs:DeleteMessage
             - sqs:ChangeMessageVisibility
           Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:monitoring*"
+        - Sid: AllowPublishToEventBus
+          Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/default"
+        - Sid: ECSReadOnlyAccess
+          Effect: Allow
+          Action:
+            - ecs:List*
+            - ecs:Describe*
+          Resource: "*"
+        - Sid: LambdaReadOnlyAccess
+          Effect: Allow
+          Action:
+            - lambda:List*
+            - lambda:Get*
+          Resource: "*"
 
 # EventBridgeRole, that allows the Lambda function to be triggered by EventBridge events
 EventBridgeRole:
