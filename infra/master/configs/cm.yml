@@ -18,5 +18,6 @@ DynamoDB:
   BillingMode: PAY_PER_REQUEST
 
 MonitoringConfigs:
-  MonitoringWebhookUrl: "https://hooks.slack.com/services/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"
-  DeploymentWebhookUrl: "https://hooks.slack.com/services/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"
+  MonitoringWebhookUrl: "https://hooks.slack.com/services/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"
+  DeploymentWebhookUrl: "https://hooks.slack.com/services/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"
+  ReportWebhookUrl: "https://hooks.slack.com/services/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"

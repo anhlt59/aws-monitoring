@@ -20,20 +20,11 @@ MonitoringConfigs:
     State: enabled
   GuardDuty:
     State: enabled
-  Lambda:
+  CloudwatchLogs:
     State: enabled
     Schedule: rate(15 minutes)
-  ECS:
-    State: enabled
-    Schedule: rate(15 minutes)
-
-
-#    Filters:
-#      - Tag:
-#          Key: Monitoring
-#          Value: true
-#    Query: |
-#      fields @message, @log, @logStream
-#      | filter @message like /(?i)(error|fail|exception)/
-#      | sort @timestamp desc
-#      | limit 200
+    Query: |
+      fields @message, @log, @logStream
+      | filter @message like /(?i)(error|fail|exception)/
+      | sort @timestamp desc
+      | limit 200

@@ -1,6 +1,7 @@
 from src.adapters.db.mappers import AgentMapper
 from src.adapters.db.models import AgentPersistence
 from src.adapters.db.repositories.base import DynamoRepository, QueryResult
+from src.common.exceptions import NotFoundError
 from src.models.agent import Agent, UpdateAgentDTO
 
 AgentQueryResult = QueryResult[Agent]
@@ -32,3 +33,10 @@ class AgentRepository(DynamoRepository):
 
     def delete(self, id: str):
         self._delete(hash_key="AGENT", range_key=id)
+
+    def exists(self, id: str) -> bool:
+        try:
+            self._get(hash_key="AGENT", range_key=id, attributes_to_get=["pk", "sk"])
+            return True
+        except NotFoundError:
+            return False

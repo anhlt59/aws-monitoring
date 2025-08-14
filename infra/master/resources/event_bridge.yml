@@ -2,7 +2,7 @@ MonitoringEventBus:
   Type: AWS::Events::EventBus
   Properties:
     Name: ${self:service}-${self:provider.stage}-MonitoringEventBus
-    Description: Custom EventBus for monitoring events
+    Description: Custom EventBus for monitoring events v1.0.1
     Policy: |
       {
         "Version": "2012-10-17",
@@ -23,7 +23,7 @@ MonitoringEventRule:
   Type: AWS::Events::Rule
   Properties:
     Name: "${self:service}-MonitoringEventRule"
-    Description: "Rule to handle monitoring events from various sources"
+    Description: Rule to handle monitoring events from various sources v1.0.1
     EventBusName: !Ref MonitoringEventBus
     EventPattern: |
       {
@@ -45,12 +45,11 @@ MonitoringEventRule:
         DeadLetterConfig:
           Arn: !GetAtt MonitoringEventRuleDLQ.Arn
 
-
-DeploymentEventRule:
+AgentDeploymentEventRule:
   Type: AWS::Events::Rule
   Properties:
-    Name: "${self:service}-DeploymentEventRule"
-    Description: "Rule to handle cloudformation deployment events"
+    Name: "${self:service}-AgentDeploymentEventRule"
+    Description: Rule to handle cloudformation deployment events v1.0.1
     EventBusName: !Ref MonitoringEventBus
     EventPattern: |
       {
@@ -60,7 +59,29 @@ DeploymentEventRule:
           "stack-id": [{ "wildcard": "*stack/monitoring-agent*"}]
         }
       }
-    State: "ENABLED"
+    State: ENABLED
+    Targets:
+      - Arn: !GetAtt UpdateAgentDeploymentLambdaFunction.Arn
+        Id: "${self:service}-EventHandler"
+        RoleArn: !GetAtt EventBridgeRole.Arn
+        DeadLetterConfig:
+          Arn: !GetAtt MonitoringEventRuleDLQ.Arn
+
+MasterDeploymentEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: "${self:service}-MasterDeploymentEventRule"
+    Description: Rule to handle cloudformation deployment events v1.0.1
+    EventBusName: default
+    EventPattern: |
+      {
+        "source": ["aws.cloudformation"],
+        "detail-type": ["CloudFormation Stack Status Change"],
+        "detail": {
+          "stack-id": [{ "wildcard": "*stack/monitoring-master*"}]
+        }
+      }
+    State: ENABLED
     Targets:
       - Arn: !GetAtt UpdateAgentDeploymentLambdaFunction.Arn
         Id: "${self:service}-EventHandler"

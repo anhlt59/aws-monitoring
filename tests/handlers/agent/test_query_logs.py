@@ -5,10 +5,10 @@ from uuid import uuid4
 import boto3
 
 from src.common.configs import AWS_ENDPOINT, AWS_REGION
-from src.handlers.agent.query_error_logs.main import LOG_GROUP_NAMES, handler
+from src.handlers.agent.query_error_logs.main import handler
 
 
-def mock_cloudwatch_logs(log_group_name: str = LOG_GROUP_NAMES):
+def mock_cloudwatch_logs(log_group_name: str):
     # Setup client
     client = boto3.client("logs", region_name=AWS_REGION, endpoint_url=AWS_ENDPOINT)
     log_stream_name = f"2025/01/01/[$LATEST]{uuid4()}"

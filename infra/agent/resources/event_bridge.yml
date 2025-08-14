@@ -2,7 +2,7 @@ MonitoringEventRule:
   Type: AWS::Events::Rule
   Properties:
     Name: ${self:service}-MonitoringEventRule
-    Description: Publish monitoring events to the master EventBus
+    Description: Publish monitoring events to the master EventBus v1.0.1
     EventBusName: default
     EventPattern: |
       {
@@ -26,7 +26,7 @@ MonitoringEventRule:
           }
         ]
       }
-    State: enabled
+    State: ENABLED
     Targets:
       - Arn: ${self:custom.monitoringConfigs.EventBusArn}
         Id: ${self:service}-MonitoringEventBusTarget

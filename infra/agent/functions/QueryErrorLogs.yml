@@ -2,12 +2,18 @@ function:
   name: ${self:service}-${self:provider.stage}-QueryErrorLogs
   description: Query error logs, triggered by an event
   handler: src.handlers.agent.query_error_logs.main.handler
-#  events:
-#    - schedule:
-#        rate: ${self:custom.monitoringConfigs.CloudwatchLogs.Default.Schedule}
-#        enabled: ${ternary(self:custom.monitoringConfigs.CloudwatchLogs.State, enabled, true, false)}
+  timeout: 300
+  events:
+    - schedule:
+        rate: ${self:custom.monitoringConfigs.CloudwatchLogs.Schedule}
+        enabled: ${ternary(${self:custom.monitoringConfigs.CloudwatchLogs.State}, enabled, true, false)}
   package:
     patterns:
       - src/handlers/agent/query_error_logs/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
+    CW_INSIGHTS_QUERY_STRING: ${self:custom.monitoringConfigs.CloudwatchLogs.Query}
+    CW_INSIGHTS_QUERY_DURATION: 300
+    CW_INSIGHTS_QUERY_DELAY: 1
+    CW_INSIGHTS_QUERY_TIMEOUT: 15
+    CW_LOGS_DELIVERY_LATENCY: 15

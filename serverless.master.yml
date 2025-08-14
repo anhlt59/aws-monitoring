@@ -39,8 +39,6 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL}
-    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}
-    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.DeploymentWebhookUrl}
     # references to resources in this template
     AWS_DYNAMODB_TABLE: !Ref DynamoDBTable
 

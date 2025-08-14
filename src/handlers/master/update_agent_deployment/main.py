@@ -1,39 +1,65 @@
 import os
 
 from src.adapters.aws.data_classes import CfnStackEvent, CfnStackStatus, event_source
-from src.adapters.db import AgentRepository
+from src.adapters.db import AgentRepository, MasterRepository
 from src.adapters.notifiers import SlackNotifier, render_message
-from src.common.exceptions import NotFoundError
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.models.agent import Agent, UpdateAgentDTO
+from src.models.master import Master, UpdateMasterDTO
 
 TEMPLATE_FILE = "cfn_deployment.json"
 notifier = SlackNotifier(os.environ.get("DEPLOYMENT_WEBHOOK_URL"))
-repo = AgentRepository()
+agent_repo = AgentRepository()
+master_repo = MasterRepository()
 
 
-def upsert_account(event: CfnStackEvent):
+def upsert_agent(event: CfnStackEvent):
     try:
-        repo.update(
-            event.account,
-            UpdateAgentDTO(
-                region=event.region,
-                status=event.stack_data.status,
-                deployed_at=datetime_str_to_timestamp(event.time),
-            ),
-        )
-    except NotFoundError:
-        repo.create(
-            Agent(
-                id=event.account,
-                region=event.region,
-                status=event.stack_data.status,
-                deployed_at=datetime_str_to_timestamp(event.time),
+        if agent_repo.exists(event.account):
+            agent_repo.update(
+                event.account,
+                UpdateAgentDTO(
+                    region=event.region,
+                    status=event.stack_data.status,
+                    deployed_at=datetime_str_to_timestamp(event.time),
+                ),
             )
-        )
+        else:
+            agent_repo.create(
+                Agent(
+                    id=event.account,
+                    region=event.region,
+                    status=event.stack_data.status,
+                    deployed_at=datetime_str_to_timestamp(event.time),
+                )
+            )
     except Exception as e:
-        logger.error(f"Failed to upsert account {event.account}: {e}")
+        logger.error(f"Failed to upsert agent {event.account}: {e}")
+
+
+def upsert_master(event: CfnStackEvent):
+    try:
+        if master_repo.exists(event.account):
+            master_repo.update(
+                event.account,
+                UpdateMasterDTO(
+                    region=event.region,
+                    status=event.stack_data.status,
+                    deployed_at=datetime_str_to_timestamp(event.time),
+                ),
+            )
+        else:
+            master_repo.create(
+                Master(
+                    id=event.account,
+                    region=event.region,
+                    status=event.stack_data.status,
+                    deployed_at=datetime_str_to_timestamp(event.time),
+                )
+            )
+    except Exception as e:
+        logger.error(f"Failed to upsert master {event.account}: {e}")
 
 
 def push_notification(event: CfnStackEvent):
@@ -75,7 +101,11 @@ def handler(event: CfnStackEvent, context):
     logger.debug(event.raw_event)
 
     if event.source == "aws.cloudformation":
-        upsert_account(event)
+        if event.stack_data.name.startswith("monitoring-master"):
+            upsert_master(event)
+        else:
+            upsert_agent(event)
+
         push_notification(event)
 
     else:
