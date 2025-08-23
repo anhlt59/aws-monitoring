@@ -4,7 +4,7 @@ from typing import Any, Protocol
 import requests
 from pydantic import BaseModel
 
-from src.libs.template import render_template
+from src.common.template import render_template
 
 
 # Interfaces

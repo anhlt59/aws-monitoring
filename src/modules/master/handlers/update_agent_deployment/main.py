@@ -3,8 +3,8 @@ import os
 from src.adapters.aws.data_classes import CfnStackEvent, CfnStackStatus, event_source
 from src.adapters.db import AgentRepository, MasterRepository
 from src.adapters.notifiers import SlackNotifier, render_message
-from src.libs.logger import logger
-from src.libs.utils.datetime_utils import datetime_str_to_timestamp
+from src.common.logger import logger
+from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.models.agent import Agent, UpdateAgentDTO
 from src.models.master import Master, UpdateMasterDTO
 

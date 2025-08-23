@@ -4,9 +4,9 @@ import boto3
 from pydantic import BaseModel, Field
 from types_boto3_events.client import EventBridgeClient
 
-from src.libs.configs import AWS_ENDPOINT, AWS_REGION
-from src.libs.logger import logger
-from src.libs.meta import SingletonMeta
+from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.logger import logger
+from src.common.meta import SingletonMeta
 
 
 # Models ------------------------------------

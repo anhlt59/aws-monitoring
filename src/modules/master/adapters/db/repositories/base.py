@@ -7,7 +7,7 @@ from pynamodb.models import Condition, Index, ResultIterator
 
 from src.adapters.db.mappers.base import Mapper
 from src.adapters.db.models.base import DynamoModel
-from src.libs.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
+from src.common.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
 
 M = TypeVar("M", bound=BaseModel)
 

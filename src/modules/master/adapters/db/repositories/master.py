@@ -1,7 +1,7 @@
 from src.adapters.db.mappers import MasterMapper
 from src.adapters.db.models import MasterPersistence
 from src.adapters.db.repositories.base import DynamoRepository, QueryResult
-from src.libs.exceptions import NotFoundError
+from src.common.exceptions import NotFoundError
 from src.models.master import Master, UpdateMasterDTO
 
 MasterQueryResult = QueryResult[Master]

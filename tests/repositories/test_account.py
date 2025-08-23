@@ -3,8 +3,8 @@ import time
 import pytest
 
 from src.adapters.aws.data_classes import CfnStackStatus
-from src.libs.configs import AWS_REGION
-from src.libs.exceptions import NotFoundError
+from src.common.configs import AWS_REGION
+from src.common.exceptions import NotFoundError
 from src.models.agent import Agent, UpdateAgentDTO
 
 

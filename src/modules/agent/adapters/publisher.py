@@ -1,14 +1,14 @@
 from src.infras.aws.eventbridge import Event, EventBridgeService
 
 
-class MonitoringEvent(Event):
+class CWLogEvent(Event):
     source: str = "monitoring.agent.logs"
     detail_type: str = "Error Log Query"
 
 
-class MonitoringPublisher:
+class Publisher:
     def __init__(self, client: EventBridgeService):
         self.client = client
 
-    def publish(self, **event: MonitoringEvent):
+    def publish(self, **event):
         self.client.publish()

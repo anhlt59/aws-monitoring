@@ -4,9 +4,9 @@ import boto3
 from types_boto3_ecs.client import ECSClient
 from types_boto3_ecs.type_defs import ClusterTypeDef
 
-from src.libs.configs import AWS_ENDPOINT, AWS_REGION
-from src.libs.exceptions import InternalServerError
-from src.libs.meta import SingletonMeta
+from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.exceptions import InternalServerError
+from src.common.meta import SingletonMeta
 
 
 # Service -----------------------------------

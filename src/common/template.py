@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from jinja2 import Environment, FileSystemLoader
 
-from src.libs.configs import TEMPLATE_DIR
+from src.common.configs import TEMPLATE_DIR
 
 
 def render_template(template_file: str, context: Dict[str, Any]) -> str:

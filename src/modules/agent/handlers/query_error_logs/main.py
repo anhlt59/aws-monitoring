@@ -1,16 +1,11 @@
 from datetime import UTC, datetime, timedelta
 
+from src.common.logger import logger
+from src.common.utils.datetime_utils import round_n_minutes
 from src.infras.aws import CloudwatchLogService, ECSService, LambdaService
 from src.infras.aws.eventbridge import Event
-from src.libs.logger import logger
-from src.libs.utils.datetime_utils import round_n_minutes
 from src.modules.agent.adapters import CloudwatchService, MonitoringPublisher
-
-from .configs import (
-    CW_INSIGHTS_QUERY_DURATION,
-    CW_INSIGHTS_QUERY_STRING,
-    CW_LOGS_DELIVERY_LATENCY,
-)
+from src.modules.agent.configs import CW_INSIGHTS_QUERY_DURATION, CW_INSIGHTS_QUERY_STRING, CW_LOGS_DELIVERY_LATENCY
 
 cloudwatch_service = CloudwatchService(
     cloudwatch_log_service=CloudwatchLogService(),

@@ -5,7 +5,7 @@ from pynamodb.attributes import Attribute
 from pynamodb.exceptions import DeleteError, DoesNotExist, GetError, PutError, QueryError, UpdateError
 from pynamodb.models import Condition, Index, ResultIterator
 
-from src.libs.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
+from src.common.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
 
 from .mapper import Mapper
 from .model import DynamoModel

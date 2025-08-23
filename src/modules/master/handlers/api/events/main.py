@@ -5,7 +5,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.adapters.api import app
 from src.adapters.db import EventRepository
-from src.libs.utils.encoding import json_to_base64
+from src.common.utils.encoding import json_to_base64
 from src.models.event import ListEventsDTO
 
 repo = EventRepository()

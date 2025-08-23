@@ -1,7 +1,7 @@
 from src.adapters.db.mappers import EventMapper
 from src.adapters.db.models import EventPersistence
 from src.adapters.db.repositories.base import DynamoRepository, QueryResult
-from src.libs.utils.encoding import base64_to_json
+from src.common.utils.encoding import base64_to_json
 from src.models.event import Event, ListEventsDTO
 
 EventQueryResult = QueryResult[Event]

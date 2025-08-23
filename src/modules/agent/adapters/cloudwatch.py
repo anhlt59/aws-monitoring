@@ -1,15 +1,11 @@
-import os
 from datetime import datetime
 from typing import Iterable
 
+from src.common.logger import logger
+from src.common.utils.objects import chunks
 from src.infras.aws import CloudwatchLogService, ECSService, LambdaService
 from src.infras.aws.cloudwatch import CwQueryParam, CwQueryResult
-from src.libs.logger import logger
-from src.libs.utils.objects import chunks
-
-CW_INSIGHTS_QUERY_DELAY = int(os.getenv("CW_INSIGHTS_QUERY_DELAY", 1))  # seconds
-CW_INSIGHTS_QUERY_TIMEOUT = int(os.getenv("CW_INSIGHTS_QUERY_TIMEOUT", 15))  # seconds
-CW_LOG_GROUPS_CHUNK_SIZE = int(os.getenv("CW_LOG_GROUPS_CHUNK_SIZE", 10))  # limit for log groups per query
+from src.modules.agent.configs import CW_INSIGHTS_QUERY_TIMEOUT, CW_LOG_GROUPS_CHUNK_SIZE
 
 
 # Service -----------------------------------
@@ -25,10 +21,7 @@ class CloudwatchService:
         self.ecs_service = ecs_service
 
     def list_monitoring_log_groups(self) -> Iterable[str]:
-        """
-        List lambda function's log groups and ECS clusters' log groups
-        that have monitoring enabled.
-        """
+        """List lambda function's log groups and ECS clusters' log groups that have monitoring enabled."""
         for function in self.lambda_service.list_functions():
             if function.get("Tags").get("monitoring", "").lower() == "true":
                 if log_group := function.get("LoggingConfig", {}).get("LogGroup"):
@@ -60,7 +53,6 @@ class CloudwatchService:
                     end_time=int(end_time.timestamp()),
                     start_time=int(start_time.timestamp()),
                     timeout=CW_INSIGHTS_QUERY_TIMEOUT,
-                    delay=CW_INSIGHTS_QUERY_DELAY,
                 )
             )
             logger.debug(f"Found {len(results)} logs matching the query")

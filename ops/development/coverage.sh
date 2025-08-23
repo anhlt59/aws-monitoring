@@ -11,7 +11,8 @@ echo -e "${YELLOW}Make sure:\n1. Virtualenv is activated\n2. Monitoring stacks i
 start_localstack
 
 # Run coverage tests
-pytest --cov=src --cov-report=html
+# Cover only handlers
+pytest tests/handlers --cov=src --cov-report=html
 python << END
 import os, webbrowser, sys
 from urllib.request import pathname2url

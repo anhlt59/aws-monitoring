@@ -1,7 +1,7 @@
 import json
 
 from src.adapters.db.models import EventPersistence
-from src.libs.configs import AWS_DYNAMODB_TTL
+from src.common.configs import AWS_DYNAMODB_TTL
 from src.models import Event
 
 

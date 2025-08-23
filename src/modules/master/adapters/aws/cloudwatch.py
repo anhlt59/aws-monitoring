@@ -6,9 +6,9 @@ import boto3
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from types_boto3_logs.client import CloudWatchLogsClient
 
-from src.libs.configs import AWS_ENDPOINT, AWS_REGION
-from src.libs.logger import logger
-from src.libs.meta import SingletonMeta
+from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.logger import logger
+from src.common.meta import SingletonMeta
 
 
 # Models ------------------------------------

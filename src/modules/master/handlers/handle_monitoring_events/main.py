@@ -9,8 +9,8 @@ from src.adapters.aws.data_classes import (
 )
 from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier
-from src.libs.logger import logger
-from src.libs.utils.datetime_utils import datetime_str_to_timestamp
+from src.common.logger import logger
+from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.models import Event
 
 from .messages import (

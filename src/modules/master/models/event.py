@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, model_validator
 
-from src.libs.utils.datetime_utils import current_utc_timestamp
+from src.common.utils.datetime_utils import current_utc_timestamp
 
 from .base import PaginatedInputDTO
 

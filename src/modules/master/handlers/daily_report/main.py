@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from src.adapters.db import EventRepository
 from src.adapters.notifiers import SlackNotifier
-from src.libs.logger import logger
+from src.common.logger import logger
 from src.models.event import ListEventsDTO
 
 repo = EventRepository()

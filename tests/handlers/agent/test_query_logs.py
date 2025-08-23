@@ -5,8 +5,8 @@ from uuid import uuid4
 import boto3
 from mock import MagicMock
 
+from src.common.configs import AWS_ENDPOINT, AWS_REGION
 from src.handlers.agent.query_error_logs.main import ecs_service, handler
-from src.libs.configs import AWS_ENDPOINT, AWS_REGION
 
 
 def mock_cloudwatch_logs(log_group_name: str):
