@@ -44,10 +44,8 @@ custom:
   pythonRequirements: ${file(infra/agent/plugins/python_requirements.yml):pythonRequirements}
 
 package:
-  individually: true
-  excludeDevDependencies: true
-  patterns:
-    - "!./**"
+  individually: false
+  excludeDevDependencies: false
 
 functions: ${file(serverless.agent.yml):functions}
 

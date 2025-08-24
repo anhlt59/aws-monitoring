@@ -7,9 +7,6 @@ function:
     - schedule:
         rate: ${self:custom.monitoringConfigs.CloudwatchLogs.Schedule}
         enabled: ${ternary(${self:custom.monitoringConfigs.CloudwatchLogs.State}, enabled, true, false)}
-  package:
-    patterns:
-      - src/handlers/agent/query_error_logs/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
     CW_INSIGHTS_QUERY_STRING: ${self:custom.monitoringConfigs.CloudwatchLogs.Query}

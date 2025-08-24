@@ -6,8 +6,5 @@ function:
     - http:
         method: GET
         path: /events
-  package:
-    patterns:
-      - src/handlers/api/events/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

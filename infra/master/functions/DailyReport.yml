@@ -6,9 +6,6 @@ function:
     - schedule:
         rate: cron(0 0 * * ? *)
         enabled: true
-  package:
-    patterns:
-      - src/handlers/master/daily_report/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events
     REPORT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.ReportWebhookUrl}

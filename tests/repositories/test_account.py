@@ -2,10 +2,10 @@ import time
 
 import pytest
 
-from src.adapters.aws.data_classes import CfnStackStatus
 from src.common.configs import AWS_REGION
 from src.common.exceptions import NotFoundError
-from src.models.agent import Agent, UpdateAgentDTO
+from src.infras.aws.data_classes import CfnStackStatus
+from src.modules.master.models.agent import Agent, UpdateAgentDTO
 
 
 def test_create_agent(agent_repo):

@@ -1,13 +1,13 @@
 from mock import MagicMock
 
-from src.master.handlers.handle_monitoring_events.main import handler, notifier
+from src.modules.master.handlers.handle_monitoring_events.main import handler, slack_client
 from tests.conftest import TEST_DIR
 from tests.mock import load_event
 
 
 def test_handle_health_event(event_repo):
     health_event = load_event(TEST_DIR / "data" / "health_event.json")
-    notifier.notify = MagicMock(side_effect=lambda *a, **kw: None)
+    slack_client.send = MagicMock(side_effect=lambda *a, **kw: None)
     handler(health_event, None)
 
     event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")
@@ -20,7 +20,7 @@ def test_handle_health_event(event_repo):
 
 def test_handle_guardduty_event(event_repo):
     guardduty_event = load_event(TEST_DIR / "data" / "guardduty_event.json")
-    notifier.notify = MagicMock(side_effect=lambda *a, **kw: None)
+    slack_client.send = MagicMock(side_effect=lambda *a, **kw: None)
     handler(guardduty_event, None)
 
     event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")
@@ -33,7 +33,7 @@ def test_handle_guardduty_event(event_repo):
 
 def test_handle_alarm_event(event_repo):
     alarm_event = load_event(TEST_DIR / "data" / "alarm_event.json")
-    notifier.notify = MagicMock(side_effect=lambda *a, **kw: None)
+    slack_client.send = MagicMock(side_effect=lambda *a, **kw: None)
     handler(alarm_event, None)
 
     event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")

@@ -6,8 +6,5 @@ function:
     - http:
         method: PUT
         path: /agents/{agent_id}
-  package:
-    patterns:
-      - src/handlers/api/agents/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: agents

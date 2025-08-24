@@ -61,9 +61,9 @@ package:
   excludeDevDependencies: true
   patterns:
     - "!./**"
-    - src/common/**/?*.py
-    - src/models/**/?*.py
-    - src/adapters/**/?*.py
+    - src/common/**.py
+    - src/infras/**.py
+    - src/modules/agent/**.py
 
 functions:
   QueryErrorLogs: ${file(infra/agent/functions/QueryErrorLogs.yml):function}

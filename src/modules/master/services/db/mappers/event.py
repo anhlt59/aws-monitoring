@@ -1,8 +1,8 @@
 import json
 
-from src.adapters.db.models import EventPersistence
 from src.common.configs import AWS_DYNAMODB_TTL
-from src.models import Event
+from src.modules.master.models import Event
+from src.modules.master.services.db.models import EventPersistence
 
 
 class EventMapper:

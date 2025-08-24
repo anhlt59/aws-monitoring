@@ -1,5 +1,5 @@
-from src.adapters.db.models import AgentPersistence
-from src.models import Agent
+from src.modules.master.models import Agent
+from src.modules.master.services.db.models import AgentPersistence
 
 
 class AgentMapper:

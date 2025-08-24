@@ -3,18 +3,23 @@ from typing import Annotated
 from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from src.adapters.api import app
-from src.adapters.db import EventRepository
 from src.common.utils.encoding import json_to_base64
-from src.models.event import ListEventsDTO
+from src.modules.master.handlers.api.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
+from src.modules.master.models.event import ListEventsDTO
+from src.modules.master.services.api import create_app
+from src.modules.master.services.db import EventRepository
 
-repo = EventRepository()
+app = create_app(
+    cors_allow_origin=CORS_ALLOW_ORIGIN,
+    cors_max_age=CORS_MAX_AGE,
+)
+event_repo = EventRepository()
 
 
 # API Routes
 @app.get("/events/<event_id>")
 def get_event(event_id: str):
-    event = repo.get(event_id)
+    event = event_repo.get(event_id)
     return event.model_dump()
 
 
@@ -33,7 +38,7 @@ def list_events(
         direction=direction,
         cursor=cursor,
     )
-    result = repo.list(dto)
+    result = event_repo.list(dto)
     return {
         "items": result.items,
         "limit": limit,

@@ -59,9 +59,10 @@ package:
   excludeDevDependencies: true
   patterns:
     - "!./**"
-    - src/common/**/?*.py
-    - src/models/**/?*.py
-    - src/adapters/**/?*.py
+    - src/common/**.py
+    - src/infras/**.py
+    - src/modules/master/**.py
+    - statics/templates/*
 
 functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}

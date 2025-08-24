@@ -1,8 +1,8 @@
-from src.adapters.db.mappers import AgentMapper
-from src.adapters.db.models import AgentPersistence
-from src.adapters.db.repositories.base import DynamoRepository, QueryResult
 from src.common.exceptions import NotFoundError
-from src.models.agent import Agent, UpdateAgentDTO
+from src.infras.db.repository import DynamoRepository, QueryResult
+from src.modules.master.models.agent import Agent, UpdateAgentDTO
+from src.modules.master.services.db.mappers import AgentMapper
+from src.modules.master.services.db.models import AgentPersistence
 
 AgentQueryResult = QueryResult[Agent]
 
