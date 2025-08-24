@@ -1,13 +1,10 @@
 function:
   name: ${self:service}-${self:provider.stage}-GetEvent
   description: Get event, triggered by API Gateway
-  handler: src.handlers.api.events.main.handler
+  handler: src.modules.master.handlers.api.events.main.handler
   events:
     - http:
         method: GET
         path: /events/{event_id}
-  package:
-    patterns:
-      - src/handlers/api/events/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

@@ -1,32 +1,20 @@
-import os
-
-from src.adapters.aws.data_classes import (
-    CwAlarmEvent,
-    EventBridgeEvent,
-    GuardDutyFindingEvent,
-    HealthEvent,
-    event_source,
-)
-from src.adapters.db import EventRepository
-from src.adapters.notifiers import SlackNotifier
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
-from src.models import Event
-
-from .messages import (
-    render_agent_err_log_message,
-    render_cw_alarm_message,
-    render_guardduty_message,
-    render_health_message,
+from src.infras.aws.data_classes import EventBridgeEvent, event_source
+from src.modules.master.configs import MONITORING_WEBHOOK_URL
+from src.modules.master.models import Event
+from src.modules.master.services.db import EventRepository
+from src.modules.master.services.notifiers import (
+    CWAlarmNotifier,
+    CWLogNotifier,
+    GuardDutyNotifier,
+    HealthNotifier,
+    SlackClient,
 )
 
-CW_ALARM_TEMPLATE_FILE = "slack_messages/cloudwatch_alarm.json"
-CW_LOG_TEMPLATE_FILE = "slack_messages/cloudwatch_log.json"
-GUARDDUTY_TEMPLATE_FILE = "slack_messages/guardduty.json"
-HEALTH_TEMPLATE_FILE = "slack_messages/health.json"
-
-repo = EventRepository()
-notifier = SlackNotifier(os.environ.get("MONITORING_WEBHOOK_URL"))
+# Initialize services
+event_repo = EventRepository()
+slack_client = SlackClient(MONITORING_WEBHOOK_URL)
 
 
 def create_event(event: EventBridgeEvent):
@@ -43,7 +31,7 @@ def create_event(event: EventBridgeEvent):
     )
 
     try:
-        repo.create(model)
+        event_repo.create(model)
         logger.info(f"Event<{model.id}> inserted")
     except Exception as e:
         logger.debug(model.model_dump())
@@ -55,17 +43,17 @@ def push_notification(event: EventBridgeEvent):
     """Push notification based on the event source."""
     match event.source:
         case "aws.health" | "monitoring.agent.health":
-            message = render_health_message(HealthEvent(event))
+            notifier = HealthNotifier(slack_client)
         case "aws.guardduty" | "monitoring.agent.guardduty":
-            message = render_guardduty_message(GuardDutyFindingEvent(event))
+            notifier = GuardDutyNotifier(slack_client)
         case "aws.cloudwatch" | "monitoring.agent.cloudwatch":
-            message = render_cw_alarm_message(CwAlarmEvent(event))
+            notifier = CWAlarmNotifier(slack_client)
         case "monitoring.agent.logs":
-            message = render_agent_err_log_message(event)
+            notifier = CWLogNotifier(slack_client)
         case _:
             logger.warning(f"Event<{event.get_id}>: Unknown event source '{event.source}'")
             raise ValueError(f"Unknown event source: {event.source}")
-    notifier.notify(message)
+    notifier.notify(event)
     logger.info(f"Sent Event<{event.get_id}> notification")
 
 

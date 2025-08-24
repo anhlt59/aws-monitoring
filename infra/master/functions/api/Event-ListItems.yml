@@ -1,13 +1,10 @@
 function:
   name: ${self:service}-${self:provider.stage}-ListEvents
   description: List events, triggered by API Gateway
-  handler: src.handlers.api.events.main.handler
+  handler: src.modules.master.handlers.api.events.main.handler
   events:
     - http:
         method: GET
         path: /events
-  package:
-    patterns:
-      - src/handlers/api/events/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: events

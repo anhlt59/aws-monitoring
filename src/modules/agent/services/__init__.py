@@ -1,4 +1,4 @@
 from .cloudwatch import CloudwatchService
-from .publisher import MonitoringPublisher
+from .publisher import Publisher
 
-__all__ = ["CloudwatchService", "MonitoringPublisher"]
+__all__ = ["CloudwatchService", "Publisher"]

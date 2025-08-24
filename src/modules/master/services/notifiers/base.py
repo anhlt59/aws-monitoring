@@ -1,34 +1,29 @@
 import json
-from typing import Any, Protocol
+from typing import Any
 
 import requests
 from pydantic import BaseModel
 
-from src.common.template import render_template
+from src.modules.master.utils.template import render_template
 
 
-# Interfaces
 class Message(BaseModel):
     body: str | None = None
     attachments: list[Any] | None = None
 
 
-class Notifier(Protocol):
-    def notify(self, message: Message): ...
-
-
-# Slack Notifier Implementation
-class SlackNotifier(Notifier):
-    def __init__(self, webhook_url: str):
+class SlackClient:
+    def __init__(self, webhook_url: str, timeout: int = 10):
         self.webhook_url = webhook_url
+        self.timeout = timeout
 
-    def notify(self, message: Message):
+    def send(self, message: Message):
         headers = {"Content-Type": "application/json"}
         payload = {
             "text": message.body or "",
             "attachments": message.attachments if message.attachments else [],
         }
-        response = requests.post(self.webhook_url, headers=headers, json=payload, timeout=10)
+        response = requests.post(self.webhook_url, headers=headers, json=payload, timeout=self.timeout)
         response.raise_for_status()
 
 

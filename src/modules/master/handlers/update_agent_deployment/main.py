@@ -1,15 +1,15 @@
-import os
-
-from src.adapters.aws.data_classes import CfnStackEvent, CfnStackStatus, event_source
-from src.adapters.db import AgentRepository, MasterRepository
-from src.adapters.notifiers import SlackNotifier, render_message
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
-from src.models.agent import Agent, UpdateAgentDTO
-from src.models.master import Master, UpdateMasterDTO
+from src.infras.aws.data_classes import CfnStackEvent, event_source
+from src.modules.master.configs import DEPLOYMENT_WEBHOOK_URL
+from src.modules.master.models.agent import Agent, UpdateAgentDTO
+from src.modules.master.models.master import Master, UpdateMasterDTO
+from src.modules.master.services.db import AgentRepository, MasterRepository
+from src.modules.master.services.notifiers import CloudFormationNotifier, SlackClient
 
-TEMPLATE_FILE = "cfn_deployment.json"
-notifier = SlackNotifier(os.environ.get("DEPLOYMENT_WEBHOOK_URL"))
+notifier = CloudFormationNotifier(
+    client=SlackClient(DEPLOYMENT_WEBHOOK_URL),
+)
 agent_repo = AgentRepository()
 master_repo = MasterRepository()
 
@@ -62,39 +62,6 @@ def upsert_master(event: CfnStackEvent):
         logger.error(f"Failed to upsert master {event.account}: {e}")
 
 
-def push_notification(event: CfnStackEvent):
-    match event.stack_data.status:
-        case CfnStackStatus.CREATE_COMPLETE | CfnStackStatus.UPDATE_COMPLETE:
-            emoji = ":rocket:"
-            color = "#36A64F"
-        case CfnStackStatus.CREATE_FAILED | CfnStackStatus.UPDATE_FAILED | CfnStackStatus.UPDATE_ROLLBACK_FAILED:
-            emoji = ":x:"
-            color = "#FF0000"
-        case _:
-            emoji = ":warning:"
-            color = "#FFA500"
-
-    message = render_message(
-        TEMPLATE_FILE,
-        context={
-            "color": color,
-            "emoji": emoji,
-            "account": event.account,
-            "region": event.region,
-            "stack_name": event.stack_data.name,
-            "stack_status": event.stack_data.status,
-            "stack_status_reason": event.stack_data.status_reason,
-            "time": event.time,
-            "console_link": (
-                f"https://console.aws.amazon.com/cloudformation/home?region={event.region}#/stacks/stackinfo?filtering"
-                f"Status=active&filteringText={event.stack_data.name}&viewNested=true&stackId={event.stack_data.id}"
-            ),
-        },
-    )
-    notifier.notify(message)
-    logger.info(f"Sent Event<{event.get_id}> notification")
-
-
 @event_source(data_class=CfnStackEvent)
 def handler(event: CfnStackEvent, context):
     """Handle the incoming event."""
@@ -106,7 +73,8 @@ def handler(event: CfnStackEvent, context):
         else:
             upsert_agent(event)
 
-        push_notification(event)
+        notifier.notify(event)
+        logger.info(f"Sent Event<{event.get_id}> notification")
 
     else:
         logger.warning(f"Unsupported event source: {event.source}")

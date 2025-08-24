@@ -1,4 +1,5 @@
 import re
+import json
 from enum import Enum
 from aws_lambda_powertools.utilities.data_classes import (
     CloudWatchAlarmData,
@@ -13,6 +14,7 @@ __all__ = [
     "CfnStackEvent",
     "CfnStackStatus",
     "CwAlarmEvent",
+    "CwLogEvent",
     "EventBridgeEvent",
     "HealthEvent",
     "GuardDutyFindingEvent",
@@ -144,3 +146,26 @@ class CfnStackEvent(EventBridgeEvent):
     @property
     def stack_data(self) -> CfnStackData:
         return CfnStackData(self["detail"])
+
+
+# CloudWatch Logs Event --------------------------
+class CwLogData(DictWrapper):
+    def __init__(self, data):
+        # Parse the detail string if it's a JSON string
+        if isinstance(data, str):
+            data = json.loads(data)
+        super().__init__(data)
+
+    @property
+    def log_group_name(self) -> str:
+        return self["log_group_name"]
+
+    @property
+    def logs(self) -> list:
+        return self.get("logs", [])
+
+
+class CwLogEvent(EventBridgeEvent):
+    @property
+    def detail(self) -> CwLogData:
+        return CwLogData(self["detail"])

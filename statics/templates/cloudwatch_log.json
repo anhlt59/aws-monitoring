@@ -1,0 +1,41 @@
+{
+  "attachments": [
+    {
+      "color": "{{color}}",
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": "{{emoji}} CloudWatch Logs: {{detail_type}}",
+            "emoji": true
+          }
+        },
+        {
+          "type": "context",
+          "elements": [
+            { "type": "mrkdwn", "text": "*Account: {{account}}  |  {{region}}*" }
+          ]
+        },
+        { "type": "divider" },
+        {
+          "type": "section",
+          "fields": [
+            {
+              "type": "mrkdwn",
+              "text": "* :file_folder: Log Group:*\n{{log_group_name}}"
+            },
+            { "type": "mrkdwn", "text": "* :clock1: Time:*\n{{time}}" }
+          ]
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "* :scroll: Logs:*\n{% for log in logs %}• `{{ log.timestamp | datetime }}`: {{ log.message }}\n{% endfor %}"
+          }
+        }
+      ]
+    }
+  ]
+}

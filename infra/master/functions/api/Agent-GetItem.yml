@@ -1,13 +1,10 @@
 function:
   name: ${self:service}-${self:provider.stage}-GetAgent
   description: Get an agent, triggered by API Gateway
-  handler: src.handlers.api.agents.main.handler
+  handler: src.modules.master.handlers.api.agents.main.handler
   events:
     - http:
         method: GET
         path: /agents/{agent_id}
-  package:
-    patterns:
-      - src/handlers/api/agents/*.py
   environment:
     POWERTOOLS_SERVICE_NAME: agents

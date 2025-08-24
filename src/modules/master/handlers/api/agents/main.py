@@ -1,21 +1,26 @@
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from src.adapters.api import app
-from src.adapters.db import AgentRepository
+from src.modules.master.handlers.api.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
+from src.modules.master.services.api import create_app
+from src.modules.master.services.db import AgentRepository
 
-repo = AgentRepository()
+app = create_app(
+    cors_allow_origin=CORS_ALLOW_ORIGIN,
+    cors_max_age=CORS_MAX_AGE,
+)
+agent_repo = AgentRepository()
 
 
 # API Routes
 @app.get("/agents/<agent_id>")
 def get_agent(agent_id: str):
-    agent = repo.get(agent_id)
+    agent = agent_repo.get(agent_id)
     return agent.model_dump()
 
 
 @app.get("/agents")
 def list_agents():
-    result = repo.list()
+    result = agent_repo.list()
     return {
         "items": result.items,
         "limit": result.limit,

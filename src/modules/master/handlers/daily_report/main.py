@@ -1,13 +1,14 @@
-import os
 from datetime import datetime, timedelta
 
-from src.adapters.db import EventRepository
-from src.adapters.notifiers import SlackNotifier
 from src.common.logger import logger
-from src.models.event import ListEventsDTO
+from src.modules.master.configs import REPORT_WEBHOOK_URL
+from src.modules.master.models.event import ListEventsDTO
+from src.modules.master.services.db import EventRepository
+from src.modules.master.services.notifiers import SlackClient
 
-repo = EventRepository()
-notifier = SlackNotifier(os.environ.get("REPORT_WEBHOOK_URL"))
+# Initialize services
+event_repo = EventRepository()
+slack_client = SlackClient(REPORT_WEBHOOK_URL)
 
 
 # @logger.inject_lambda_context(log_event=True)
@@ -16,7 +17,7 @@ def handler(event, context):
     end_date = start_date + timedelta(days=1)
 
     # Fetch events from the repository
-    events = repo.list(
+    events = event_repo.list(
         ListEventsDTO(
             start_date=int(start_date.timestamp()),
             end_date=int(end_date.timestamp()),
@@ -26,4 +27,5 @@ def handler(event, context):
     logger.debug(f"Fetched {len(events.items)} events for daily report")
 
     # TODO: Push notification to Slack
-    #
+    # slack_client.send(...)
+    logger.info("Daily report sent")

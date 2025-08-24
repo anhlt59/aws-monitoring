@@ -1,7 +1,7 @@
 import pytest
 
 from src.common.exceptions import NotFoundError
-from src.models import Event
+from src.modules.master.models import Event
 
 
 def test_create_event(event_repo):

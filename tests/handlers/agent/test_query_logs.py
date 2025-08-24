@@ -6,7 +6,7 @@ import boto3
 from mock import MagicMock
 
 from src.common.configs import AWS_ENDPOINT, AWS_REGION
-from src.handlers.agent.query_error_logs.main import ecs_service, handler
+from src.modules.agent.handlers.query_error_logs.main import cloudwatch_service, handler
 
 
 def mock_cloudwatch_logs(log_group_name: str):
@@ -62,6 +62,6 @@ def mock_cloudwatch_logs(log_group_name: str):
 def test_query_logs():
     log_group_name = "/aws/lambda/monitoring-master-local-HandleMonitoringEvents"
     mock_cloudwatch_logs(log_group_name)
-    ecs_service.list_monitoring_clusters = MagicMock(return_value=[])
+    cloudwatch_service.ecs_service.list_clusters = MagicMock(return_value=[])
 
     handler(None, None)

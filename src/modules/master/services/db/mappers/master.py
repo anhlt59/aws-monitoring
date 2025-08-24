@@ -1,5 +1,5 @@
-from src.adapters.db.models import MasterPersistence
-from src.models import Master
+from src.modules.master.models import Master
+from src.modules.master.services.db.models import MasterPersistence
 
 
 class MasterMapper:
