@@ -17,7 +17,7 @@ class ECSService(metaclass=SingletonMeta):
         self.client = boto3.client("ecs", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
 
     def list_clusters(self, **kwargs) -> Iterable[ClusterTypeDef]:
-        """List all ECS clusters that have tag `monitoring: true`."""
+        """List all ECS clusters."""
         try:
             response = self.client.list_clusters(**kwargs)
 
@@ -25,11 +25,6 @@ class ECSService(metaclass=SingletonMeta):
                 clusters = self.client.describe_clusters(clusters=cluster_arns, include=["TAGS", "CONFIGURATIONS"])
 
                 yield from clusters.get("clusters", [])
-                # for cluster in clusters.get("clusters", []):
-                #     # Check if the cluster has the 'monitoring' tag set to 'true'
-                #     tags = cluster.get("tags", [])
-                #     if any(tag["key"] == "monitoring" and tag["value"].lower() == "true" for tag in tags):
-                #         yield cluster
 
             if cursor := response.get("nextToken"):
                 yield from self.list_clusters(nextToken=cursor)

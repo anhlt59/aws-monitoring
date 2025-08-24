@@ -2,17 +2,23 @@ from datetime import UTC, datetime, timedelta
 
 from src.common.logger import logger
 from src.common.utils.datetime_utils import round_n_minutes
-from src.infras.aws import CloudwatchLogService, ECSService, LambdaService
-from src.infras.aws.eventbridge import Event
-from src.modules.agent.adapters import CloudwatchService, MonitoringPublisher
-from src.modules.agent.configs import CW_INSIGHTS_QUERY_DURATION, CW_INSIGHTS_QUERY_STRING, CW_LOGS_DELIVERY_LATENCY
+from src.infras.aws import CloudwatchLogService, ECSService, EventBridgeService, LambdaService
+from src.modules.agent.services.cloudwatch import CloudwatchService, CwQueryParam
+from src.modules.agent.services.publisher import CWLogEvent, Publisher
+
+from .configs import (
+    CW_INSIGHTS_QUERY_DURATION,
+    CW_INSIGHTS_QUERY_STRING,
+    CW_INSIGHTS_QUERY_TIMEOUT,
+    CW_LOGS_DELIVERY_LATENCY,
+)
 
 cloudwatch_service = CloudwatchService(
     cloudwatch_log_service=CloudwatchLogService(),
     lambda_service=LambdaService(),
     ecs_service=ECSService(),
 )
-publisher = MonitoringPublisher()
+publisher = Publisher(EventBridgeService())
 
 
 # @logger.inject_lambda_context(log_event=True)
@@ -26,20 +32,19 @@ def handler(event, context):
 
     # query error logs from CloudWatch Logs
     error_logs = cloudwatch_service.query_error_logs(
-        log_groups=log_groups,
-        query_string=CW_INSIGHTS_QUERY_STRING,
-        start_time=start_time,
-        end_time=end_time,
+        CwQueryParam(
+            log_group_names=log_groups,
+            query_string=CW_INSIGHTS_QUERY_STRING,
+            start_time=start_time,
+            end_time=end_time,
+            timeout=CW_INSIGHTS_QUERY_TIMEOUT,
+        )
     )
 
     # convert error logs to a list of events
-    events = [
-        Event(
-            source="monitoring.agent.logs",
-            detail_type="Query Error Logs",
-            detail=log_result.model_dump_json(),
-        )
-        for log_result in error_logs
-    ]
-    logger.debug(f"Publishing {len(events)} error log events to EventBridge")
-    publisher.publish(*events)
+    events = [CWLogEvent(detail=log_result.model_dump_json()) for log_result in error_logs]
+    if events:
+        logger.debug(f"Publishing {len(events)} error log events to EventBridge")
+        publisher.publish(*events)
+    else:
+        logger.debug("No error log events to publish")

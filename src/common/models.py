@@ -14,8 +14,3 @@ class Page(BaseModel, Generic[M]):
     @property
     def total(self):
         return len(self.items)
-
-
-class Tag(BaseModel):
-    key: str = Field(alias="Key")
-    value: str = Field(alias="Value")
