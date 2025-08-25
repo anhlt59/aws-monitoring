@@ -7,7 +7,7 @@ import boto3
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent
 
 from src.modules.master.models.event import ListEventsDTO
-from src.modules.master.services.db import EventRepository
+from src.modules.master.services.repositories import EventRepository
 
 
 @dataclass

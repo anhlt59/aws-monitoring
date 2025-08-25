@@ -4,8 +4,8 @@ from src.infras.aws.data_classes import CfnStackEvent, event_source
 from src.modules.master.configs import DEPLOYMENT_WEBHOOK_URL
 from src.modules.master.models.agent import Agent, UpdateAgentDTO
 from src.modules.master.models.master import Master, UpdateMasterDTO
-from src.modules.master.services.db import AgentRepository, MasterRepository
 from src.modules.master.services.notifiers import CloudFormationNotifier, SlackClient
+from src.modules.master.services.repositories import AgentRepository, MasterRepository
 
 notifier = CloudFormationNotifier(
     client=SlackClient(DEPLOYMENT_WEBHOOK_URL),
@@ -74,7 +74,7 @@ def handler(event: CfnStackEvent, context):
             upsert_agent(event)
 
         notifier.notify(event)
-        logger.info(f"Sent Event<{event.get_id}> notification")
+        logger.info(f"Sent Event<{event.get_id}> successfully")
 
     else:
         logger.warning(f"Unsupported event source: {event.source}")

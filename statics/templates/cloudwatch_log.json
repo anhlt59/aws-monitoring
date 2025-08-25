@@ -14,25 +14,33 @@
         {
           "type": "context",
           "elements": [
-            { "type": "mrkdwn", "text": "*Account: {{account}}  |  {{region}}*" }
+            {
+              "type": "mrkdwn",
+              "text": "*Account: {{account}}  |  {{region}}*"
+            }
           ]
         },
-        { "type": "divider" },
+        {
+          "type": "divider"
+        },
         {
           "type": "section",
           "fields": [
             {
               "type": "mrkdwn",
-              "text": "* :file_folder: Log Group:*\n{{log_group_name}}"
+              "text": "*Log Group:*\n`{{log_group_name}}`"
             },
-            { "type": "mrkdwn", "text": "* :clock1: Time:*\n{{time}}" }
+            {
+              "type": "mrkdwn",
+              "text": "* :alarm_clock: Time:*\n{{time}}"
+            }
           ]
         },
         {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": "* :scroll: Logs:*\n{% for log in logs %}• `{{ log.timestamp | datetime }}`: {{ log.message }}\n{% endfor %}"
+            "text": "* :scroll: Logs:*\n```{% for log in logs %}{{ log.timestamp }}: {{ log.message }}\n{% endfor %}```"
           }
         }
       ]

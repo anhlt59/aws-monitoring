@@ -1,7 +1,8 @@
 from pynamodb.attributes import NumberAttribute, UnicodeAttribute
 
 from src.common.utils.datetime_utils import current_utc_timestamp
-from src.infras.db.model import DynamoModel, KeyAttribute
+
+from .base import DynamoModel, KeyAttribute
 
 
 class AgentPersistence(DynamoModel, discriminator="AGENT"):

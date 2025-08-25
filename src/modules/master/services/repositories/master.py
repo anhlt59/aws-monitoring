@@ -1,8 +1,8 @@
 from src.common.exceptions import NotFoundError
+from src.infras.db.models import MasterPersistence
 from src.infras.db.repository import DynamoRepository, QueryResult
 from src.modules.master.models.master import Master, UpdateMasterDTO
-from src.modules.master.services.db.mappers import MasterMapper
-from src.modules.master.services.db.models import MasterPersistence
+from src.modules.master.services.repositories.mappers import MasterMapper
 
 MasterQueryResult = QueryResult[Master]
 

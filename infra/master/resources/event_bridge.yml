@@ -48,8 +48,8 @@ MonitoringEventRule:
 DeploymentEventRule:
   Type: AWS::Events::Rule
   Properties:
-    Name: "${self:service}-AgentDeploymentEventRule"
-    Description: Rule to handle cloudformation deployment events v1.0.1
+    Name: "${self:service}-DeploymentEventRule"
+    Description: Rule to handle cloudformation deployment events (agent & master) v1.0.1
     EventBusName: !Ref MonitoringEventBus
     EventPattern: |
       {
@@ -61,41 +61,41 @@ DeploymentEventRule:
       }
     State: ENABLED
     Targets:
-      - Arn: !GetAtt UpdateAgentDeploymentLambdaFunction.Arn
+      - Arn: !GetAtt UpdateDeploymentLambdaFunction.Arn
         Id: "${self:service}-EventHandler"
         RoleArn: !GetAtt EventBridgeRole.Arn
         DeadLetterConfig:
           Arn: !GetAtt MonitoringEventRuleDLQ.Arn
 
-MonitoringMasterEventRule:
-  Type: AWS::Events::Rule
-  Properties:
-    Name: ${self:service}-MonitoringMasterEventRule
-    Description: Publish monitoring events (from default EventBus) to monitoring EventBus v1.0.1
-    EventBusName: default
-    EventPattern: |
-      {
-        "$or": [
-          {
-            "source": ["aws.guardduty", "aws.health"],
-            "detail-type": ["GuardDuty Finding", "AWS Health Event"]
-          },
-          {
-            "source": ["aws.cloudformation"],
-            "detail-type": ["CloudFormation Stack Status Change"],
-            "detail": {
-              "status-details": {
-                "status": [ { "wildcard": "*COMPLETE" }, { "wildcard": "*FAILED" }]
-              },
-              "stack-id": [{ "wildcard": "*stack/monitoring*"}]
-            }
-          }
-        ]
-      }
-    State: ENABLED
-    Targets:
-      - Arn: !GetAtt MonitoringEventBus.Arn
-        Id: ${self:service}-MonitoringEventBusTarget
-        RoleArn: !GetAtt EventBridgeRole.Arn
-        DeadLetterConfig:
-          Arn: !GetAtt MonitoringEventRuleDLQ.Arn
+#MonitoringMasterEventRule:
+#  Type: AWS::Events::Rule
+#  Properties:
+#    Name: ${self:service}-MonitoringMasterEventRule
+#    Description: Publish monitoring events (from default EventBus) to monitoring EventBus v1.0.1
+#    EventBusName: default
+#    EventPattern: |
+#      {
+#        "$or": [
+#          {
+#            "source": ["aws.guardduty", "aws.health"],
+#            "detail-type": ["GuardDuty Finding", "AWS Health Event"]
+#          },
+#          {
+#            "source": ["aws.cloudformation"],
+#            "detail-type": ["CloudFormation Stack Status Change"],
+#            "detail": {
+#              "status-details": {
+#                "status": [ { "wildcard": "*COMPLETE" }, { "wildcard": "*FAILED" }]
+#              },
+#              "stack-id": [{ "wildcard": "*stack/monitoring*"}]
+#            }
+#          }
+#        ]
+#      }
+#    State: ENABLED
+#    Targets:
+#      - Arn: !GetAtt MonitoringEventBus.Arn
+#        Id: ${self:service}-MonitoringEventBusTarget
+#        RoleArn: !GetAtt EventBridgeRole.Arn
+#        DeadLetterConfig:
+#          Arn: !GetAtt MonitoringEventRuleDLQ.Arn

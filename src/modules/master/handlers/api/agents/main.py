@@ -2,7 +2,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.modules.master.handlers.api.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.modules.master.services.api import create_app
-from src.modules.master.services.db import AgentRepository
+from src.modules.master.services.repositories import AgentRepository
 
 app = create_app(
     cors_allow_origin=CORS_ALLOW_ORIGIN,

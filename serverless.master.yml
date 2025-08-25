@@ -59,14 +59,14 @@ package:
   excludeDevDependencies: true
   patterns:
     - "!./**"
-    - src/common/**.py
-    - src/infras/**.py
-    - src/modules/master/**.py
-    - statics/templates/*
+    - src/common/**/?*.py
+    - src/infras/**/?*.py
+    - src/modules/master/**/?*.py
+    - statics/*/?*
 
 functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}
-  UpdateAgentDeployment: ${file(infra/master/functions/UpdateAgentDeployment.yml):function}
+  UpdateDeployment: ${file(infra/master/functions/UpdateDeployment.yml):function}
   DailyReport: ${file(infra/master/functions/DailyReport.yml):function}
 
 #  # API -------------------------------------------------------------------------
@@ -96,8 +96,8 @@ resources:
     # EventBridge
     MonitoringEventBus: ${file(infra/master/resources/event_bridge.yml):MonitoringEventBus}
     MonitoringEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringEventRule}
-    MonitoringMasterEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringMasterEventRule}
     DeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):DeploymentEventRule}
+    # MonitoringMasterEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringMasterEventRule}
     # SQS
     MonitoringEventRuleDLQ: ${file(infra/master/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB

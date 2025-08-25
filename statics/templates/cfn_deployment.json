@@ -20,7 +20,9 @@
             }
           ]
         },
-        { "type": "divider" },
+        {
+          "type": "divider"
+        },
         {
           "type": "section",
           "fields": [
@@ -28,7 +30,10 @@
               "type": "mrkdwn",
               "text": ":beginner:*Status:*\n`{{stack_status}}`"
             },
-            { "type": "mrkdwn", "text": ":alarm_clock:*Time:*\n{{time}}" }
+            {
+              "type": "mrkdwn",
+              "text": ":alarm_clock:*Time:*\n{{time}}"
+            }
           ]
         },
         {

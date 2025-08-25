@@ -13,7 +13,7 @@ load_dotenv(BASE_DIR / ".env.local")
 from src.modules.master.models import Agent, Event  # noqa
 
 # fmt: off
-from src.modules.master.services.db import AgentRepository, EventRepository, MasterRepository  # noqa
+from src.modules.master.services.repositories import AgentRepository, EventRepository, MasterRepository  # noqa
 
 # fmt: on
 

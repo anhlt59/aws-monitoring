@@ -53,5 +53,5 @@ def test_handle_cwlog_event(event_repo):
     assert event is not None
     assert event.account == "000000000000"
     assert event.region == "us-east-1"
-    assert event.source == "aws.cloudwatch"
-    assert event.detail_type == "CloudWatch Alarm State Change"
+    assert event.source == "monitoring.agent.logs"
+    assert event.detail_type == "Error Logs Query"

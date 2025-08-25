@@ -1,6 +1,6 @@
 from pynamodb.attributes import ListAttribute, NumberAttribute, UnicodeAttribute
 
-from src.infras.db.model import DynamoModel, KeyAttribute
+from .base import DynamoModel, KeyAttribute
 
 
 class EventPersistence(DynamoModel, discriminator="EVENT"):

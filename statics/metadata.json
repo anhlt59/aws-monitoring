@@ -1,17 +1,16 @@
-  [
+{
+  "agents": [
     {
-        "name": "LocalStack",
-        "stage": "local",
-        "account_id": "000000000000",
+      "name": "LocalStack",
+      "account_id": "000000000000"
     },
     {
-        "name": "CM",
-        "stage": "staging",
-        "account_id": "746166211068",
+      "name": "CM",
+      "account_id": "746166211068"
     },
     {
-        "name": "Neos",
-        "stage": "staging",
-        "account_id": "728171922033",
+      "name": "Neos",
+      "account_id": "728171922033"
     }
-]
+  ]
+}

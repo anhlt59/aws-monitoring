@@ -30,7 +30,6 @@ class Publisher:
                 "Source": event.source,
                 "DetailType": event.detail_type,
                 "Detail": event.detail,
-                "EventBusName": self.client.bus_name,
                 "Resources": event.resources,
                 "Time": event.time,
             }

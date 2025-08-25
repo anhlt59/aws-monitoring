@@ -3,7 +3,6 @@ from src.common.utils.datetime_utils import datetime_str_to_timestamp
 from src.infras.aws.data_classes import EventBridgeEvent, event_source
 from src.modules.master.configs import MONITORING_WEBHOOK_URL
 from src.modules.master.models import Event
-from src.modules.master.services.db import EventRepository
 from src.modules.master.services.notifiers import (
     CWAlarmNotifier,
     CWLogNotifier,
@@ -11,6 +10,7 @@ from src.modules.master.services.notifiers import (
     HealthNotifier,
     SlackClient,
 )
+from src.modules.master.services.repositories import EventRepository
 
 # Initialize services
 event_repo = EventRepository()
@@ -54,7 +54,7 @@ def push_notification(event: EventBridgeEvent):
             logger.warning(f"Event<{event.get_id}>: Unknown event source '{event.source}'")
             raise ValueError(f"Unknown event source: {event.source}")
     notifier.notify(event)
-    logger.info(f"Sent Event<{event.get_id}> notification")
+    logger.info(f"Sent Event<{event.get_id}> successfully")
 
 
 # @logger.inject_lambda_context(log_event=True)

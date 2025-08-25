@@ -2,20 +2,19 @@ import json
 
 import boto3
 
-boto3.setup_default_session(profile_name="lc-stg")
+boto3.setup_default_session(profile_name="wellmira")
 
 
 def handle_monitoring_events():
     from src.infras.aws import EventBridgeService
     from tests.conftest import TEST_DIR
 
-    service = EventBridgeService("monitoring-master-cm-MonitoringEventBus")
+    service = EventBridgeService()
     with open(TEST_DIR / "data" / "logs_event.json") as f:
         data = json.load(f)
 
     service.put_events(
         {
-            "Time": data["time"],
             "Resources": data["resources"],
             "DetailType": data["detail-type"],
             "EventBusName": "monitoring-master-cm-MonitoringEventBus",

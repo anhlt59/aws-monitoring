@@ -11,7 +11,7 @@ There is only one master stack (except for local development).
 
 ## Agent stack
 
-There are two or more agent stacks, depending on the environment.
+Each environment has its own agent stack.
 
 * Configuration files
     - [local.yml](../infra/agent/configs/local.yml)

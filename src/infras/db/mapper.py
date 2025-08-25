@@ -2,7 +2,7 @@ from typing import Protocol
 
 from pydantic import BaseModel as EntityModel
 
-from .model import DynamoModel as PersistenceModel
+from src.infras.db.models import DynamoModel as PersistenceModel
 
 
 class Mapper[P: PersistenceModel, E: EntityModel](Protocol):

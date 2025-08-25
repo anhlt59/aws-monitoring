@@ -7,7 +7,7 @@ from src.common.utils.encoding import json_to_base64
 from src.modules.master.handlers.api.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.modules.master.models.event import ListEventsDTO
 from src.modules.master.services.api import create_app
-from src.modules.master.services.db import EventRepository
+from src.modules.master.services.repositories import EventRepository
 
 app = create_app(
     cors_allow_origin=CORS_ALLOW_ORIGIN,

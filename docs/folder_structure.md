@@ -21,20 +21,24 @@
 │   ├── postman           # Postman collections
 │   └── base.sh
 ├── src
-│   ├── adapters          # Adapters for external services
+│   ├── infras            # Driven adapters that interact with external services (e.g., AWS, DB)
 │   │   ├── aws
-│   │   ├── db
-│   │   ├── api
-│   │   └── notifiers
+│   │   └── db
 │   ├── common            # Common utilities and helpers
 │   │   ├── exceptions
 │   │   ├── utils
 │   │   ├── logger
+│   │   ├── models
 │   │   └── configs
-│   ├── handlers          # Handlers for Lambda functions
-│   │   ├── agent
-│   │   └── master
-│   └── models            # Data models and schemas
+│   └── modules            
+│       ├── agent
+│       │   ├── handlers
+│       │   ├── models
+│       │   └── services
+│       └── master
+│           ├── handlers
+│           ├── models
+│           └── services
 ├── tests
 ├── docker-compose.yaml
 ├── Makefile

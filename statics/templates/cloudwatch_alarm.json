@@ -14,10 +14,15 @@
         {
           "type": "context",
           "elements": [
-            { "type": "mrkdwn", "text": "*Account: {{account}}  |  {{region}}*" }
+            {
+              "type": "mrkdwn",
+              "text": "*Account: {{account}}  |  {{region}}*"
+            }
           ]
         },
-        { "type": "divider" },
+        {
+          "type": "divider"
+        },
         {
           "type": "section",
           "fields": [
@@ -25,7 +30,10 @@
               "type": "mrkdwn",
               "text": "* :bar_chart: Metric:*\n{{metric_namespace}}/{{metric_name}}"
             },
-            { "type": "mrkdwn", "text": "* :alarm_clock: Time:*\n{{time}}" }
+            {
+              "type": "mrkdwn",
+              "text": "* :alarm_clock: Time:*\n{{time}}"
+            }
           ]
         },
         {
@@ -44,7 +52,10 @@
         },
         {
           "type": "section",
-          "text": { "type": "mrkdwn", "text": "* Dimensions:*\n{% for k, v in metric_dimensions.items() %}• *{{k}}*: `{{v}}`{%endfor%}" }
+          "text": {
+            "type": "mrkdwn",
+            "text": "* Dimensions:*\n{% for k, v in metric_dimensions.items() %}• *{{k}}*: `{{v}}`{%endfor%}"
+          }
         }
       ]
     }

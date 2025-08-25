@@ -1,13 +1,13 @@
-from src.modules.master.models import Master
-from src.modules.master.services.db.models import MasterPersistence
+from src.infras.db.models import AgentPersistence
+from src.modules.master.models import Agent
 
 
-class MasterMapper:
+class AgentMapper:
     @classmethod
-    def to_persistence(cls, model: Master) -> MasterPersistence:
-        return MasterPersistence(
+    def to_persistence(cls, model: Agent) -> AgentPersistence:
+        return AgentPersistence(
             # Keys
-            pk="MASTER",
+            pk="AGENT",
             sk=model.id,
             # Attributes
             region=model.region,
@@ -17,8 +17,8 @@ class MasterMapper:
         )
 
     @classmethod
-    def to_model(cls, persistence: MasterPersistence) -> Master:
-        return Master(
+    def to_model(cls, persistence: AgentPersistence) -> Agent:
+        return Agent(
             id=persistence.sk,
             region=persistence.region,
             status=persistence.status,

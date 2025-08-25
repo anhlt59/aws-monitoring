@@ -14,14 +14,22 @@
         {
           "type": "context",
           "elements": [
-            { "type": "mrkdwn", "text": "*Account: {{account}}  |  {{region}}*" }
+            {
+              "type": "mrkdwn",
+              "text": "*Account: {{account}}  |  {{region}}*"
+            }
           ]
         },
-        { "type": "divider" },
+        {
+          "type": "divider"
+        },
         {
           "type": "section",
           "fields": [
-            { "type": "mrkdwn", "text": ":label:*Type:*\n{{finding_type}}" },
+            {
+              "type": "mrkdwn",
+              "text": ":label:*Type:*\n{{finding_type}}"
+            },
             {
               "type": "mrkdwn",
               "text": ":beginner:*Severity:*\n{{severity_label}}"
@@ -30,12 +38,18 @@
               "type": "mrkdwn",
               "text": ":chart_with_upwards_trend:*Count:*\n{{count}}"
             },
-            { "type": "mrkdwn", "text": ":alarm_clock:*Time:*\n{{created_at}}" }
+            {
+              "type": "mrkdwn",
+              "text": ":alarm_clock:*Time:*\n{{created_at}}"
+            }
           ]
         },
         {
           "type": "section",
-          "text": { "type": "mrkdwn", "text": "*Description:*\n{{description}}" }
+          "text": {
+            "type": "mrkdwn",
+            "text": "*Description:*\n{{description}}"
+          }
         },
         {
           "type": "section",

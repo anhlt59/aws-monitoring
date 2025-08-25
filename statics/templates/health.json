@@ -14,19 +14,30 @@
         {
           "type": "context",
           "elements": [
-            { "type": "mrkdwn", "text": "*Account: {{account}}  |  {{region}}*" }
+            {
+              "type": "mrkdwn",
+              "text": "*Account: {{account}}  |  {{region}}*"
+            }
           ]
         },
-        { "type": "divider" },
+        {
+          "type": "divider"
+        },
         {
           "type": "section",
           "fields": [
-            { "type": "mrkdwn", "text": "* :gear: Service:*\n{{service}}" },
+            {
+              "type": "mrkdwn",
+              "text": "* :gear: Service:*\n{{service}}"
+            },
             {
               "type": "mrkdwn",
               "text": "* :label: Category:*\n{{event_type_category}}"
             },
-            { "type": "mrkdwn", "text": "* :beginner: Status:*\n{{status}}" },
+            {
+              "type": "mrkdwn",
+              "text": "* :beginner: Status:*\n{{status}}"
+            },
             {
               "type": "mrkdwn",
               "text": "* :calendar: Start Time:*\n{{start_time}}"
@@ -35,7 +46,10 @@
         },
         {
           "type": "section",
-          "text": { "type": "mrkdwn", "text": "*Description:*\n{{description}}" }
+          "text": {
+            "type": "mrkdwn",
+            "text": "*Description:*\n{{description}}"
+          }
         },
         {
           "type": "section",
