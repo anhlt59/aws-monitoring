@@ -76,6 +76,7 @@
         "logs:Untag*"
       ],
       "Resource": [
+        "arn:aws:logs:${AWS_REGION}:${AWS_ACCOUNT_ID}:log-group:/aws/lambda/monitoring*",
         "arn:aws:logs:${AWS_REGION}:${AWS_ACCOUNT_ID}:log-group:/aws/lambda/monitoring*:*"
       ]
     },
@@ -166,6 +167,7 @@
         "dynamodb:UpdateTable",
         "dynamodb:DeleteTable",
         "dynamodb:TagResource",
+        "dynamodb:UntagResource",
         "dynamodb:UpdateTimeToLive",
         "dynamodb:UpdateContinuousBackups"
       ],

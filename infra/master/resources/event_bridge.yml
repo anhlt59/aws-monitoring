@@ -45,7 +45,7 @@ MonitoringEventRule:
         DeadLetterConfig:
           Arn: !GetAtt MonitoringEventRuleDLQ.Arn
 
-AgentDeploymentEventRule:
+DeploymentEventRule:
   Type: AWS::Events::Rule
   Properties:
     Name: "${self:service}-AgentDeploymentEventRule"
@@ -56,7 +56,7 @@ AgentDeploymentEventRule:
         "source": ["aws.cloudformation"],
         "detail-type": ["CloudFormation Stack Status Change"],
         "detail": {
-          "stack-id": [{ "wildcard": "*stack/monitoring-agent*"}]
+          "stack-id": [{ "wildcard": "*stack/monitoring*"}]
         }
       }
     State: ENABLED
@@ -67,24 +67,35 @@ AgentDeploymentEventRule:
         DeadLetterConfig:
           Arn: !GetAtt MonitoringEventRuleDLQ.Arn
 
-MasterDeploymentEventRule:
+MonitoringMasterEventRule:
   Type: AWS::Events::Rule
   Properties:
-    Name: "${self:service}-MasterDeploymentEventRule"
-    Description: Rule to handle cloudformation deployment events v1.0.1
+    Name: ${self:service}-MonitoringMasterEventRule
+    Description: Publish monitoring events (from default EventBus) to monitoring EventBus v1.0.1
     EventBusName: default
     EventPattern: |
       {
-        "source": ["aws.cloudformation"],
-        "detail-type": ["CloudFormation Stack Status Change"],
-        "detail": {
-          "stack-id": [{ "wildcard": "*stack/monitoring-master*"}]
-        }
+        "$or": [
+          {
+            "source": ["aws.guardduty", "aws.health"],
+            "detail-type": ["GuardDuty Finding", "AWS Health Event"]
+          },
+          {
+            "source": ["aws.cloudformation"],
+            "detail-type": ["CloudFormation Stack Status Change"],
+            "detail": {
+              "status-details": {
+                "status": [ { "wildcard": "*COMPLETE" }, { "wildcard": "*FAILED" }]
+              },
+              "stack-id": [{ "wildcard": "*stack/monitoring*"}]
+            }
+          }
+        ]
       }
     State: ENABLED
     Targets:
-      - Arn: !GetAtt UpdateAgentDeploymentLambdaFunction.Arn
-        Id: "${self:service}-EventHandler"
+      - Arn: !GetAtt MonitoringEventBus.Arn
+        Id: ${self:service}-MonitoringEventBusTarget
         RoleArn: !GetAtt EventBridgeRole.Arn
         DeadLetterConfig:
           Arn: !GetAtt MonitoringEventRuleDLQ.Arn

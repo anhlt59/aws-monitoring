@@ -42,3 +42,16 @@ def test_handle_alarm_event(event_repo):
     assert event.region == "us-east-1"
     assert event.source == "aws.cloudwatch"
     assert event.detail_type == "CloudWatch Alarm State Change"
+
+
+def test_handle_cwlog_event(event_repo):
+    cwlog_event = load_event(TEST_DIR / "data" / "logs_event.json")
+    # slack_client.send = MagicMock(side_effect=lambda *a, **kw: None)
+    handler(cwlog_event, None)
+
+    event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")
+    assert event is not None
+    assert event.account == "000000000000"
+    assert event.region == "us-east-1"
+    assert event.source == "aws.cloudwatch"
+    assert event.detail_type == "CloudWatch Alarm State Change"

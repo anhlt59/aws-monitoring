@@ -96,8 +96,8 @@ resources:
     # EventBridge
     MonitoringEventBus: ${file(infra/master/resources/event_bridge.yml):MonitoringEventBus}
     MonitoringEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringEventRule}
-    AgentDeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):AgentDeploymentEventRule}
-    MasterDeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):MasterDeploymentEventRule}
+    MonitoringMasterEventRule: ${file(infra/master/resources/event_bridge.yml):MonitoringMasterEventRule}
+    DeploymentEventRule: ${file(infra/master/resources/event_bridge.yml):DeploymentEventRule}
     # SQS
     MonitoringEventRuleDLQ: ${file(infra/master/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB
