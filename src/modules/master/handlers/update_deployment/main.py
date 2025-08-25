@@ -74,7 +74,7 @@ def handler(event: CfnStackEvent, context):
             upsert_agent(event)
 
         notifier.notify(event)
-        logger.info(f"Sent Event<{event.get_id}> notification")
+        logger.info(f"Sent Event<{event.get_id}> successfully")
 
     else:
         logger.warning(f"Unsupported event source: {event.source}")

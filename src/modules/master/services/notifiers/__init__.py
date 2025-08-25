@@ -1,4 +1,4 @@
-from .base import Message, SlackClient
+from .base import Message, SlackClient, render_message
 from .event_notifiers import (
     CloudFormationNotifier,
     CWAlarmNotifier,
@@ -9,6 +9,7 @@ from .event_notifiers import (
 )
 
 __all__ = [
+    "render_message",
     "SlackClient",
     "EventNotifier",
     "Message",

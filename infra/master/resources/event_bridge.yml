@@ -48,8 +48,8 @@ MonitoringEventRule:
 DeploymentEventRule:
   Type: AWS::Events::Rule
   Properties:
-    Name: "${self:service}-AgentDeploymentEventRule"
-    Description: Rule to handle cloudformation deployment events v1.0.1
+    Name: "${self:service}-DeploymentEventRule"
+    Description: Rule to handle cloudformation deployment events (agent & master) v1.0.1
     EventBusName: !Ref MonitoringEventBus
     EventPattern: |
       {
@@ -61,7 +61,7 @@ DeploymentEventRule:
       }
     State: ENABLED
     Targets:
-      - Arn: !GetAtt UpdateAgentDeploymentLambdaFunction.Arn
+      - Arn: !GetAtt UpdateDeploymentLambdaFunction.Arn
         Id: "${self:service}-EventHandler"
         RoleArn: !GetAtt EventBridgeRole.Arn
         DeadLetterConfig:

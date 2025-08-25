@@ -11,9 +11,8 @@ from src.common.meta import SingletonMeta
 class EventBridgeService(metaclass=SingletonMeta):
     client: EventBridgeClient
 
-    def __init__(self, bus_name: str = "default"):
+    def __init__(self):
         self.client = boto3.client("events", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
-        self.bus_name = bus_name
 
     def put_events(self, *events: PutEventsRequestEntryTypeDef):
         """Publish an event to the AWS EventBus."""

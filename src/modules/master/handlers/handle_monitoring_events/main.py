@@ -54,7 +54,7 @@ def push_notification(event: EventBridgeEvent):
             logger.warning(f"Event<{event.get_id}>: Unknown event source '{event.source}'")
             raise ValueError(f"Unknown event source: {event.source}")
     notifier.notify(event)
-    logger.info(f"Sent Event<{event.get_id}> notification")
+    logger.info(f"Sent Event<{event.get_id}> successfully")
 
 
 # @logger.inject_lambda_context(log_event=True)
