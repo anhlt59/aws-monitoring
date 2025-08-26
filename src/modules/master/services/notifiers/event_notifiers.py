@@ -13,6 +13,7 @@ from src.modules.master.configs import (
     CW_LOG_TEMPLATE_FILE,
     GUARDDUTY_TEMPLATE_FILE,
     HEALTH_TEMPLATE_FILE,
+    METADATA,
 )
 
 from .base import Message, SlackClient, render_message
@@ -48,8 +49,7 @@ class CWAlarmNotifier(EventNotifier):
             context={
                 "emoji": emoji,
                 "color": color,
-                "account": event.account,
-                "region": event.region,
+                "account": {"id": event.account, "name": METADATA.get(event.account), "region": event.region},
                 "alarm_name": event.detail.alarm_name,
                 "alarm_description": event.detail.configuration.description,
                 "alarm_reason": event.detail.state.reason,
@@ -64,18 +64,17 @@ class CWAlarmNotifier(EventNotifier):
 class CWLogNotifier(EventNotifier):
     @staticmethod
     def event_to_message(event: EventBridgeEvent) -> Message:
-        cw_log_event = CwLogEvent(event)
+        event = CwLogEvent(event)
         return render_message(
             CW_LOG_TEMPLATE_FILE,
             context={
                 "emoji": ":warning:",
                 "color": "#FF0000",
-                "account": cw_log_event.account,
-                "region": cw_log_event.region,
-                "detail_type": cw_log_event.detail_type,
-                "log_group_name": cw_log_event.detail.log_group_name,
-                "logs": cw_log_event.detail.logs,
-                "time": cw_log_event.time,
+                "account": {"id": event.account, "name": METADATA.get(event.account), "region": event.region},
+                "detail_type": event.detail_type,
+                "log_group_name": event.detail.log_group_name,
+                "logs": event.detail.logs,
+                "time": event.time,
             },
         )
 
@@ -99,8 +98,7 @@ class GuardDutyNotifier(EventNotifier):
             context={
                 "emoji": ":shield:",
                 "color": color,
-                "account": event.account,
-                "region": event.region,
+                "account": {"id": event.account, "name": METADATA.get(event.account), "region": event.region},
                 "title": event.detail.title,
                 "finding_type": event.detail.finding_type,
                 "severity_label": severity_label,
@@ -129,8 +127,7 @@ class HealthNotifier(EventNotifier):
             context={
                 "emoji": emoji,
                 "color": color,
-                "account": event.account,
-                "region": event.region,
+                "account": {"id": event.account, "name": METADATA.get(event.account), "region": event.region},
                 "service": event.detail.service,
                 "event_type_code": event.detail.event_type_code,
                 "event_type_category": event.detail.event_type_category,
@@ -162,8 +159,7 @@ class CloudFormationNotifier(EventNotifier):
             context={
                 "color": color,
                 "emoji": emoji,
-                "account": event.account,
-                "region": event.region,
+                "account": {"id": event.account, "name": METADATA.get(event.account), "region": event.region},
                 "stack_name": event.stack_data.name,
                 "stack_status": event.stack_data.status,
                 "stack_status_reason": event.stack_data.status_reason,

@@ -24,6 +24,12 @@ class ReportNotifier:
     def __init__(self, client: SlackClient):
         self.client = client
 
+    # def _categorize_by_account_id(self, events: list[Event]) -> dict[str, list[Event]]:
+    #     results = defaultdict(list)
+    #     for event in events:
+    #         results[event.account].append(event)
+    #     return results
+
     @staticmethod
     def events_to_message(events: list[Event]) -> Message:
         report_date = datetime.now(UTC).strftime("%Y-%m-%d")

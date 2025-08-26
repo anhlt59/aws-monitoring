@@ -46,7 +46,7 @@ def test_handle_alarm_event(event_repo):
 
 def test_handle_cwlog_event(event_repo):
     cwlog_event = load_event(TEST_DIR / "data" / "logs_event.json")
-    # slack_client.send = MagicMock(side_effect=lambda *a, **kw: None)
+    slack_client.send = MagicMock(side_effect=lambda *a, **kw: None)
     handler(cwlog_event, None)
 
     event = event_repo.get("1735689600-00000000-0000-0000-0000-000000000000")

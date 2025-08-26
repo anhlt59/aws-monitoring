@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": "{{emoji}} Health Event: {{event_type_code}}",
+            "text": "{{emoji}} ({{account['name']}}) Health Event: {{event_type_code}}",
             "emoji": true
           }
         },
@@ -16,7 +16,7 @@
           "elements": [
             {
               "type": "mrkdwn",
-              "text": "*Account: {{account}}  |  {{region}}*"
+              "text": "*Account: {{account['id']}}  | {{account['region']}}*"
             }
           ]
         },

@@ -13,9 +13,16 @@ HEALTH_TEMPLATE_FILE = "health.json"
 CFN_TEMPLATE_FILE = "cfn_deployment.json"
 REPORT_TEMPLATE_FILE = "daily_report.json"
 
-META_DATA_FILE = STATIC_DIR / "metadata.json"
-
 # Webhook URLs
 REPORT_WEBHOOK_URL = os.environ.get("REPORT_WEBHOOK_URL")
 MONITORING_WEBHOOK_URL = os.environ.get("MONITORING_WEBHOOK_URL")
 DEPLOYMENT_WEBHOOK_URL = os.environ.get("DEPLOYMENT_WEBHOOK_URL")
+
+# TODO:
+# 1. Restructure metadata
+# 2. Load metadata from environment or database
+METADATA = {
+    "000000000000": "LocalStack",
+    "746166211068": "CM",
+    "728171922033": "Neos",
+}

@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": "{{emoji}} CloudFormation: {{stack_name}}",
+            "text": "{{emoji}} ({{account['name']}}) CloudFormation: {{stack_name}}",
             "emoji": true
           }
         },
@@ -16,7 +16,7 @@
           "elements": [
             {
               "type": "mrkdwn",
-              "text": "*Account:* {{account}}  |  *Region:* {{region}}"
+              "text": "*Account: {{account['id']}}  | {{account['region']}}*"
             }
           ]
         },

@@ -7,7 +7,7 @@ from .base import PaginatedInputDTO
 
 # Model
 class Event(BaseModel):
-    id: str
+    id: str  # AWS EventID
     account: str
     region: str | None = None
     source: str

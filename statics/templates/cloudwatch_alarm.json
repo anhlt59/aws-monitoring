@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": "{{emoji}} CloudWatch Alarm: {{alarm_name}}",
+            "text": "{{emoji}} ({{account['name']}}) CloudWatch Alarm: {{alarm_name}}",
             "emoji": true
           }
         },
@@ -16,7 +16,7 @@
           "elements": [
             {
               "type": "mrkdwn",
-              "text": "*Account: {{account}}  |  {{region}}*"
+              "text": "*Account: {{account['id']}}  | {{account['region']}}*"
             }
           ]
         },

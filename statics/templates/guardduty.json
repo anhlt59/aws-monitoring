@@ -7,7 +7,7 @@
           "type": "header",
           "text": {
             "type": "plain_text",
-            "text": ":shield: GuardDuty: {{title}}",
+            "text": ":shield: ({{account['name']}}) GuardDuty: {{title}}",
             "emoji": true
           }
         },
@@ -16,7 +16,7 @@
           "elements": [
             {
               "type": "mrkdwn",
-              "text": "*Account: {{account}}  |  {{region}}*"
+              "text": "*Account: {{account['id']}}  | {{account['region']}}*"
             }
           ]
         },

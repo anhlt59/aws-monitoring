@@ -5,7 +5,7 @@ from src.common.utils.datetime_utils import current_utc_timestamp
 
 # Model
 class Agent(BaseModel):
-    id: str
+    id: str  # AWS AccountID
     region: str
     status: str | None = None
     deployed_at: int

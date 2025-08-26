@@ -8,7 +8,7 @@ from .base import DynamoModel, KeyAttribute
 class AgentPersistence(DynamoModel, discriminator="AGENT"):
     # Keys
     pk = KeyAttribute(hash_key=True, default="AGENT")
-    sk = KeyAttribute(range_key=True, prefix="AGENT#")
+    sk = KeyAttribute(range_key=True, prefix="AGENT#")  # AGENT#{AWS AccountID}
     # Attributes
     region = UnicodeAttribute(null=False)
     status = UnicodeAttribute(null=True)
