@@ -13,7 +13,7 @@ load_dotenv(BASE_DIR / ".env.local")
 from src.modules.master.models import Agent, Event  # noqa
 
 # fmt: off
-from src.modules.master.services.repositories import AgentRepository, EventRepository, MasterRepository  # noqa
+from src.modules.master.services.repositories import AgentRepository, EventRepository  # noqa
 
 # fmt: on
 
@@ -31,15 +31,6 @@ def event_repo():
 @pytest.fixture()
 def agent_repo():
     repo = AgentRepository()
-    yield repo
-    # Cleanup
-    for item in repo.list().items:
-        repo.delete(item.persistence_id)
-
-
-@pytest.fixture()
-def master_repo():
-    repo = MasterRepository()
     yield repo
     # Cleanup
     for item in repo.list().items:
