@@ -13,6 +13,7 @@ class EventPersistence(DynamoModel, discriminator="EVENT"):
     source = UnicodeAttribute(null=False)
     detail = UnicodeAttribute(null=False)
     detail_type = UnicodeAttribute(null=True)
+    severity = NumberAttribute(default=0)
     resources = ListAttribute(null=True, default=lambda: [])
     published_at = NumberAttribute(null=False)
     expired_at = NumberAttribute(null=True)

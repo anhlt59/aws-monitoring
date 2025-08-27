@@ -13,6 +13,7 @@ class Event(BaseModel):
     source: str
     detail: dict
     detail_type: str | None = None
+    severity: int = 0
     resources: list[str] = []
     published_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
