@@ -1,0 +1,48 @@
+{
+  "attachments": [
+    {
+      "color": "{{color}}",
+      "blocks": [
+        {
+          "type": "header",
+          "text": {
+            "type": "plain_text",
+            "text": ":bar_chart: Daily Report",
+            "emoji": true
+          }
+        },
+        {
+          "type": "context",
+          "elements": [
+            {
+              "type": "mrkdwn",
+              "text": "*Date: {{date}} | Total: {{total}}*"
+            }
+          ]
+        }
+        {% for stat in statistics %}
+        , {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "{% if stat.total == 0 %}:white_check_mark:{% else %}:warning:{% endif %}*  {{ stat.name }}*"
+          }
+        }
+        {% if stat.total > 0 %}
+        , {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "```{% if stat.events.critical %}Critical: {% for event in stat.events.critical %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
+          {% if stat.events.high %}High: {% for event in stat.events.high %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
+          {% if stat.events.medium %}Medium: {% for event in stat.events.medium %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
+          {% if stat.events.low %}Low: {% for event in stat.events.low %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
+          {% if stat.events.unknown %}Unknown: {% for event in stat.events.unknown %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}```"
+          }
+        }
+        {% endif %}
+        {% endfor %}
+      ]
+    }
+  ]
+}

@@ -1,64 +1,81 @@
-from datetime import UTC, datetime
+from collections import defaultdict
+from datetime import date
 
 from pydantic import BaseModel
 
-from src.modules.master.configs import REPORT_TEMPLATE_FILE
-from src.modules.master.models import Event
+from src.modules.master.configs import METADATA, REPORT_TEMPLATE_FILE
+from src.modules.master.models.event import Event, Severity
 
 from .base import Message, SlackClient, render_message
 
 
-class ProjectStatistic(BaseModel):
+class ReportInput(BaseModel):
+    date: date
+    events: list[Event]
+
+
+class EventCategories(BaseModel):
+    critical: list[Event] = []
+    high: list[Event] = []
+    medium: list[Event] = []
+    low: list[Event] = []
+    unknown: list[Event] = []
+
+
+class AccountStatistic(BaseModel):
+    id: str
     name: str
-    total: int
-    event_type_stats: dict[str, int]
+    events: EventCategories
 
-
-class ReportContext(BaseModel):
-    date: str
-    total: int
-    projects: list[ProjectStatistic]
+    @property
+    def total(self) -> int:
+        return (
+            len(self.events.critical)
+            + len(self.events.high)
+            + len(self.events.medium)
+            + len(self.events.low)
+            + len(self.events.unknown)
+        )
 
 
 class ReportNotifier:
     def __init__(self, client: SlackClient):
         self.client = client
 
-    # def _categorize_by_account_id(self, events: list[Event]) -> dict[str, list[Event]]:
-    #     results = defaultdict(list)
-    #     for event in events:
-    #         results[event.account].append(event)
-    #     return results
-
     @staticmethod
-    def events_to_message(events: list[Event]) -> Message:
-        report_date = datetime.now(UTC).strftime("%Y-%m-%d")
+    def make_report(data: ReportInput) -> Message:
+        # Categorize events by account and severity
+        events_categories = defaultdict(EventCategories)
+        for _id in METADATA:
+            events_categories[_id] = EventCategories()
 
-        # Build statistics
-        total_events = len(events)
-        event_type_stats = {}
-        top_events = []
-        for event in events:
-            event_type = getattr(event, "type", "Unknown")
-            event_type_stats[event_type] = event_type_stats.get(event_type, 0) + 1
-            # Add top events (customize as needed)
-            if len(top_events) < 5:
-                top_events.append(
-                    {
-                        "summary": getattr(event, "summary", str(event)),
-                        "type": event_type,
-                        "time": getattr(event, "time", ""),
-                    }
-                )
+        for event in data.events:
+            stats = events_categories[event.account]
+            match event.severity:
+                case Severity.CRITICAL:
+                    stats.critical.append(event)
+                case Severity.HIGH:
+                    stats.high.append(event)
+                case Severity.MEDIUM:
+                    stats.medium.append(event)
+                case Severity.LOW:
+                    stats.low.append(event)
+                case _:
+                    stats.unknown.append(event)
+
+        # Prepare statistics for rendering
+        statistics = [
+            AccountStatistic(id=_id, name=METADATA[_id], events=events_categories[_id]) for _id in events_categories
+        ]
+
         context = {
-            "color": "#36a64f",
-            "report_date": report_date,
-            "total_events": total_events,
-            "event_type_stats": event_type_stats,
-            "top_events": top_events,
+            "color": "#4089a3",
+            "date": data.date,
+            "total": len(data.events),
+            "statistics": statistics,
         }
         return render_message(REPORT_TEMPLATE_FILE, context)
 
-    def notify(self, events: list[Event]):
-        message = self.events_to_message(events)
+    def report(self, data: ReportInput):
+        message = self.make_report(data)
         self.client.send(message)

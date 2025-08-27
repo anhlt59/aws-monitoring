@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timezone
+from datetime import UTC, date, datetime, timezone
 
 
 def current_utc_timestamp() -> int:
@@ -20,3 +20,7 @@ def round_n_minutes(dt: datetime, n: int = 5) -> datetime:
     new_minute = (dt.minute // n) * n
     rounded_time = dt.replace(minute=new_minute, second=0, microsecond=0)
     return rounded_time
+
+
+def timestamp_to_date(ts: int) -> date:
+    return datetime.fromtimestamp(ts, tz=UTC).date()

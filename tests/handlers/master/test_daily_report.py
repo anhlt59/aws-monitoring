@@ -1,38 +1,33 @@
-# import pytest
-#
-# from src.common.exceptions import NotFoundError
-# from src.modules.master.handlers.daily_report.main import handler
-# from tests.conftest import TEST_DIR
-# from tests.mock import load_event
-#
-#
-# def test_normal_case(agent_repo, master_repo):
-#     # Agent
-#     event = load_event(TEST_DIR / "data" / "cloudformation_event.json")
-#     # notifier.client.send = MagicMock(side_effect=lambda *a, **kw: None)
-#     handler(event, None)
-#     agent = agent_repo.get("000000000000")
-#     assert agent.status == "CREATE_COMPLETE"
-#
-#     event.detail["status-details"]["status"] = "UPDATE_FAILED"
-#     # notifier.client.send = MagicMock(side_effect=lambda *a, **kw: None)
-#     handler(event, None)
-#     agent = agent_repo.get("000000000000")
-#     assert agent.status == "UPDATE_FAILED"
-#
-#     event.detail["status-details"]["status"] = "DELETE_COMPLETE"
-#     # notifier.client.send = MagicMock(side_effect=lambda *a, **kw: None)
-#     handler(event, None)
-#     agent = agent_repo.get("000000000000")
-#     assert agent.status == "DELETE_COMPLETE"
-#
-#
-#
-# def test_abnormal_case(agent_repo):
-#     event = load_event(TEST_DIR / "data" / "health_event.json")
-#     handler(event, None)
-#
-#     with pytest.raises(NotFoundError):
-#         agent_repo.get("000000000000")
-#     with pytest.raises(NotFoundError):
-#         agent_repo.get("000000000000")
+import time
+from unittest.mock import Mock
+from uuid import uuid4
+
+from src.modules.master.handlers.daily_report.main import handler, notifier
+from src.modules.master.models import Event
+from src.modules.master.services.repositories import EventRepository
+
+
+def test_normal_case(event_repo: EventRepository):
+    # Create dummy events
+    now = int(time.time())
+    for i in range(5):
+        event = Event(
+            id=f"{now}-{uuid4()}",
+            account="000000000000",
+            region="us-east-1",
+            source="agent.test",
+            detail={"message": f"Test event {i}"},
+            detail_type="TestEvent",
+            resources=[],
+            published_at=now - 86400 - i * 60,
+            updated_at=now - 86400 - i * 60,
+        )
+        event_repo.create(event)
+
+    # Mock the notifier's report method
+    notifier.report = Mock()
+
+    # Invoke the handler
+    handler(None, None)
+
+    notifier.report.assert_called_once()

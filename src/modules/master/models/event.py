@@ -1,8 +1,18 @@
+from enum import Enum
+
 from pydantic import BaseModel, Field, model_validator
 
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 from .base import PaginatedInputDTO
+
+
+class Severity(int, Enum):
+    CRITICAL = 4
+    HIGH = 3
+    MEDIUM = 2
+    LOW = 1
+    UNKNOWN = 0
 
 
 # Model
@@ -13,7 +23,7 @@ class Event(BaseModel):
     source: str
     detail: dict
     detail_type: str | None = None
-    severity: int = 0
+    severity: Severity = Severity.UNKNOWN
     resources: list[str] = []
     published_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
