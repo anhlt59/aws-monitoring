@@ -11,7 +11,10 @@ MonitoringEventBus:
             "Sid": "AllowLambdaToPutEvents",
             "Effect": "Allow",
             "Principal": {
-              "AWS": "*"
+              "AWS": [
+                "772468693720",
+                "728171922033"
+              ]
             },
             "Action": "events:PutEvents",
             "Resource": "*"
