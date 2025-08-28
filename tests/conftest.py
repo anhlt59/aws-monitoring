@@ -61,15 +61,3 @@ def dummy_agent(agent_repo):
     )
     agent_repo.create(agent)
     yield agent
-
-
-if __name__ == "__main__":
-    event_repo = EventRepository()
-    for i in range(10):
-        event = Event(
-            id=f"event-{i}",
-            account="000000000000",
-            source="test-source",
-            detail={"key": f"value-{i}"},
-        )
-        event_repo.create(event)

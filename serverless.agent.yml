@@ -45,7 +45,6 @@ provider:
 plugins:
   - serverless-plugin-utils
   - serverless-python-requirements
-  - ./infra/agent/plugins/jsonUtil.js
 
 useDotenv: true
 

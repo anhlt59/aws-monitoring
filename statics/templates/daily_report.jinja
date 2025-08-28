@@ -33,11 +33,7 @@
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": "```{% if stat.events.critical %}Critical: {% for event in stat.events.critical %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
-          {% if stat.events.high %}High: {% for event in stat.events.high %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
-          {% if stat.events.medium %}Medium: {% for event in stat.events.medium %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
-          {% if stat.events.low %}Low: {% for event in stat.events.low %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}
-          {% if stat.events.unknown %}Unknown: {% for event in stat.events.unknown %}\n - {{ event.detail_type }}{% endfor %}{% endif -%}```"
+              "text": "```{% if stat.statistics %}{% for type, count in stat.statistics.items() %}\n • {{ type }}: {{ count }}{% endfor %}{% endif -%}```"
           }
         }
         {% endif %}
