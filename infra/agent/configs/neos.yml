@@ -1,0 +1,30 @@
+Region: us-east-1
+Profile: neos
+
+# AWS Services
+IAM:
+  DeploymentRole: arn:aws:iam::728171922033:role/monitoring-DeploymentRole
+
+S3:
+  DeploymentBucket:
+    Name: monitoring-neos-deployment
+
+Lambda:
+  Environment:
+    LOG_LEVEL: DEBUG
+  LogRetentionInDays: 7
+
+MonitoringConfigs:
+  EventBusArn: arn:aws:events:us-east-1:728171922033:event-bus/monitoring-master-neos-MonitoringEventBus
+  Health:
+    State: enabled
+  GuardDuty:
+    State: enabled
+  CloudwatchLogs:
+    State: enabled
+    Schedule: rate(15 minutes)
+    Query: |
+      fields @message, @log, @logStream
+      | filter @message like /(?i)(error|fail|exception)/
+      | sort @timestamp desc
+      | limit 200

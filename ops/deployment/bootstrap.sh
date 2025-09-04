@@ -45,6 +45,7 @@ echo -e "${BLUE}* AWS profile  ${AWS_PROFILE}${RESET}"
 echo -e "${BLUE}* AWS region   ${AWS_DEFAULT_REGION}${RESET}${RESET}"
 echo -e "${BLUE}===============================${RESET}\n"
 
+# S3 BUCKET ------------------------------------------------------------------------------------------------------------
 # Read S3 deployment bucket name from CONFIG_FILE using yq
 # Then check if the S3 deployment bucket exists, create if not
 echo -e "${GREEN}Bootstrapping S3...${RESET}"
@@ -60,6 +61,7 @@ else
     echo -e "${GREEN}S3 bucket '$DEPLOYMENT_BUCKET' created.${RESET}"
 fi
 
+# IAM POLICY -----------------------------------------------------------------------------------------------------------
 # Create or update IAM role & policy for deployment
 echo -e "${GREEN}\nBootstrapping IAM Role & Policy...${RESET}"
 ROLE_NAME="monitoring-DeploymentRole"
@@ -96,6 +98,7 @@ else
     echo -e "${GREEN}IAM policy '$POLICY_NAME' created.${RESET}"
 fi
 
+# IAM ROLE -------------------------------------------------------------------------------------------------------------
 # Create IAM role, if the role doesn't exist
 if aws iam get-role --role-name "$ROLE_NAME" >/dev/null 2>&1; then
     echo -e "${GREEN}IAM role '$ROLE_NAME' already exists.${RESET}"

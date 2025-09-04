@@ -36,3 +36,43 @@ function start_localstack() {
         echo -e "${GREEN}LocalStack is already running.${RESET}"
     fi
 }
+
+function upsert_ssm_parameter() {
+    local name="$1"
+    local value="$2"
+    local type="${3:-String}"
+    aws --endpoint-url "$LOCALSTACK_ENDPOINT" --region "$LOCALSTACK_REGION" ssm put-parameter \
+        --name "$name" --value "$value" --type "$type" --overwrite
+    if [[ $? -eq 0 ]]; then
+        echo -e "${GREEN}SSM parameter '$name' updated.${RESET}"
+    else
+        echo -e "${RED}Failed to update SSM parameter.${RESET}"
+    fi
+}
+
+function delete_ssm_parameter() {
+    local name="$1"
+    aws --endpoint-url "$LOCALSTACK_ENDPOINT" --region "$LOCALSTACK_REGION" ssm delete-parameter --name "$name"
+    if [[ $? -eq 0 ]]; then
+        echo -e "${GREEN}SSM parameter '$name' deleted.${RESET}"
+    else
+        echo -e "${RED}Failed to delete SSM parameter.${RESET}"
+    fi
+}
+
+function get_ssm_parameter() {
+    local name="$1"
+    aws --endpoint-url "$LOCALSTACK_ENDPOINT" --region "$LOCALSTACK_REGION" ssm get-parameter --name "$name" --query 'Parameter.Value' --output text 2>/dev/null
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}SSM parameter '$name' not found.${RESET}"
+    fi
+}
+
+function confirm_continue() {
+    local message="${1:-Do you want to continue? [y/N]: }"
+    read -p "$message" CONFIRM
+    if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+        echo "Aborted by user."
+        exit 1
+    fi
+}
