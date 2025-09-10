@@ -1,15 +1,10 @@
-# Development
+# Local Development Guide
 
-<!-- TOC -->
+This guide provides instructions for setting up and running the AWS Monitoring project on your local machine.
 
-* [Development](#development)
-  * [Pre-Installation Requirements](#pre-installation-requirements)
-  * [Installation](#installation)
-  * [Development](#development-1)
+## Prerequisites
 
-<!-- TOC -->
-
-## Pre-Installation Requirements
+Before you can run the project locally, you need to have the following prerequisites installed:
 
 - [Python 3.12](https://www.python.org/downloads/)
 - [NodeJs 23.0.0](https://nodejs.org/en/download/)
@@ -18,73 +13,22 @@
 
 ## Installation
 
-* Run `make install` at the root of the project to install all dependencies and set up the environment.
+1.  **Install dependencies:** Run `make install` to install all the required dependencies.
+2.  **Activate the virtual environment:** Run `make activate` to activate the virtual environment.
 
-  ```sh
-  ❯ make install
-  Installing python dependencies...
-  Installing dependencies from lock file
-  
-  No dependencies to install or update
-  
-  Installing the current project: src (1.0.0)
-  Installing node dependencies...
-  Lockfile is up to date, resolution step is skipped
-  Already up to date
-  
-  Done in 431ms using pnpm v10.9.0
-  Installing pre-commit hooks...
-  pre-commit installed at .git/hooks/pre-commit
-  pre-commit installed at .git/hooks/pre-push
-  pre-commit installed at .git/hooks/commit-msg
-  Done
-  ```
+## Running the Local Environment
 
-## Development
+1.  **Start LocalStack:** Run `make start` to start the LocalStack container. This will create a local AWS environment on your machine.
+2.  **Deploy the stacks:** Run `make deploy-local` to deploy the master and agent stacks to the local environment.
 
-* `make` or `make help` to see available commands.
+## Available Commands
 
-  ```sh
-    ❯ make 
-    install              Install the packages
-    activate             Activate the virtual environment
-    start                Start the local master server
-    prepare-neos         Prepare s3 and iam roles for NEOS environment
-    deploy-local         Deploy to the local environment
-    deploy-neos          Deploy to the NEOS environment
-    package-local        Create artifacts for local deployment
-    package-neos         Create artifacts for NEOS deployment
-    delete-local         Delete the local deployment
-    delete-neos          Delete the NEOS deployment
-    test                 Run the tests
-    coverage             Check code coverage
-  ```
+The following `make` commands are available for local development:
 
-* `make activate` to activate the virtual environment (Python & NodeJS).
-    ```sh
-    ❯ make activate
-    Virtual environment activated.
-    ```
-
-* `make start` to start the local development environment.
-    ```sh
-    ❯ make start  
-    Starting LocalStack...
-    [+] Running 1/1
-     ✔ Container localstack  Started                                                                                                                                                                                                                                                                                0.3s 
-    LocalStack started successfully.
-    ```
-
-* `make deploy-local` to deploy the local environment.
-    ```sh
-    ❯ make deploy-local
-    Deploying 'monitoring-agent' in stage 'local'...
-    pnpm exec sls deploy --stage local --config serverless.agent.local.yml
-    ...
-    Service deployed to stack 'monitoring-agent-local' (1s)   
-
-    Deploying 'monitoring-master' in stage 'local'...
-    pnpm exec sls deploy --stage local --config serverless.master.local.yml
-    ...
-    Service deployed to stack 'monitoring-master-local' (1s)  
-    ```
+- `make install`: Install all dependencies.
+- `make activate`: Activate the virtual environment.
+- `make start`: Start the LocalStack container.
+- `make deploy-local`: Deploy the stacks to the local environment.
+- `make delete-local`: Delete the local deployment.
+- `make test`: Run the tests.
+- `make coverage`: Check code coverage.
