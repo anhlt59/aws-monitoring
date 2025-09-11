@@ -3,7 +3,7 @@ from typing import Any
 from pynamodb.attributes import DiscriminatorAttribute, UnicodeAttribute
 from pynamodb.models import Model
 
-from src.common.configs import AWS_DYNAMODB_TABLE, AWS_ENDPOINT, AWS_REGION
+from src.common.constants import AWS_DYNAMODB_TABLE, AWS_ENDPOINT, AWS_REGION
 
 
 # Attributes -----------------------------------------------------------

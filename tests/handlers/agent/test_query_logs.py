@@ -5,7 +5,7 @@ from uuid import uuid4
 import boto3
 from mock import MagicMock
 
-from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.constants import AWS_ENDPOINT, AWS_REGION
 from src.modules.agent.handlers.query_error_logs.main import cloudwatch_service, handler
 
 

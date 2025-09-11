@@ -4,7 +4,7 @@ import boto3
 from types_boto3_lambda.client import LambdaClient
 from types_boto3_lambda.type_defs import FunctionConfigurationTypeDef
 
-from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.constants import AWS_ENDPOINT, AWS_REGION
 from src.common.exceptions import InternalServerError
 from src.common.meta import SingletonMeta
 
@@ -17,8 +17,8 @@ class FunctionConfiguration(FunctionConfigurationTypeDef):
 class LambdaService(metaclass=SingletonMeta):
     client: LambdaClient
 
-    def __init__(self):
-        self.client = boto3.client("lambda", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
+    def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
+        self.client = boto3.client("lambda", region_name=region, endpoint_url=endpoint_url)
 
     def list_functions(self, **kwargs) -> Iterable[FunctionConfiguration]:
         try:

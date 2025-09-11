@@ -2,7 +2,7 @@ import logging
 
 from aws_lambda_powertools.logging import Logger, correlation_paths
 
-from src.common.configs import LOG_LEVEL, SERVICE
+from src.common.constants import LOG_LEVEL, SERVICE
 
 __all__ = ["logger", "correlation_paths"]
 

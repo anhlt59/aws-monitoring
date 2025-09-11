@@ -2,7 +2,7 @@ import boto3
 from types_boto3_events.client import EventBridgeClient
 from types_boto3_events.type_defs import PutEventsRequestEntryTypeDef
 
-from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.constants import AWS_ENDPOINT, AWS_REGION
 from src.common.logger import logger
 from src.common.meta import SingletonMeta
 
@@ -11,8 +11,8 @@ from src.common.meta import SingletonMeta
 class EventBridgeService(metaclass=SingletonMeta):
     client: EventBridgeClient
 
-    def __init__(self):
-        self.client = boto3.client("events", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
+    def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
+        self.client = boto3.client("events", region_name=region, endpoint_url=endpoint_url)
 
     def put_events(self, *events: PutEventsRequestEntryTypeDef):
         """Publish an event to the AWS EventBus."""

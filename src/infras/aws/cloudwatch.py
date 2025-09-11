@@ -4,7 +4,7 @@ import boto3
 from types_boto3_logs.client import CloudWatchLogsClient
 from types_boto3_logs.type_defs import ResultFieldTypeDef
 
-from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.constants import AWS_ENDPOINT, AWS_REGION
 from src.common.logger import logger
 from src.common.meta import SingletonMeta
 
@@ -12,8 +12,8 @@ from src.common.meta import SingletonMeta
 class CloudwatchLogService(metaclass=SingletonMeta):
     client: CloudWatchLogsClient
 
-    def __init__(self):
-        self.client = boto3.client("logs", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
+    def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
+        self.client = boto3.client("logs", region_name=region, endpoint_url=endpoint_url)
 
     def query_logs(
         self,

@@ -4,7 +4,7 @@ import boto3
 from types_boto3_ecs.client import ECSClient
 from types_boto3_ecs.type_defs import ClusterTypeDef
 
-from src.common.configs import AWS_ENDPOINT, AWS_REGION
+from src.common.constants import AWS_ENDPOINT, AWS_REGION
 from src.common.exceptions import InternalServerError
 from src.common.meta import SingletonMeta
 
@@ -13,8 +13,8 @@ from src.common.meta import SingletonMeta
 class ECSService(metaclass=SingletonMeta):
     client: ECSClient
 
-    def __init__(self):
-        self.client = boto3.client("ecs", endpoint_url=AWS_ENDPOINT, region_name=AWS_REGION)
+    def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
+        self.client = boto3.client("ecs", region_name=region, endpoint_url=endpoint_url)
 
     def list_clusters(self, **kwargs) -> Iterable[ClusterTypeDef]:
         """List all ECS clusters."""
