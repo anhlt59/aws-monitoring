@@ -1,2 +1,0 @@
-follow CLAUDE.md file.
-
