@@ -3,10 +3,19 @@ import time
 from uuid import uuid4
 
 import boto3
-from mock import MagicMock
 
 from src.common.constants import AWS_ENDPOINT, AWS_REGION
-from src.modules.agent.handlers.query_error_logs.main import cloudwatch_service, handler
+from src.modules.agent.handlers.query_error_logs.main import handler
+
+
+def mock_ecs_service():
+    from src.infras.aws import ECSService
+
+    class ECSMockService(ECSService):
+        def list_clusters(self, **kwargs):
+            return []
+
+    # container.ecs_service.override(providers.Singleton(ECSMockService))
 
 
 def mock_cloudwatch_logs(log_group_name: str):
@@ -62,6 +71,4 @@ def mock_cloudwatch_logs(log_group_name: str):
 def test_query_logs():
     log_group_name = "/aws/lambda/monitoring-master-local-HandleMonitoringEvents"
     mock_cloudwatch_logs(log_group_name)
-    cloudwatch_service.ecs_service.list_clusters = MagicMock(return_value=[])
-
     handler(None, None)

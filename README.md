@@ -27,7 +27,7 @@
 ---
 
 ![Unittest](https://img.shields.io/badge/-passing-brightgreen?style=for-the-badge&logo=github&logoColor=black)
-![Coverage Status](https://img.shields.io/badge/Coverage-89%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
+![Coverage Status](https://img.shields.io/badge/Coverage-86%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
 
 ---
 

@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository
 
-## Instructions
+## Rules
 
 - Always respond in English
 - At the end of each task, summarize what has been completed and what remains
