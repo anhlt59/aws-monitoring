@@ -1,3 +1,5 @@
+from typing import List, Unpack
+
 import boto3
 from types_boto3_events.client import EventBridgeClient
 from types_boto3_events.type_defs import PutEventsRequestEntryTypeDef
@@ -14,7 +16,7 @@ class EventBridgeService(metaclass=SingletonMeta):
     def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
         self.client = boto3.client("events", region_name=region, endpoint_url=endpoint_url)
 
-    def put_events(self, *events: PutEventsRequestEntryTypeDef):
+    def put_events(self, events: List[Unpack[PutEventsRequestEntryTypeDef]]):
         """Publish an event to the AWS EventBus."""
         response = self.client.put_events(Entries=events)
 
