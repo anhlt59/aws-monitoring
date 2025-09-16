@@ -16,7 +16,7 @@ class ECSService(metaclass=SingletonMeta):
     def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
         self.client = boto3.client("ecs", region_name=region, endpoint_url=endpoint_url)
 
-    def list_clusters(self, **kwargs) -> Iterable[ClusterTypeDef]:
+    def list_clusters_by_tag(self, tag_name: str, tag_value: str, **kwargs) -> Iterable[ClusterTypeDef]:
         """List all ECS clusters."""
         try:
             response = self.client.list_clusters(**kwargs)
@@ -24,13 +24,13 @@ class ECSService(metaclass=SingletonMeta):
             if cluster_arns := response.get("clusterArns", []):
                 clusters = self.client.describe_clusters(clusters=cluster_arns, include=["TAGS", "CONFIGURATIONS"])
 
-                yield from clusters.get("clusters", [])
+                for cluster in clusters:
+                    for tag in cluster.get("tags", []):
+                        if tag.get("key") == tag_name and tag.get("value", "") == tag_value:
+                            yield cluster
 
             if cursor := response.get("nextToken"):
-                yield from self.list_clusters(nextToken=cursor)
-
-        # except self.client.exceptions.ClientException as e:
-        #     raise AWSClientException(f"[ClientException] Failed to list ECS clusters: {e}")
+                yield from self.list_clusters(tag_name, tag_value, nextToken=cursor)
 
         except Exception as e:
             raise InternalServerError(f"An unexpected error occurred while listing ECS clusters: {e}")

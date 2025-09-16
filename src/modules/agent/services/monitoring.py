@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import datetime
 from typing import Iterable
 
@@ -7,7 +6,7 @@ from pydantic import BaseModel, ValidationInfo, field_validator
 from src.common.logger import logger
 from src.common.utils.objects import chunks
 from src.infras.aws import CloudwatchLogService, ECSService, EventBridgeService, LambdaService
-from src.modules.agent.models import Event
+from src.infras.aws.cloudwatch import CwQueryResult
 
 MONITORING_TAG_NAME = "monitoring"
 MONITORING_TAG_VALUE = "true"
@@ -37,18 +36,6 @@ class QueryParam(BaseModel):
         if value < info.data.get("start_time"):
             raise ValueError("End time must be greater than or equal to start time")
         return value
-
-
-class CwLog(BaseModel):
-    timestamp: int | None = None
-    message: str
-    log: str
-    log_stream: str | None = None
-
-
-class CwQueryResult(BaseModel):
-    log_group_name: str
-    logs: list[CwLog] = []
 
 
 # Service -----------------------------------
@@ -88,16 +75,17 @@ class MonitoringService:
         # 3. publish the results to the message broker
         # convert error logs to a list of events
         events = [
-            Event(
-                source="monitoring.agent.logs",
-                detail=log_result.model_dump_json(),
-                detail_type="Error Log Query",
-            )
+            {
+                "source": "monitoring.agent.logs",
+                "detail": log_result.model_dump_json(),
+                "detail_type": "Error Log Query",
+            }
             for log_result in error_logs
         ]
         # publish events if any
         if events:
-            self._publish_events(events)
+            logger.debug(f"Publishing {len(events)} error log events to EventBridge")
+            self.publisher.put_events(events)
 
     def _list_monitoring_log_groups_by_tag(
         self,
@@ -105,21 +93,17 @@ class MonitoringService:
         tag_value=MONITORING_TAG_VALUE,
     ) -> Iterable[str]:
         """List lambda function's log groups and ECS clusters' log groups that have monitoring enabled."""
-        for function in self.lambda_service.list_functions():
-            if function.get("Tags").get(tag_name, "").lower() == tag_value:
-                if log_group := function.get("LoggingConfig", {}).get("LogGroup"):
-                    yield log_group
+        for function in self.lambda_service.list_functions_by_tag(tag_name, tag_value):
+            yield function.get("LoggingConfig", {}).get("LogGroup")
 
-        for cluster in self.ecs_service.list_clusters():
-            for tag in cluster.get("tags", []):
-                if tag.get("key") == tag_name and tag.get("value", "").lower() == tag_value:
-                    if (
-                        log_group := cluster.get("configuration", {})
-                        .get("executeCommandConfiguration", {})
-                        .get("logConfiguration", {})
-                        .get("cloudWatchLogGroupName")
-                    ):
-                        yield log_group
+        for cluster in self.ecs_service.list_clusters_by_tag(tag_name, tag_value):
+            if (
+                log_group := cluster.get("configuration", {})
+                .get("executeCommandConfiguration", {})
+                .get("logConfiguration", {})
+                .get("cloudWatchLogGroupName")
+            ):
+                yield log_group
 
     def _query_error_logs(
         self,
@@ -143,27 +127,4 @@ class MonitoringService:
                 delay=delay,
             )
             logger.debug(f"Found {len(results)} logs matching the query")
-
-            # categorize results by log_group_name
-            categorized_results = defaultdict(list)
-            for result in results:
-                cw_log = CwLog.model_validate({item.get("field", " ")[1:]: item.get("value") for item in result})
-                categorized_results[cw_log.log].append(cw_log)
-
-            yield from (CwQueryResult(log_group_name=name, logs=logs) for name, logs in categorized_results.items())
-
-    def _publish_events(self, events: list[Event]):
-        """Publish events to the message broker."""
-        entries = [
-            {
-                "Source": event.source,
-                "DetailType": event.detail_type,
-                "Detail": event.detail,
-                "Resources": event.resources,
-                "Time": event.time,
-            }
-            for event in events
-        ]
-        if entries:
-            logger.debug(f"Publishing {len(events)} error log events to EventBridge")
-            self.publisher.put_events(entries)
+            yield from results

@@ -1,12 +1,25 @@
 import time
 
 import boto3
+from pydantic import BaseModel
 from types_boto3_logs.client import CloudWatchLogsClient
 from types_boto3_logs.type_defs import ResultFieldTypeDef
 
 from src.common.constants import AWS_ENDPOINT, AWS_REGION
 from src.common.logger import logger
 from src.common.meta import SingletonMeta
+
+
+class CwLog(BaseModel):
+    timestamp: int | None = None
+    message: str
+    log: str
+    log_stream: str | None = None
+
+
+class CwQueryResult(BaseModel):
+    log_group_name: str
+    logs: list[CwLog] = []
 
 
 class CloudwatchLogService(metaclass=SingletonMeta):
@@ -42,6 +55,13 @@ class CloudwatchLogService(metaclass=SingletonMeta):
                 raise Exception("Query timed out")
             time.sleep(delay)
             response = self.client.get_query_results(queryId=query_id)
-
+        results = response.get("results", [])
         logger.debug(f"Query completed with status: {response.get('status')}")
-        return response.get("results", [])
+
+        # categorize results by log_group_name
+        categorized_results = defaultdict(list)
+        for result in results:
+            cw_log = CwLog.model_validate({item.get("field", " ")[1:]: item.get("value") for item in result})
+            categorized_results[cw_log.log].append(cw_log)
+
+        yield from (CwQueryResult(log_group_name=name, logs=logs) for name, logs in categorized_results.items())

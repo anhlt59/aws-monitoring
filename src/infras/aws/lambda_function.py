@@ -9,10 +9,6 @@ from src.common.exceptions import InternalServerError
 from src.common.meta import SingletonMeta
 
 
-class FunctionConfiguration(FunctionConfigurationTypeDef):
-    Tags: dict[str, str]
-
-
 # Service -----------------------------------
 class LambdaService(metaclass=SingletonMeta):
     client: LambdaClient
@@ -20,19 +16,17 @@ class LambdaService(metaclass=SingletonMeta):
     def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
         self.client = boto3.client("lambda", region_name=region, endpoint_url=endpoint_url)
 
-    def list_functions(self, **kwargs) -> Iterable[FunctionConfiguration]:
+    def list_functions_by_tag(self, tag_name: str, tag_value: str, **kwargs) -> Iterable[FunctionConfigurationTypeDef]:
         try:
             response = self.client.list_functions(**kwargs)
 
             for function in response.get("Functions", []):
                 tags = self.client.list_tags(Resource=function["FunctionArn"]).get("Tags", {})
-                yield FunctionConfiguration(**function, Tags=tags)
+                if tags.get(tag_name, "") == tag_value:
+                    yield function
 
             if cursor := response.get("NextMarker"):
-                yield from self.list_functions(Marker=cursor)
-
-        # except self.client.exceptions.ClientError as e:
-        #     raise AWSClientException(f"[ClientException] Failed to list Lambda functions: {e}")
+                yield from self.list_functions(tag_name, tag_value, Marker=cursor)
 
         except Exception as e:
             raise InternalServerError(f"An unexpected error occurred while listing Lambda functions: {e}")
