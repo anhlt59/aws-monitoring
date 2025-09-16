@@ -2,7 +2,7 @@
 
 The codebase follows a hexagonal architecture pattern with clear separation of concerns across multiple layers:
 
-## Presentation Layer (`src/modules/*/handlers/`)
+## Presentation Layer (`src/entrypoints/`)
 
 - Lambda function handlers that serve as entry points
 - Process incoming events (EventBridge, API Gateway, scheduled events)
@@ -16,11 +16,11 @@ The codebase follows a hexagonal architecture pattern with clear separation of c
 - Domain-specific services like `EventRepository`, `SlackClient`, notification services
 - Handles complex workflows and business rules
 
-## Infrastructure Layer (`src/infras/`)
+## Infrastructure Layer (`src/infra/`)
 
 - Abstracts external dependencies and technical concerns
-- **AWS Services** (`src/infras/aws/`): CloudWatch, EventBridge, ECS, Lambda abstractions
-- **Database** (`src/infras/db/`): DynamoDB models, repository pattern, data mapping
+- **AWS Services** (`src/infra/aws/`): CloudWatch, EventBridge, ECS, Lambda abstractions
+- **Database** (`src/infra/db/`): DynamoDB models, repository pattern, data mapping
 - Provides clean interfaces for external service interactions
 
 ## Domain Layer (`src/modules/*/models/`)
@@ -40,7 +40,7 @@ The codebase follows a hexagonal architecture pattern with clear separation of c
 ## Dependency Flow
 
 ```
-Handlers → Services → Repositories → Infrastructure
+entrypoints → Services → Repositories → Infrastructure
     ↓         ↓           ↓
   Models ← Models ← Models ← Common
 ```
@@ -74,13 +74,16 @@ Handlers → Services → Repositories → Infrastructure
 │   └── base.sh
 ├── src
 │   ├── common            # Shared utilities, configurations, and cross-cutting concerns
-│   │   ├── configs.py
+│   │   ├── constants.py
 │   │   ├── exceptions.py
 │   │   ├── logger.py
 │   │   ├── meta.py
 │   │   ├── models.py
 │   │   └── utils
-│   ├── infras            # Abstracts external dependencies and technical concerns
+│   ├── entrypoints
+│   │   ├── apigw           # API Gateway handlers
+│   │   └── functions       # Lambda function handlers
+│   ├── infra             # Abstracts external dependencies and technical concerns
 │   │   ├── aws             # AWS service abstractions
 │   │   │   ├── cloudwatch.py
 │   │   │   ├── data_classes.py
@@ -93,20 +96,10 @@ Handlers → Services → Repositories → Infrastructure
 │   │       └── repository
 │   └── modules
 │       ├── agent           # Deployed to each monitored AWS account
-│       │   ├── handlers      # Lambda function handlers
-│       │   │   └── query_error_logs
 │       │   └── services
 │       │       ├── cloudwatch.py
 │       │       └── publisher.py
 │       └── master          # Central monitoring system
-│           ├── handlers      # Lambda function handlers and contains business logic
-│           │   ├── api
-│           │   │   ├── agents
-│           │   │   ├── configs.py
-│           │   │   └── events
-│           │   ├── daily_report
-│           │   ├── handle_monitoring_events
-│           │   └── update_deployment
 │           ├── models        # Business entities and domain models
 │           │   ├── agent.py
 │           │   ├── base.py
@@ -114,7 +107,7 @@ Handlers → Services → Repositories → Infrastructure
 │           ├── services
 │           │   ├── api.py        # API Gateway interactions
 │           │   ├── notifiers     # Notification services (e.g., Slack)
-│           │   └── repositories  # Database interaction services 
+│           │   └── repositories  # Database interaction services
 │           │       ├── agent.py
 │           │       ├── event.py
 │           │       └── mappers
@@ -133,4 +126,3 @@ Handlers → Services → Repositories → Infrastructure
 ├── serverless.agent.yml                # Serverless Framework template for agent stack
 └── serverless.master.yml               # Serverless Framework template for master stack
 ```
-
