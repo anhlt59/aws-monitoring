@@ -1,8 +1,8 @@
 from src.common.exceptions import NotFoundError
-from src.infras.db.models import AgentPersistence
-from src.infras.db.repository import DynamoRepository, QueryResult
+from src.infra.db.mappers import AgentMapper
+from src.infra.db.models import AgentPersistence
+from src.infra.db.repositories.base import DynamoRepository, QueryResult
 from src.modules.master.models.agent import Agent, UpdateAgentDTO
-from src.modules.master.services.repositories.mappers import AgentMapper
 
 AgentQueryResult = QueryResult[Agent]
 

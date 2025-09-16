@@ -6,9 +6,8 @@ from pynamodb.exceptions import DeleteError, DoesNotExist, GetError, PutError, Q
 from pynamodb.models import Condition, Index, ResultIterator
 
 from src.common.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
-from src.infras.db.models import DynamoModel
-
-from .mapper import Mapper
+from src.infra.db.mappers.base import Mapper
+from src.infra.db.models import DynamoModel
 
 M = TypeVar("M", bound=BaseModel)
 

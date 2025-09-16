@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 
 from src.common.logger import logger
 from src.common.utils.datetime_utils import round_n_minutes
-from src.infras.aws import CloudwatchLogService, ECSService, EventBridgeService, LambdaService
+from src.infra.aws import CloudwatchLogService, ECSService, EventBridgeService, LambdaService
 from src.modules.agent.services.monitoring import MonitoringService, QueryParam
 
 # Constants

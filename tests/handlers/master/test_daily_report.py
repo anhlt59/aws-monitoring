@@ -2,9 +2,9 @@ import time
 from unittest.mock import Mock
 from uuid import uuid4
 
-from src.modules.master.handlers.daily_report.main import handler, notifier
+from src.entrypoints.functions.daily_report.main import handler, notifier
+from src.infra.db.repositories import EventRepository
 from src.modules.master.models import Event
-from src.modules.master.services.repositories import EventRepository
 
 
 def test_normal_case(event_repo: EventRepository):

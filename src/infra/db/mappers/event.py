@@ -1,7 +1,7 @@
 import json
 
 from src.common.constants import AWS_DYNAMODB_TTL
-from src.infras.db.models import EventPersistence
+from src.infra.db.models import EventPersistence
 from src.modules.master.models import Event
 
 

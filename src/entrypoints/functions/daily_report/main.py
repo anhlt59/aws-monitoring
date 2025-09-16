@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
 from src.common.logger import logger
+from src.infra.db.repositories import EventRepository
 from src.modules.master.configs import REPORT_WEBHOOK_URL
 from src.modules.master.models.event import ListEventsDTO
 from src.modules.master.services.notifiers.report_notifier import ReportInput, ReportNotifier, SlackClient
-from src.modules.master.services.repositories import EventRepository
 
 # Initialize services
 event_repo = EventRepository()

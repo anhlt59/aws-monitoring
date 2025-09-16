@@ -116,7 +116,7 @@ ConfigEventBridgeRule:
 ```yaml
 # infra/agent/functions/ProcessConfigEvents.yml
 function:
-  handler: src.modules.agent.handlers.process_config_events.handler
+  handler: src.entrypoints.process_config_events.handler
   events:
     - eventBridge:
         eventBus: default
@@ -164,7 +164,7 @@ ConfigAggregator:
 ```yaml
 # infra/master/functions/HandleConfigEvents.yml
 function:
-  handler: src.modules.master.handlers.handle_config_events.handler
+  handler: src.entrypoints.handle_config_events.handler
   events:
     - eventBridge:
         eventBus: !Ref MonitoringEventBus

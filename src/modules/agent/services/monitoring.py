@@ -5,8 +5,8 @@ from pydantic import BaseModel, ValidationInfo, field_validator
 
 from src.common.logger import logger
 from src.common.utils.objects import chunks
-from src.infras.aws import CloudwatchLogService, ECSService, EventBridgeService, LambdaService
-from src.infras.aws.cloudwatch import CwQueryResult
+from src.infra.aws import CloudwatchLogService, ECSService, EventBridgeService, LambdaService
+from src.infra.aws.cloudwatch import CwQueryResult
 
 MONITORING_TAG_NAME = "monitoring"
 MONITORING_TAG_VALUE = "true"

@@ -1,4 +1,5 @@
 import time
+from collections import defaultdict
 
 import boto3
 from pydantic import BaseModel
