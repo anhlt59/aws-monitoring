@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-HandleMonitoringEvents
   description: Send monitoring events to Slack channel
-  handler: src.modules.master.handlers.handle_monitoring_events.main.handler
+  handler: src.entrypoints.handle_monitoring_events.main.handler
   environment:
     POWERTOOLS_SERVICE_NAME: events
     MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}

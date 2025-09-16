@@ -10,10 +10,9 @@ TEST_DIR = BASE_DIR / "tests"
 sys.path.append(str(BASE_DIR))
 load_dotenv(BASE_DIR / ".env.local")
 
-from src.modules.master.models import Agent, Event  # noqa
-
 # fmt: off
-from src.modules.master.services.repositories import AgentRepository, EventRepository  # noqa
+from src.infra.db.repositories import AgentRepository, EventRepository  # noqa
+from src.modules.master.models import Agent, Event  # noqa
 
 # fmt: on
 

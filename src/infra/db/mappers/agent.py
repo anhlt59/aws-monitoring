@@ -1,4 +1,4 @@
-from src.infras.db.models import AgentPersistence
+from src.infra.db.models import AgentPersistence
 from src.modules.master.models import Agent
 
 

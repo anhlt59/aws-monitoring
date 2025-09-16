@@ -5,11 +5,11 @@ from uuid import uuid4
 import boto3
 
 from src.common.constants import AWS_ENDPOINT, AWS_REGION
-from src.modules.agent.handlers.query_error_logs.main import handler
+from src.entrypoints.functions.query_error_logs.main import handler
 
 
 def mock_ecs_service():
-    from src.infras.aws import ECSService
+    from src.infra.aws import ECSService
 
     class ECSMockService(ECSService):
         def list_clusters(self, **kwargs):

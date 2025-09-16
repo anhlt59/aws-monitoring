@@ -71,7 +71,7 @@ class AgentRepositoryInterface(Repository[Agent], Protocol):
 ```python
 # src/common/interfaces/notifier.py
 from typing import Protocol
-from src.infras.aws.data_classes import EventBridgeEvent
+from src.infra.aws.data_classes import EventBridgeEvent
 
 class NotificationClientInterface(Protocol):
     def send(self, message: Any) -> None: ...
@@ -98,14 +98,16 @@ class EventBridgeInterface(Protocol):
 ### Phase 2: Implement Service Adapters
 
 #### 2.1 Refactor Repository Layer
+
 ```python
 # src/infras/db/services/event_repository.py
 from src.common.interfaces.repository import EventRepositoryInterface
-from src.infras.db.repository import DynamoRepository
+from src.infra.db.repositories.repository import DynamoRepository
+
 
 class DynamoEventRepositoryService(DynamoRepository, EventRepositoryInterface):
-    # Implementation using existing DynamoRepository as base
-    pass
+  # Implementation using existing DynamoRepository as base
+  pass
 ```
 
 #### 2.2 Refactor AWS Services

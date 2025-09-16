@@ -4,7 +4,7 @@ import pytest
 
 from src.common.constants import AWS_REGION
 from src.common.exceptions import NotFoundError
-from src.infras.aws.data_classes import CfnStackStatus
+from src.infra.aws.data_classes import CfnStackStatus
 from src.modules.master.models.agent import Agent, UpdateAgentDTO
 
 

@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-ListEvents
   description: List events, triggered by API Gateway
-  handler: src.modules.master.handlers.api.events.main.handler
+  handler: src.entrypoints.api.events.main.handler
   events:
     - http:
         method: GET

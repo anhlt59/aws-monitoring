@@ -1,6 +1,6 @@
 from mock import MagicMock
 
-from src.modules.master.handlers.handle_monitoring_events.main import handler, slack_client
+from src.entrypoints.functions.handle_monitoring_events.main import handler, slack_client
 from tests.conftest import TEST_DIR
 from tests.mock import load_event
 

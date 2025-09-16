@@ -2,7 +2,7 @@ import pytest
 from mock import MagicMock
 
 from src.common.exceptions import NotFoundError
-from src.modules.master.handlers.update_deployment.main import handler, notifier
+from src.entrypoints.functions.update_deployment.main import handler, notifier
 from tests.conftest import TEST_DIR
 from tests.mock import load_event
 

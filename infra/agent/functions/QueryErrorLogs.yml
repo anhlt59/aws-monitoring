@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-QueryErrorLogs
   description: Query error logs, triggered by an event
-  handler: src.modules.agent.handlers.query_error_logs.main.handler
+  handler: src.entrypoints.query_error_logs.main.handler
   timeout: 300
   events:
     - schedule:

@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-GetAgent
   description: Get an agent, triggered by API Gateway
-  handler: src.modules.master.handlers.api.agents.main.handler
+  handler: src.entrypoints.api.agents.main.handler
   events:
     - http:
         method: GET

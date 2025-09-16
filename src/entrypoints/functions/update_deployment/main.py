@@ -1,10 +1,10 @@
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
-from src.infras.aws.data_classes import CfnStackEvent, event_source
+from src.infra.aws.data_classes import CfnStackEvent, event_source
+from src.infra.db.repositories import AgentRepository
 from src.modules.master.configs import DEPLOYMENT_WEBHOOK_URL
 from src.modules.master.models.agent import Agent, UpdateAgentDTO
 from src.modules.master.services.notifiers import CloudFormationNotifier, SlackClient
-from src.modules.master.services.repositories import AgentRepository
 
 notifier = CloudFormationNotifier(
     client=SlackClient(DEPLOYMENT_WEBHOOK_URL),

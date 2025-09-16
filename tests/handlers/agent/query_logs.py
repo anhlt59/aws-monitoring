@@ -10,6 +10,6 @@ os.environ["QUERY_STRING"] = """fields @message, @log, @logStream
 boto3.setup_default_session(profile_name="lc-stg", region_name="ap-northeast-1")
 
 if __name__ == "__main__":
-    from src.modules.agent.handlers.query_error_logs.main import handler
+    from src.entrypoints.functions.query_error_logs.main import handler
 
     handler(None, None)

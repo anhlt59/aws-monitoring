@@ -2,7 +2,7 @@ import json
 import time
 from uuid import uuid4
 
-from src.modules.master.handlers.api.agents.main import handler
+from src.entrypoints.apigw.agents.main import handler
 from src.modules.master.models import Agent
 from tests.mock import mock_api_gateway_event, mock_lambda_context
 
