@@ -27,7 +27,7 @@ provider:
     deploymentRole: ${self:custom.configs.IAM.DeploymentRole}
 
   # config lambda functions
-  runtime: python3.12
+  runtime: python3.13
   logRetentionInDays: ${self:custom.configs.Lambda.LogRetentionInDays}
   memorySize: 256
   timeout: 10
