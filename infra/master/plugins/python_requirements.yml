@@ -25,6 +25,6 @@ pythonRequirements:
     name: ${self:service}-${self:provider.stage}-PythonLayer
     description: ${self:service} ${self:provider.stage} Python Layer
     compatibleRuntimes:
-      - python3.12
+      - python3.13
     allowedAccounts:
       - "*"
