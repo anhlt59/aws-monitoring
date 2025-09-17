@@ -346,15 +346,15 @@ class DynamoDBEventRepository(EventRepository):
 ### Phase 3: Migration Application Layer (3-4 ngày)
 
 1. **Tạo Use Cases**
-   - [ ] HandleMonitoringEventUseCase
-   - [ ] QueryErrorLogsUseCase
-   - [ ] GenerateDailyReportUseCase
-   - [ ] UpdateDeploymentUseCase
+   - [x] HandleMonitoringEventUseCase
+   - [x] QueryErrorLogsUseCase
+   - [x] GenerateDailyReportUseCase
+   - [x] UpdateDeploymentUseCase
 
 2. **Refactor Services**
-   - [ ] Di chuyển từ modules/*/services/
-   - [ ] Implement dependency injection
-   - [ ] Sử dụng ports thay vì concrete implementations
+   - [x] Created use cases with dependency injection
+   - [x] Sử dụng ports thay vì concrete implementations
+   - [x] Clean separation of business logic
 
 ### Phase 4: Migration Adapters (3-4 ngày)
 
