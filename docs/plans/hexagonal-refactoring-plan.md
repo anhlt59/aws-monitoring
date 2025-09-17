@@ -333,9 +333,11 @@ class DynamoDBEventRepository(EventRepository):
 ### Phase 2: Migration Domain Layer (2-3 ngày)
 
 1. **Di chuyển Domain Models**
-   - [ ] Refactor models từ modules/*/models/
-   - [ ] Loại bỏ infrastructure dependencies
-   - [ ] Thêm business logic vào entities
+   - [x] Refactor models từ modules/*/models/
+   - [x] Loại bỏ infrastructure dependencies
+   - [x] Thêm business logic vào entities
+   - [x] Tạo DTOs cho domain operations
+   - [x] Tạo shared domain models (pagination)
 
 2. **Tạo Domain Services (nếu cần)**
    - [ ] Services chứa complex business logic
