@@ -315,19 +315,20 @@ class DynamoDBEventRepository(EventRepository):
 ### Phase 1: Chuẩn Bị (1-2 ngày)
 
 1. **Tạo cấu trúc thư mục mới**
-   - [ ] Tạo domain/, application/, adapters/
-   - [ ] Thiết lập __init__.py files
+   - [x] Tạo domain/, application/, adapters/
+   - [x] Thiết lập __init__.py files
 
 2. **Xác định và tạo Domain Entities**
-   - [ ] Event entity
-   - [ ] Agent entity
-   - [ ] Value objects (Severity, Status, etc.)
+   - [x] Event entity (refactored to use Pydantic)
+   - [x] Agent entity (refactored to use Pydantic)
+   - [x] LogEntry entity (refactored to use Pydantic)
+   - [x] Value objects (Severity, AgentStatus, LogLevel)
 
 3. **Định nghĩa Ports**
-   - [ ] EventRepository interface
-   - [ ] AgentRepository interface
-   - [ ] Notifier interface
-   - [ ] EventPublisher interface
+   - [x] EventRepository interface
+   - [x] AgentRepository interface
+   - [x] Notifier interface
+   - [x] EventPublisher interface
 
 ### Phase 2: Migration Domain Layer (2-3 ngày)
 
