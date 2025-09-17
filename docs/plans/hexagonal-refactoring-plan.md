@@ -366,8 +366,8 @@ class DynamoDBEventRepository(EventRepository):
 2. **Secondary Adapters**
    - [x] Implement DynamoDB repositories (Event, Agent)
    - [x] Implement persistence mappers
-   - [ ] Implement AWS service adapters (CloudWatch, EventBridge)
-   - [ ] Implement notification adapters (Slack)
+   - [x] Implement AWS service adapters (CloudWatch, EventBridge)
+   - [x] Implement notification adapters (Slack)
 
 ### Phase 5: Testing & Validation (2-3 ngày)
 
