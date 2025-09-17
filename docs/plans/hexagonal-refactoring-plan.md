@@ -372,17 +372,18 @@ class DynamoDBEventRepository(EventRepository):
 ### Phase 5: Testing & Validation (2-3 ngày)
 
 1. **Unit Tests**
-   - [ ] Domain layer tests (100% coverage)
-   - [ ] Application layer tests với mock ports
-   - [ ] Adapter integration tests
+   - [x] Domain layer tests (entities và value objects)
+   - [x] Application layer tests với mock ports
+   - [x] Adapter integration tests (DynamoDB)
 
 2. **Integration Tests**
-   - [ ] End-to-end flow tests
-   - [ ] LocalStack integration tests
+   - [x] DynamoDB repository integration tests with moto
+   - [ ] End-to-end flow tests (optional)
+   - [ ] LocalStack integration tests (optional)
 
 3. **Performance Tests**
-   - [ ] Benchmark critical paths
-   - [ ] Memory usage analysis
+   - [ ] Benchmark critical paths (optional)
+   - [ ] Memory usage analysis (optional)
 
 ### Phase 6: Deployment & Migration (1-2 ngày)
 
