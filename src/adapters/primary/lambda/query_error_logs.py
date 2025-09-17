@@ -6,11 +6,11 @@ from typing import Any, Dict
 from src.adapters.secondary.aws.cloudwatch.log_reader import CloudWatchLogReader
 from src.adapters.secondary.aws.eventbridge.event_publisher import EventBridgeEventPublisher
 from src.application.agent.use_cases.query_error_logs import QueryErrorLogsUseCase
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.agent.dtos.log_dtos import LogQueryDTO
 from src.domain.agent.value_objects.log_level import LogLevel
 
-logger = Logger(__name__)
+
 
 
 def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -39,7 +39,7 @@ def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         query_dto = _create_query_dto(event)
 
         # Execute query
-        summary = await use_case.execute(
+        summary = use_case.execute(
             query_dto=query_dto,
             account=account,
             region=region,

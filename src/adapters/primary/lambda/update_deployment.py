@@ -2,10 +2,10 @@ import json
 from typing import Any, Dict
 
 from src.adapters.container import container
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.dtos.agent_dtos import AgentDeploymentRequestDTO
 
-logger = Logger(__name__)
+
 
 
 def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -14,7 +14,7 @@ def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         logger.info(f"Processing deployment request: {event}")
 
         # Get use case from container
-        use_case = container.resolve("update_deployment_use_case")
+        use_case = container.update_deployment_use_case()
 
         # Determine operation type
         operation = event.get("operation", "deploy")

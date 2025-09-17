@@ -2,11 +2,11 @@ from typing import List, Optional
 
 from src.adapters.secondary.persistence.dynamodb.base_repository import BaseDynamoDBRepository
 from src.adapters.secondary.persistence.mappers.agent_mapper import AgentMapper
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.entities.agent import Agent
 from src.domain.master.ports.agent_repository import AgentRepository
 
-logger = Logger(__name__)
+
 
 
 class DynamoDBAgentRepository(BaseDynamoDBRepository, AgentRepository):

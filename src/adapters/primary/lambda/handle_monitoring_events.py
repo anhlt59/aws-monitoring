@@ -2,10 +2,10 @@ import json
 from typing import Any, Dict
 
 from src.adapters.container import container
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.dtos.event_dtos import CreateEventDTO
 
-logger = Logger(__name__)
+
 
 
 def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -14,7 +14,7 @@ def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         logger.info(f"Processing {len(event.get('Records', []))} event records")
 
         # Get use case from container
-        use_case = container.resolve("handle_monitoring_event_use_case")
+        use_case = container.handle_monitoring_event_use_case()
 
         processed_count = 0
         failed_count = 0

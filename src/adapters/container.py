@@ -71,5 +71,4 @@ class DIContainer:
         return factory()
 
 
-# Global container instance
-container = DIContainer()
+

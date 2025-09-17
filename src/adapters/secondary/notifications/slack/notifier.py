@@ -3,12 +3,12 @@ import os
 from typing import Any, Dict, List
 from urllib.request import Request, urlopen
 
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.entities.agent import Agent
 from src.domain.master.entities.event import MonitoringEvent
 from src.domain.master.ports.notifier import Notifier
 
-logger = Logger(__name__)
+
 
 
 class SlackNotifier(Notifier):

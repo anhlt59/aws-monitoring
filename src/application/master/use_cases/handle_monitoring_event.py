@@ -1,12 +1,12 @@
 from datetime import UTC, datetime
 
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.dtos.event_dtos import CreateEventDTO
 from src.domain.master.entities.event import MonitoringEvent
 from src.domain.master.ports.event_repository import EventRepository
 from src.domain.master.ports.notifier import Notifier
 
-logger = Logger(__name__)
+
 
 
 class HandleMonitoringEventUseCase:

@@ -4,9 +4,9 @@ from typing import Any, Dict, List, Optional
 import boto3
 from botocore.exceptions import ClientError
 
-from src.common.logger import Logger
+from src.common.logger import logger
 
-logger = Logger(__name__)
+
 
 
 class BaseDynamoDBRepository:

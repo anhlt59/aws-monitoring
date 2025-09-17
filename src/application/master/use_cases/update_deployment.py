@@ -1,13 +1,13 @@
 from datetime import UTC, datetime
 from typing import Optional
 
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.dtos.agent_dtos import AgentDeploymentRequestDTO, AgentHealthDTO, UpdateAgentDTO
 from src.domain.master.entities.agent import Agent
 from src.domain.master.ports.agent_repository import AgentRepository
 from src.domain.master.ports.notifier import Notifier
 
-logger = Logger(__name__)
+
 
 
 class UpdateDeploymentUseCase:

@@ -5,13 +5,13 @@ from typing import Any, Dict, List
 import boto3
 from botocore.exceptions import ClientError
 
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.agent.entities.log_entry import LogEntry
 from src.domain.agent.ports.event_publisher import EventPublisher as AgentEventPublisher
 from src.domain.master.entities.event import MonitoringEvent
 from src.domain.master.ports.event_publisher import EventPublisher as MasterEventPublisher
 
-logger = Logger(__name__)
+
 
 
 class EventBridgeEventPublisher(MasterEventPublisher, AgentEventPublisher):

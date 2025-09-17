@@ -4,11 +4,11 @@ from typing import List, Optional
 import boto3
 from botocore.exceptions import ClientError
 
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.agent.entities.log_entry import LogEntry
 from src.domain.agent.ports.log_reader import LogReader
 
-logger = Logger(__name__)
+
 
 
 class CloudWatchLogReader(LogReader):

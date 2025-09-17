@@ -3,9 +3,7 @@ from datetime import UTC, datetime
 from typing import Any, Dict
 
 from src.adapters.container import container
-from src.common.logger import Logger
-
-logger = Logger(__name__)
+from src.common.logger import logger
 
 
 def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
@@ -14,7 +12,7 @@ def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
         logger.info("Starting daily report generation")
 
         # Get use case from container
-        use_case = container.resolve("generate_daily_report_use_case")
+        use_case = container.generate_daily_report_use_case()
 
         # Parse report date from event (optional)
         report_date = None
@@ -25,7 +23,7 @@ def handler(event: Dict[str, Any], context: Dict[str, Any]) -> Dict[str, Any]:
                 logger.warning(f"Invalid report_date format: {event['report_date']}")
 
         # Generate report
-        report_data = await use_case.execute(report_date=report_date)
+        report_data = use_case.execute(report_date=report_date)
 
         logger.info(
             f"Daily report generated successfully for "

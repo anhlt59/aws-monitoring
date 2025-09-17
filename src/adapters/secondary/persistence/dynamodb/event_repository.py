@@ -3,12 +3,12 @@ from typing import List, Optional
 
 from src.adapters.secondary.persistence.dynamodb.base_repository import BaseDynamoDBRepository
 from src.adapters.secondary.persistence.mappers.event_mapper import EventMapper
-from src.common.logger import Logger
+from src.common.logger import logger
 from src.domain.master.entities.event import MonitoringEvent
 from src.domain.master.ports.event_repository import EventRepository
 from src.domain.master.value_objects.severity import Severity
 
-logger = Logger(__name__)
+
 
 
 class DynamoDBEventRepository(BaseDynamoDBRepository, EventRepository):
