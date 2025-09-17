@@ -359,14 +359,15 @@ class DynamoDBEventRepository(EventRepository):
 ### Phase 4: Migration Adapters (3-4 ngày)
 
 1. **Primary Adapters**
-   - [ ] Refactor Lambda handlers
-   - [ ] Refactor API Gateway handlers
-   - [ ] Setup dependency injection container
+   - [x] Refactor Lambda handlers (HandleMonitoringEvents, DailyReport, UpdateDeployment, QueryErrorLogs)
+   - [x] Setup dependency injection container
+   - [ ] Refactor API Gateway handlers (nếu cần)
 
 2. **Secondary Adapters**
-   - [ ] Implement DynamoDB repositories
-   - [ ] Implement AWS service adapters
-   - [ ] Implement notification adapters
+   - [x] Implement DynamoDB repositories (Event, Agent)
+   - [x] Implement persistence mappers
+   - [ ] Implement AWS service adapters (CloudWatch, EventBridge)
+   - [ ] Implement notification adapters (Slack)
 
 ### Phase 5: Testing & Validation (2-3 ngày)
 
