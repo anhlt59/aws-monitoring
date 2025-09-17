@@ -2,9 +2,18 @@ import time
 from unittest.mock import Mock
 from uuid import uuid4
 
-from src.entrypoints.functions.daily_report.main import handler, notifier
+from src.entrypoints.functions.daily_report.main import container, handler
 from src.infra.db.repositories import EventRepository
 from src.modules.master.models import Event
+
+
+def mock_notifier():
+    from src.modules.master.configs import REPORT_WEBHOOK_URL
+    from src.modules.master.services.notifiers import ReportNotifier, SlackClient
+
+    notifier = ReportNotifier(client=SlackClient(REPORT_WEBHOOK_URL))
+    container.notifier.override(notifier)
+    return notifier
 
 
 def test_normal_case(event_repo: EventRepository):
@@ -25,6 +34,7 @@ def test_normal_case(event_repo: EventRepository):
         event_repo.create(event)
 
     # Mock the notifier's report method
+    notifier = mock_notifier()
     notifier.report = Mock()
 
     # Invoke the handler

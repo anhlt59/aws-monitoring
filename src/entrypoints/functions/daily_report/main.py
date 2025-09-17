@@ -1,20 +1,22 @@
 from datetime import datetime, timedelta
 
-from src.common.logger import logger
-from src.infra.db.repositories import EventRepository
-from src.modules.master.configs import REPORT_WEBHOOK_URL
-from src.modules.master.models.event import ListEventsDTO
-from src.modules.master.services.notifiers.report_notifier import ReportInput, ReportNotifier, SlackClient
+from dependency_injector.wiring import Provide, inject
 
-# Initialize services
-event_repo = EventRepository()
-notifier = ReportNotifier(
-    client=SlackClient(REPORT_WEBHOOK_URL),
-)
+from src.common.logger import logger
+from src.entrypoints.functions.daily_report.container import Container
+from src.infra.db.repositories import EventRepository
+from src.modules.master.models.event import ListEventsDTO
+from src.modules.master.services.notifiers.report_notifier import ReportInput, ReportNotifier
 
 
 # @logger.inject_lambda_context(log_event=True)
-def handler(event, context):
+@inject
+def handler(
+    event,
+    context,
+    event_repo: EventRepository = Provide[Container.event_repo],
+    notifier: ReportNotifier = Provide[Container.notifier],
+) -> None:
     end_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     start_date = end_date - timedelta(days=1)
 
@@ -32,3 +34,9 @@ def handler(event, context):
         # Send report to Slack
         notifier.report(data=ReportInput(date=start_date.date(), events=events.items))
         logger.info("Daily report sent")
+
+
+# # Initialize container
+# container = Container()
+# container.wire(modules=["src.entrypoints.functions.daily_report.main", __name__])
+handler(None, None)
