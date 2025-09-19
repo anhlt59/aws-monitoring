@@ -765,23 +765,6 @@ files = [
 ]
 
 [[package]]
-name = "mock"
-version = "5.2.0"
-description = "Rolling backport of unittest.mock for all Pythons"
-optional = false
-python-versions = ">=3.6"
-groups = ["test"]
-files = [
-    {file = "mock-5.2.0-py3-none-any.whl", hash = "sha256:7ba87f72ca0e915175596069dbbcc7c75af7b5e9b9bc107ad6349ede0819982f"},
-    {file = "mock-5.2.0.tar.gz", hash = "sha256:4e460e818629b4b173f32d08bf30d3af8123afbb8e04bb5707a1fd4799e503f0"},
-]
-
-[package.extras]
-build = ["blurb", "twine", "wheel"]
-docs = ["sphinx"]
-test = ["pytest", "pytest-cov"]
-
-[[package]]
 name = "moto"
 version = "5.1.12"
 description = "A library that allows you to easily mock out tests based on AWS infrastructure"
@@ -2026,4 +2009,4 @@ test = ["pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.13"
-content-hash = "a2006b17e32dce391364e20c9f4f906ce5f15c54aacff8a8fbe6babca48aa38d"
+content-hash = "d3eb861e134bb1b7acdabe81f60ac0443f7d686990e7b28046b031dd0f73df24"

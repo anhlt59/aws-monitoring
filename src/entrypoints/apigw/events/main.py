@@ -3,11 +3,11 @@ from typing import Annotated
 from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
+from src.adapters.db.repositories import EventRepository
 from src.common.utils.encoding import json_to_base64
+from src.domain.models.event import ListEventsDTO
 from src.entrypoints.apigw.base import create_app
 from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
-from src.infra.db.repositories import EventRepository
-from src.modules.master.models.event import ListEventsDTO
 
 app = create_app(
     cors_allow_origin=CORS_ALLOW_ORIGIN,

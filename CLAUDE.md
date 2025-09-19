@@ -4,7 +4,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Rules
 
-- Always respond in English
 - At the end of each task, summarize what has been completed and what remains
 
 ## Commands
@@ -19,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Tech Stack
 
-- Backend: Python 3.12, Serverless Framework
+- Backend: Python 3.13, Serverless Framework
 - Database: DynamoDB
 - Infrastructure: AWS (Lambda, API Gateway, EventBridge, SNS, S3, CloudWatch)
 - Testing: Pytest, Coverage
@@ -27,24 +26,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-This is a serverless AWS monitoring application with two main components:
+This is a serverless AWS monitoring application built using hexagonal architecture (ports and adapters pattern) with clean separation of concerns:
 
-### Master Stack (`src/modules/master/`)
+### Core Architecture Layers
 
+#### Domain Layer (`src/domain/`)
+- **Models**: Core business entities (Event, Agent) with domain logic
+- **Ports**: Interfaces defining contracts for external dependencies (repositories, notifiers, publishers)
+- **Use Cases**: Business logic orchestration (daily_report, insert_monitoring_event, query_error_logs, update_deployment)
+
+#### Adapters Layer (`src/adapters/`)
+- **Database**: DynamoDB repositories, models, and mappers for data persistence
+- **AWS Services**: CloudWatch, EventBridge, Lambda function abstractions
+- **External Services**: Notifiers (Slack, etc.), log adapters, event publishers
+
+#### Entry Points (`src/entrypoints/`)
+- **Functions**: Lambda function handlers for business operations
+- **API Gateway**: REST API endpoints for agents and events
+
+#### Common Layer (`src/common/`)
+- Shared utilities, configurations, logger, exceptions, and cross-cutting concerns
+
+### Deployment Architecture
+
+The application consists of two serverless stacks:
+
+#### Master Stack
 - Central monitoring system deployed once
-- Handles event processing, notifications, API endpoints, and stores data in DynamoDB
-- Contains handlers:
-  - `HandleMonitoringEvents` - Process incoming monitoring events
-  - `UpdateDeployment` - Manage deployment updates
-  - `DailyReport` - Generate daily monitoring reports
-  - API endpoints for agents and events (currently commented out)
+- Processes monitoring events, sends notifications, provides APIs
+- Lambda functions: HandleMonitoringEvents, UpdateDeployment, DailyReport
+- API Gateway endpoints for agent management and event querying
 
-### Agent Stack (`src/modules/agent/`)
-
+#### Agent Stack
 - Deployed to each monitored AWS account
-- Queries logs and publishes events to the master stack
-- Contains handlers:
-  - `QueryErrorLogs` - Query CloudWatch logs for errors
+- Queries CloudWatch logs and publishes events to master stack
+- Lambda function: QueryErrorLogs
 
 ### Infrastructure (`infra/`)
 
@@ -58,5 +74,5 @@ This is a serverless AWS monitoring application with two main components:
 
 ## Development Notes
 
-- Python 3.12 + Poetry, with pre-commit hooks (ruff, isort, bandit)
+- Python 3.13 + Poetry, with pre-commit hooks (ruff, isort, bandit)
 - Test structure mirrors the source code in `tests/`

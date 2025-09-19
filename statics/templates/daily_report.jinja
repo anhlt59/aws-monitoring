@@ -1,7 +1,7 @@
 {
   "attachments": [
     {
-      "color": "{{color}}",
+      "color": "#4089a3",
       "blocks": [
         {
           "type": "header",
@@ -25,15 +25,15 @@
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": "{% if stat.total == 0 %}:white_check_mark:{% else %}:warning:{% endif %}*  {{ stat.name }}*"
+            "text": "{% if stat["statistics"] %}:white_check_mark:{% else %}:warning:{% endif %}*  {{ stat["name"] }}*"
           }
         }
-        {% if stat.total > 0 %}
+        {% if stat["statistics"] %}
         , {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": "```{% if stat.statistics %}{% for type, count in stat.statistics.items() %}\n • {{ type }}: {{ count }}{% endfor %}{% endif -%}```"
+              "text": "```{% for type, count in stat["statistics"].items() %}\n • {{ type }}: {{ count }}{% endfor %}```"
           }
         }
         {% endif %}
