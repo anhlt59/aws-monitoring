@@ -2,7 +2,7 @@
 #
 #
 # def test_handle_monitoring_events():
-#     from src.infra.aws.eventbridge import EventBridgeService, EventsRequestEntry
+#     from src.adapters.aws.eventbridge import EventBridgeService, EventsRequestEntry
 #     from tests.conftest import TEST_DIR
 #     from tests.mock import load_events, truncate_event_table
 #

@@ -6,8 +6,8 @@ from uuid import uuid4
 import boto3
 from aws_lambda_powertools.utilities.data_classes import EventBridgeEvent
 
-from src.infra.db.repositories import EventRepository
-from src.modules.master.models.event import ListEventsDTO
+from src.adapters.db.repositories import EventRepository
+from src.domain.models.event import ListEventsDTO
 
 
 @dataclass

@@ -30,7 +30,6 @@ pytest = "~8.4.0"
 pytest-cov = "~7.0.0"
 python-dotenv = "~1.1.0"
 moto = "~5.1.0"
-mock = "~5.2.0"
 faker = "~37.3.0"
 coverage-badge = "~1.1.0"
 

@@ -49,7 +49,6 @@ entrypoints → Services → Repositories → Infrastructure
 - Common utilities are used across all layers
 - Infrastructure layer handles all external system interactions
 
-
 # 📁 Folder structure
 
 ```

@@ -9,7 +9,7 @@ from src.entrypoints.functions.query_error_logs.main import handler
 
 
 def mock_ecs_service():
-    from src.infra.aws import ECSService
+    from src.infra import ECSService
 
     class ECSMockService(ECSService):
         def list_clusters(self, **kwargs):

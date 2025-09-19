@@ -4,8 +4,8 @@ import pytest
 
 from src.common.constants import AWS_REGION
 from src.common.exceptions import NotFoundError
-from src.infra.aws.data_classes import CfnStackStatus
-from src.modules.master.models.agent import Agent, UpdateAgentDTO
+from src.domain.models.agent import Agent, UpdateAgentDTO
+from src.infra.data_classes import CfnStackStatus
 
 
 def test_create_agent(agent_repo):

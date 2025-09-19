@@ -1,5 +1,6 @@
+from unittest.mock import MagicMock
+
 import pytest
-from mock import MagicMock
 
 from src.common.exceptions import NotFoundError
 from src.entrypoints.functions.update_deployment.main import handler, notifier

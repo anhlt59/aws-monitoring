@@ -2,11 +2,11 @@ import json
 
 import boto3
 
-boto3.setup_default_session(profile_name="wellmira")
+boto3.setup_default_session(profile_name="")
 
 
 def handle_monitoring_events():
-    from src.infra.aws import EventBridgeService
+    from src.infra import EventBridgeService
     from tests.conftest import TEST_DIR
 
     service = EventBridgeService()
