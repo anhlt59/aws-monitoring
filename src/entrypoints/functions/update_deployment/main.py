@@ -1,49 +1,42 @@
+from src.adapters.aws.data_classes import CfnStackEvent, event_source
+from src.adapters.db.repositories import AgentRepository
+from src.adapters.notifiers import EventNotifier, SlackClient
+from src.common.constants import DEPLOYMENT_WEBHOOK_URL
 from src.common.logger import logger
 from src.common.utils.datetime_utils import datetime_str_to_timestamp
-from src.infra.aws.data_classes import CfnStackEvent, event_source
-from src.infra.db.repositories import AgentRepository
-from src.modules.master.configs import DEPLOYMENT_WEBHOOK_URL
-from src.modules.master.models.agent import Agent, UpdateAgentDTO
-from src.modules.master.services.notifiers import CloudFormationNotifier, SlackClient
+from src.domain.use_cases.update_deployment import update_deployment_use_case
 
-notifier = CloudFormationNotifier(
-    client=SlackClient(DEPLOYMENT_WEBHOOK_URL),
-)
+notifier = EventNotifier(client=SlackClient(DEPLOYMENT_WEBHOOK_URL))
 agent_repo = AgentRepository()
 
 
-def upsert_agent(event: CfnStackEvent):
-    try:
-        if agent_repo.exists(event.account):
-            agent_repo.update(
-                event.account,
-                UpdateAgentDTO(
-                    region=event.region,
-                    status=event.stack_data.status,
-                    deployed_at=datetime_str_to_timestamp(event.time),
-                ),
-            )
-        else:
-            agent_repo.create(
-                Agent(
-                    id=event.account,
-                    region=event.region,
-                    status=event.stack_data.status,
-                    deployed_at=datetime_str_to_timestamp(event.time),
-                )
-            )
-    except Exception as e:
-        logger.error(f"Failed to upsert agent {event.account}: {e}")
-
-
+# @logger.inject_lambda_context(log_event=True)
 @event_source(data_class=CfnStackEvent)
 def handler(event: CfnStackEvent, context):
-    """Handle the incoming event."""
+    """Lambda handler for CloudFormation stack deployment events.
+
+    Extracts domain values from AWS-specific CfnStackEvent and delegates
+    to the use case layer with pure domain data. This maintains hexagonal
+    architecture by keeping AWS-specific parsing in the entrypoint layer.
+    """
     logger.debug(event.raw_event)
 
-    if event.source == "aws.cloudformation":
-        upsert_agent(event)
-        notifier.notify(event)
-        logger.info(f"Sent Event<{event.get_id}> successfully")
-    else:
-        logger.warning(f"Unsupported event source: {event.source}")
+    try:
+        # Validate that this is a CloudFormation event
+        # CfnStackEvent will throw KeyError for non-CloudFormation events
+        # This maintains backward compatibility with test expectations
+        update_deployment_use_case(
+            account=event.account,
+            region=event.region,
+            status=event.stack_data.status,  # Will raise KeyError for non-CFN events
+            deployed_at=datetime_str_to_timestamp(event.time),
+            event_data=event,  # Pass original event for notification
+            agent_repo=agent_repo,
+            notifier=notifier,
+        )
+    except KeyError as e:
+        logger.error(f"Invalid CloudFormation event structure: missing {e}")
+        raise ValueError(f"Event is not a valid CloudFormation stack event: missing {e}")
+    except Exception as e:
+        logger.error(f"Failed to process deployment event: {e}")
+        raise

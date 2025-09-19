@@ -1,35 +1,67 @@
 # Deployment Guide
 
-This guide provides instructions for deploying the AWS Monitoring project to your AWS account.
+This guide provides comprehensive instructions for deploying the AWS Monitoring project to various AWS environments
+including production, staging, and multi-account setups.
 
 ## Prerequisites
 
 Before you can deploy the project, you need to have the following prerequisites installed and configured:
 
-- [Docker](https://docs.docker.com/engine/install/)
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- An AWS account with the necessary permissions to create the required resources.
+### Software Requirements
 
-### AWS Resources
+| Tool                | Purpose                         | Installation                                                                                           |
+|---------------------|---------------------------------|--------------------------------------------------------------------------------------------------------|
+| **AWS CLI 2.x**     | AWS service interaction         | [AWS CLI Install Guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) |
+| **Docker**          | LocalStack and containerization | [Docker Install Guide](https://docs.docker.com/engine/install/)                                        |
+| **Python 3.13+**    | Runtime environment             | [python.org](https://www.python.org/downloads/)                                                        |
+| **Node.js 23.0.0+** | Serverless Framework            | [nodejs.org](https://nodejs.org/en/download/)                                                          |
 
-You need to set up the following prerequisite resources in AWS before deploying the application:
+## Pre-Deployment Setup
 
-1.  **IAM Role:** Create an IAM role that will be used to deploy the CloudFormation stack. The required permissions are defined in the `infra/roles/deployment_policy.json.tpl` file.
-2.  **S3 Bucket:** Create an S3 bucket in the same region as your application to store the artifacts for your serverless application. For example, `neos-monitoring-deployment`.
+### 1. Bootstrap Infrastructure
 
-> You can use the `make bootstrap-${env}` command to create the necessary resources in your AWS account.
+Bootstrap creates the foundational AWS resources needed for deployment:
 
-## Environment Configurations
+```bash
+# Bootstrap NEOS environment (agent only)
+make bootstrap-neos
+
+# Bootstrap CM+ environment (master + staging agent)
+make bootstrap-cm
+```
+
+The bootstrap process creates:
+
+- **S3 Bucket:** An S3 bucket in the same region as your application to store the artifacts for your serverless
+   application. For example, `neos-monitoring-deployment`. 
+- **IAM Roles:** An IAM role that will be used to deploy the CloudFormation stack. The required permissions are
+   defined in the `infra/roles/deployment_policy.json.tpl` file.
+
+### 2. Environment-Specific Configuration
 
 The project uses a two-stack approach for deployment:
 
-- **Master Stack:** There is only one master stack (except for local development). The configuration files for the master stack are located in the `infra/master/configs` directory.
-- **Agent Stack:** Each environment has its own agent stack. The configuration files for the agent stack are located in the `infra/agent/configs` directory.
+- **Master Stack:** There is only one master stack (except for local development). The configuration files for the
+  master stack are located in the `infra/master/configs` directory.
+- **Agent Stack:** Each environment has its own agent stack. The configuration files for the agent stack are located in
+  the `infra/agent/configs` directory.
 
-## Deployment Steps
+
+## Deployment Process
 
 To deploy the project, follow these steps:
 
-1.  **Install dependencies:** Run `make install` to install all the required dependencies.
-2.  **Activate the virtual environment:** Run `make activate` to activate the virtual environment.
-3.  **Deploy the stacks:** Run `make deploy-${env}` to deploy the master and agent stacks to the specified environment. For example, to deploy to the `neos` environment, run `make deploy-neos`.
+Deploy to specific environments using make commands:
+
+```bash
+# Install dependencies first
+make install
+make activate
+
+# Deploy to NEOS environment (agent stack only)
+make deploy-neos
+
+# Deploy to master environment
+make deploy-master
+```
+
