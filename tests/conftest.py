@@ -11,8 +11,8 @@ sys.path.append(str(BASE_DIR))
 load_dotenv(BASE_DIR / ".env.local")
 
 # fmt: off
-from src.infra.db.repositories import AgentRepository, EventRepository  # noqa
-from src.modules.master.models import Agent, Event  # noqa
+from src.adapters.db.repositories import AgentRepository, EventRepository  # noqa
+from src.domain.models import Agent, Event  # noqa
 
 # fmt: on
 

@@ -23,6 +23,9 @@ pre-commit = "~4.3.0"
 nodeenv = "~1.9.0"
 awscli = "~1.42.0"
 boto3 = "~1.40.0"
+SuperClaude = "^4.1.6"
+ruff = "~0.14.0"
+bandit = "~1.8.0"
 
 # Testing dependencies. -------------------------------------
 [tool.poetry.group.test.dependencies]
@@ -30,7 +33,6 @@ pytest = "~8.4.0"
 pytest-cov = "~7.0.0"
 python-dotenv = "~1.1.0"
 moto = "~5.1.0"
-mock = "~5.2.0"
 faker = "~37.3.0"
 coverage-badge = "~1.1.0"
 

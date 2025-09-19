@@ -12,22 +12,25 @@
 
 ## 📖 Table of Contents
 
-- [✨ Features](#-features)
-- [🏗️ Project Overview](#️-project-overview)
-- [🏁 Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [🏃‍♀️ Running the project](#️-running-the-project)
-  - [Local Development](#local-development)
-  - [Deployment](#deployment)
-- [🗃️ Database](#️-database)
-- [🤝 Contributing](#-contributing)
-- [📝 License](#-license)
+<!-- TOC -->
+* [📊 AWS Monitoring 🌩️](#-aws-monitoring-)
+  * [📖 Table of Contents](#-table-of-contents)
+  * [✨ Features](#-features)
+  * [🏗️ Project Overview](#-project-overview)
+  * [🏁 Getting Started](#-getting-started)
+    * [Prerequisites](#prerequisites)
+    * [Installation](#installation)
+  * [🏃‍♀️ Running the project](#-running-the-project)
+    * [Local Development](#local-development)
+    * [Deployment](#deployment)
+  * [🗃️ Database](#-database)
+  * [🤝 Contributing](#-contributing)
+<!-- TOC -->
 
 ---
 
 ![Unittest](https://img.shields.io/badge/-passing-brightgreen?style=for-the-badge&logo=github&logoColor=black)
-![Coverage Status](https://img.shields.io/badge/Coverage-86%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
+![Coverage Status](https://img.shields.io/badge/Coverage-88%25-blue?style=for-the-badge&logo=codecov&logoColor=white)
 
 ---
 
@@ -51,7 +54,7 @@ For a detailed explanation of the project's architecture, components, and tech s
 
 ### Prerequisites
 
-- [Python 3.12](https://www.python.org/downloads/)
+- [Python 3.13](https://www.python.org/downloads/)
 - [NodeJs 23.0.0](https://nodejs.org/en/download/)
 - [Docker](https://docs.docker.com/engine/install/)
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
