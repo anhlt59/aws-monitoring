@@ -26,6 +26,7 @@ boto3 = "~1.40.0"
 SuperClaude = "^4.1.6"
 ruff = "~0.14.0"
 bandit = "~1.8.0"
+rich = "~14.2.0"
 
 # Testing dependencies. -------------------------------------
 [tool.poetry.group.test.dependencies]

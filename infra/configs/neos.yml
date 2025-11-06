@@ -14,8 +14,10 @@ Lambda:
     LOG_LEVEL: DEBUG
   LogRetentionInDays: 7
 
-MonitoringConfigs:
-  EventBusArn: arn:aws:events:us-east-1:728171922033:event-bus/monitoring-master-neos-MonitoringEventBus
+DynamoDB:
+  BillingMode: PAY_PER_REQUEST
+
+Monitoring:
   Health:
     State: enabled
   GuardDuty:
@@ -28,3 +30,8 @@ MonitoringConfigs:
       | filter @message like /(?i)(error|fail|exception)/
       | sort @timestamp desc
       | limit 200
+
+  Webhooks:
+    Monitoring: "https://hooks.slack.com/services/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"
+    Deployment: "https://hooks.slack.com/services/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"
+    Report: "https://hooks.slack.com/services/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"

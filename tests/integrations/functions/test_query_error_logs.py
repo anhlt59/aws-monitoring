@@ -66,6 +66,6 @@ def mock_cloudwatch_logs(log_group_name: str):
 
 
 def test_query_logs():
-    log_group_name = "/aws/lambda/monitoring-master-local-HandleMonitoringEvents"
+    log_group_name = "/aws/lambda/monitoring-local-HandleMonitoringEvents"
     mock_cloudwatch_logs(log_group_name)
     handler(None, None)

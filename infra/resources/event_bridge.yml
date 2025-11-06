@@ -1,0 +1,52 @@
+MonitoringEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: ${self:service}-MonitoringEventRule
+    Description: Rule to handle monitoring events from various sources ${self:service}
+    EventBusName: default
+    EventPattern: |
+      {
+        "$or": [
+          {
+            "source": ["aws.health"],
+            "detail-type": ["AWS Health Event"]
+          },
+          {
+            "source": ["aws.guardduty"],
+            "detail-type": ["GuardDuty Finding"]
+          },
+          {
+            "source": [ { "wildcard": "monitoring*" } ]
+          }
+        ]
+      }
+    State: ENABLED
+    Targets:
+      - Arn: !GetAtt HandleMonitoringEventsLambdaFunction.Arn
+        Id: "${self:service}-EventHandler"
+        RoleArn: !GetAtt EventBridgeRole.Arn
+        DeadLetterConfig:
+          Arn: !GetAtt MonitoringEventRuleDLQ.Arn
+
+
+DeploymentEventRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: "${self:service}-DeploymentEventRule"
+    Description: Rule to handle cloudformation deployment events ${self:service}
+    EventBusName: default
+    EventPattern: |
+      {
+        "source": ["aws.cloudformation"],
+        "detail-type": ["CloudFormation Stack Status Change"],
+        "detail": {
+          "stack-id": [{ "wildcard": "*stack/monitoring*"}]
+        }
+      }
+    State: ENABLED
+    Targets:
+      - Arn: !GetAtt UpdateDeploymentLambdaFunction.Arn
+        Id: "${self:service}-EventHandler"
+        RoleArn: !GetAtt EventBridgeRole.Arn
+        DeadLetterConfig:
+          Arn: !GetAtt MonitoringEventRuleDLQ.Arn

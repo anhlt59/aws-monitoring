@@ -4,69 +4,54 @@
 #   for a given deployment stage.
 #
 # Usage:
-#   $ bootstrap.sh [stage] [stack]
+#   $ bootstrap.sh [stage]
 # Arguments:
-#   - stage: The deployment stage (e.g., 'cm', 'local')
-#   - stack: The stack to bootstrap (e.g., 'master', 'agent')
+#   - stage: The deployment stage (e.g., 'local')
 # ==================================================================================
 
 set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
-STAGE="${1:-cm}"
-STACK="${2:-agent}"
+STAGE="${1:-local}"
 
 if [[ "$STAGE" == "local" ]]; then
     echo -e "${RED}Warning: 'local' stage is not supported.${RESET}"
     exit 1
 fi
 
-# Create folder .serverless in current directory
-DEPLOYMENT_DIR="${BASE_DIR}/.serverless"
-mkdir -p "$DEPLOYMENT_DIR"
-# Copy the config file
-CONFIG_FILE="${DEPLOYMENT_DIR}/config.yml"
-cp "${BASE_DIR}/infra/${STACK}/configs/${STAGE}.yml" "$CONFIG_FILE"
-cp -r "${BASE_DIR}/infra/roles/" "$DEPLOYMENT_DIR"
-AWS_DEFAULT_REGION="$(yq e '.Region' "$CONFIG_FILE")"
-AWS_PROFILE="$(yq e '.Profile' "$CONFIG_FILE")"
-export AWS_DEFAULT_REGION
-export AWS_PROFILE
-# Generate deployment policy file
-sed -e "s|\${AWS_REGION}|$AWS_DEFAULT_REGION|g" \
-    -e "s|\${AWS_ACCOUNT_ID}|$(aws sts get-caller-identity --query Account --output text)|g" \
-    "${DEPLOYMENT_DIR}/deployment_policy.json.tpl" >"${DEPLOYMENT_DIR}/deployment_policy.json"
-
 echo -e "${BLUE}===============================${RESET}"
-echo -e "${BLUE}Bootstrap 'monitoring-${STACK}'${RESET}"
+echo -e "${BLUE}Bootstrap 'monitoring'${RESET}"
 echo -e "${BLUE}* Stage        ${STAGE}${RESET}"
 echo -e "${BLUE}* AWS profile  ${AWS_PROFILE}${RESET}"
 echo -e "${BLUE}* AWS region   ${AWS_DEFAULT_REGION}${RESET}${RESET}"
 echo -e "${BLUE}===============================${RESET}\n"
 
-# S3 BUCKET ------------------------------------------------------------------------------------------------------------
-# Read S3 deployment bucket name from CONFIG_FILE using yq
-# Then check if the S3 deployment bucket exists, create if not
-echo -e "${GREEN}Bootstrapping S3...${RESET}"
-DEPLOYMENT_BUCKET=$(yq e '.S3.DeploymentBucket.Name' "$CONFIG_FILE")
-if aws s3api head-bucket --bucket "$DEPLOYMENT_BUCKET" 2>/dev/null; then
-    echo -e "${GREEN}S3 bucket '$DEPLOYMENT_BUCKET' already exists.${RESET}"
-else
-    echo -e "${YELLOW}S3 bucket '$DEPLOYMENT_BUCKET' does not exist. Creating...${RESET}"
-    aws s3api create-bucket \
-        --bucket "$DEPLOYMENT_BUCKET" \
-        --region "$AWS_DEFAULT_REGION" \
-        $([[ "$AWS_DEFAULT_REGION" != "us-east-1" ]] && echo --create-bucket-configuration LocationConstraint="$AWS_DEFAULT_REGION")
-    echo -e "${GREEN}S3 bucket '$DEPLOYMENT_BUCKET' created.${RESET}"
-fi
+# Create folder .serverless in current directory
+DEPLOYMENT_DIR="${BASE_DIR}/.serverless"
+mkdir -p "$DEPLOYMENT_DIR"
+
+# Copy the config file
+CONFIG_FILE="${DEPLOYMENT_DIR}/config.yml"
+cp "${BASE_DIR}/infra/configs/${STAGE}.yml" "$CONFIG_FILE"
+cp -r "${BASE_DIR}/infra/roles/" "$DEPLOYMENT_DIR"
+AWS_DEFAULT_REGION="$(yq e '.Region' "$CONFIG_FILE")"
+AWS_PROFILE="$(yq e '.Profile' "$CONFIG_FILE")"
+export AWS_DEFAULT_REGION
+export AWS_PROFILE
 
 # IAM POLICY -----------------------------------------------------------------------------------------------------------
-# Create or update IAM role & policy for deployment
 echo -e "${GREEN}\nBootstrapping IAM Role & Policy...${RESET}"
 ROLE_NAME="monitoring-DeploymentRole"
 POLICY_NAME="monitoring-DeploymentPolicy"
 
+# Generate deployment policy file
+sed -e "s|\${AWS_REGION}|$AWS_DEFAULT_REGION|g" \
+    -e "s|\${AWS_ACCOUNT_ID}|$(aws sts get-caller-identity --query Account --output text)|g" \
+    "${DEPLOYMENT_DIR}/deployment_policy.json.tpl" >"${DEPLOYMENT_DIR}/deployment_policy.json"
+echo -e "${GREEN}Generated deployment policy at '${DEPLOYMENT_DIR}/deployment_policy.json'.${RESET}"
+
+# Create or update IAM role & policy for deployment
 # Search for the policy by name
 POLICY_ARN=$(aws iam list-policies --scope Local --query "Policies[?PolicyName=='$POLICY_NAME'].Arn" --output text)
 # Create IAM policy, if the policy doesn't exist
@@ -114,4 +99,20 @@ else
         --role-name "$ROLE_NAME" \
         --policy-arn "$(aws iam list-policies --scope Local --query "Policies[?PolicyName=='$POLICY_NAME'].Arn" --output text)"
     echo -e "${GREEN}IAM role '$ROLE_NAME' created and policy '$POLICY_NAME' attached."
+fi
+
+# S3 BUCKET ------------------------------------------------------------------------------------------------------------
+# Read S3 deployment bucket name from CONFIG_FILE using yq
+# Then check if the S3 deployment bucket exists, create if not
+echo -e "${GREEN}Bootstrapping S3...${RESET}"
+DEPLOYMENT_BUCKET=$(yq e '.S3.DeploymentBucket.Name' "$CONFIG_FILE")
+if aws s3api head-bucket --bucket "$DEPLOYMENT_BUCKET" 2>/dev/null; then
+    echo -e "${GREEN}S3 bucket '$DEPLOYMENT_BUCKET' already exists.${RESET}"
+else
+    echo -e "${YELLOW}S3 bucket '$DEPLOYMENT_BUCKET' does not exist. Creating...${RESET}"
+    aws s3api create-bucket \
+        --bucket "$DEPLOYMENT_BUCKET" \
+        --region "$AWS_DEFAULT_REGION" \
+        $([[ "$AWS_DEFAULT_REGION" != "us-east-1" ]] && echo --create-bucket-configuration LocationConstraint="$AWS_DEFAULT_REGION")
+    echo -e "${GREEN}S3 bucket '$DEPLOYMENT_BUCKET' created.${RESET}"
 fi

@@ -31,6 +31,7 @@ function start_localstack() {
     if ! docker ps --format '{{.Names}}' | grep -q '^localstack$'; then
         echo -e "${YELLOW}LocalStack is not running. Starting...${RESET}"
         docker compose up localstack -d
+        sleep 5  # Wait for LocalStack to initialize
         echo -e "${GREEN}LocalStack started successfully.${RESET}"
     else
         echo -e "${GREEN}LocalStack is already running.${RESET}"

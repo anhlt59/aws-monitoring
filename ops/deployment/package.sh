@@ -5,16 +5,15 @@ set -euo pipefail
 SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
 STAGE="${1:-local}"
-STACK="${2:-agent}"
 
 if [[ "$STAGE" == "local" ]]; then
-    TEMPLATE_FILE="serverless.${STACK}.local.yml"
+    TEMPLATE_FILE="serverless.local.yml"
 else
-    TEMPLATE_FILE="serverless.${STACK}.yml"
+    TEMPLATE_FILE="serverless.yml"
 fi
 
 echo -e "${BLUE}===============================${RESET}"
-echo -e "${BLUE}Packaging 'monitoring-${STACK}'${RESET}"
+echo -e "${BLUE}Packaging 'monitoring'${RESET}"
 echo -e "${BLUE}* Stage ${STAGE}${RESET}"
 echo -e "${BLUE}===============================${RESET}\n"
 

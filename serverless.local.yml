@@ -1,9 +1,9 @@
-service: monitoring-agent
+service: monitoring
 
 provider:
   name: aws
   stage: "local"
-  region: ${opt:region, self:custom.stackConfigs.Region}
+  region: ${opt:region, self:custom.configs.Region}
   stackName: ${self:service}-${self:provider.stage}
 
   # default tags for all resources
@@ -17,13 +17,13 @@ provider:
 
   # Default environment for lambda functions
   environment:
-    REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
     POWERTOOLS_LOG_LEVEL: DEBUG
+    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.Webhooks.Monitoring}
+    DYNAMODB_TABLE: monitoring-local
 
 plugins:
   - serverless-plugin-utils
-  - serverless-python-requirements
   - serverless-offline
   - serverless-localstack
 
@@ -31,22 +31,23 @@ useDotenv: true
 
 custom:
   # load the configuration corresponding to a specific $stage
-  stackConfigs: ${file(infra/agent/configs/${self:provider.stage}.yml)}
-  monitoringConfigs:
-    ${file(infra/agent/configs/${self:provider.stage}.yml):MonitoringConfigs}
-    # plugins
+  custom:
+  version: v1.0.1
+  # load the configuration corresponding to a specific $stage
+  configs: ${file(infra/configs/${self:provider.stage}.yml)}
+  # plugins
   localstack:
     stages: [local]
     debug: false
     lambda:
       mountCode: true
     autostart: true
-  pythonRequirements: ${file(infra/agent/plugins/python_requirements.yml):pythonRequirements}
+  pythonRequirements: ${file(infra/plugins/python_requirements.yml):pythonRequirements}
 
 package:
   individually: false
   excludeDevDependencies: false
 
-functions: ${file(serverless.agent.yml):functions}
+functions: ${file(serverless.yml):functions}
 
-resources: ${file(serverless.agent.yml):resources}
+resources: ${file(serverless.yml):resources}

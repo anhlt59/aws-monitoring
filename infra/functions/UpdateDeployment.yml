@@ -4,6 +4,6 @@ function:
   handler: src.entrypoints.update_deployment.main.handler
   environment:
     POWERTOOLS_SERVICE_NAME: events
-    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.DeploymentWebhookUrl}
+    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.Webhooks.Deployment}
   tags:
     monitoring: true

@@ -61,6 +61,20 @@ LambdaFunctionPolicy:
             - lambda:List*
             - lambda:Get*
           Resource: "*"
+        - Sid: AllowAccessDynamoDB
+          Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Get*
+            - dynamodb:List*
+            - dynamodb:BatchGet*
+            - dynamodb:BatchWrite*
+            - dynamodb:Describe*
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+          Resource:
+            - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*"
 
 # EventBridgeRole, that allows the Lambda function to be triggered by EventBridge events
 EventBridgeRole:

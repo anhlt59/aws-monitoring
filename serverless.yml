@@ -1,0 +1,111 @@
+service: monitoring
+
+stages:
+  default:
+    resolvers:
+      aws-resolver:
+        type: aws
+        profile: ${self:custom.configs.Profile}
+
+provider:
+  name: aws
+  resolver: aws-resolver
+  stage: ${opt:stage, "dev"}
+  region: ${opt:region, self:custom.configs.Region}
+  stackName: monitoring-${self:provider.stage}
+
+  # default tags for all resources
+  stackTags:
+    owner: monitoring
+    environment: ${self:provider.stage}
+  tags: ${self:provider.stackTags}
+
+  # deployment
+  deploymentBucket:
+    name: ${self:custom.configs.S3.DeploymentBucket.Name}
+  iam:
+    deploymentRole: ${self:custom.configs.IAM.DeploymentRole}
+
+  # config lambda functions
+  runtime: python3.13
+  logRetentionInDays: ${self:custom.configs.Lambda.LogRetentionInDays}
+  memorySize: 256
+  timeout: 10
+  role: LambdaFunctionRole
+  layers:
+    - !Ref PythonRequirementsLambdaLayer
+
+  environment:
+    SERVICE: ${self:service}
+    STAGE: ${self:provider.stage}
+    POWERTOOLS_LOG_LEVEL: ${self:custom.configs.Lambda.Environment.LOG_LEVEL, "INFO"}
+    # references to resources in this template
+    AWS_DYNAMODB_TABLE: ${self:custom.configs.DynamoDB.TableName, "monitoring-local"}
+
+plugins:
+  - serverless-plugin-utils
+  - serverless-python-requirements
+
+useDotenv: true
+
+custom:
+  version: v1.0.1
+  # load the configuration corresponding to a specific $stage
+  configs: ${file(infra/configs/${self:provider.stage}.yml)}
+  # plugins
+  pythonRequirements: ${file(infra/plugins/python_requirements.yml):pythonRequirements}
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - "!./**"
+    - src/common/**/?*.py
+    - src/infras/**/?*.py
+    - src/modules/**/?*.py
+    - src/modules/**/?*.py
+    - statics/*/?*
+
+# Functions (merged)
+functions:
+  # functions
+  HandleMonitoringEvents: ${file(infra/functions/HandleMonitoringEvents.yml):function}
+  UpdateDeployment: ${file(infra/functions/UpdateDeployment.yml):function}
+  DailyReport: ${file(infra/functions/DailyReport.yml):function}
+
+  # agent functions
+  QueryErrorLogs: ${file(infra/functions/QueryErrorLogs.yml):function}
+
+#  # API -------------------------------------------------------------------------
+#  # Events
+#  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
+#  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
+#
+#  # Agents
+#  GetAgent: ${file(infra/functions/api/Agent-GetItem.yml):function}
+#  ListAgents: ${file(infra/functions/api/Agent-ListItems.yml):function}
+#  UpdateAgent: ${file(infra/functions/api/Agent-UpdateItem.yml):function}
+
+resources:
+  # -----------------------------------------------------------------------------
+  Parameters:
+    Stage:
+      Type: String
+      Default: ${self:provider.stage}
+      AllowedValues: [ local, dev, prod ]
+  # -----------------------------------------------------------------------------
+  Resources:
+    # IAM
+    LambdaFunctionRole: ${file(infra/resources/iam.yml):LambdaFunctionRole}
+    LambdaFunctionPolicy: ${file(infra/resources/iam.yml):LambdaFunctionPolicy}
+    EventBridgeRole: ${file(infra/resources/iam.yml):EventBridgeRole}
+    EventBridgePolicy: ${file(infra/resources/iam.yml):EventBridgePolicy}
+    # EventBridge
+    MonitoringEventRule: ${file(infra/resources/event_bridge.yml):MonitoringEventRule}
+    DeploymentEventRule: ${file(infra/resources/event_bridge.yml):DeploymentEventRule}
+    # SQS
+    MonitoringEventRuleDLQ: ${file(infra/resources/sqs.yml):MonitoringEventRuleDLQ}
+    # DynamoDB
+    DynamoDBTable: ${file(infra/resources/dynamodb.yml):DynamoDBTable}
+  # -----------------------------------------------------------------------------
+  Outputs: { }

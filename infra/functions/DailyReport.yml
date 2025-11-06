@@ -8,6 +8,6 @@ function:
         enabled: true
   environment:
     POWERTOOLS_SERVICE_NAME: events
-    REPORT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.ReportWebhookUrl}
+    REPORT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.Webhooks.Report}
   tags:
     monitoring: true

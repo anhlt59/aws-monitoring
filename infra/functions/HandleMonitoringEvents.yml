@@ -4,6 +4,6 @@ function:
   handler: src.entrypoints.handle_monitoring_events.main.handler
   environment:
     POWERTOOLS_SERVICE_NAME: events
-    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.MonitoringWebhookUrl}
+    MONITORING_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.Webhooks.Monitoring}
   tags:
     monitoring: true
