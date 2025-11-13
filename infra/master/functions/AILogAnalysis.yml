@@ -1,0 +1,20 @@
+function:
+  name: ${self:service}-${self:provider.stage}-AILogAnalysis
+  description: AI-powered log analysis batch processing (runs every 10 minutes)
+  handler: src.entrypoints.functions.ai_log_analysis.main.handler
+  timeout: 300  # 5 minutes (needs more time for AI processing)
+  memorySize: 512  # More memory for AI processing
+  events:
+    - schedule:
+        rate: cron(*/10 * * * ? *)  # Every 10 minutes
+        enabled: true
+  environment:
+    POWERTOOLS_SERVICE_NAME: ai-log-analysis
+    OPENAI_API_KEY: ${self:custom.configs.AILogAnalysis.OpenAIApiKey}
+    OPENAI_MODEL: ${self:custom.configs.AILogAnalysis.OpenAIModel, "gpt-4o-mini"}
+    AI_ANALYSIS_LOOKBACK_MINUTES: ${self:custom.configs.AILogAnalysis.LookbackMinutes, "10"}
+    AI_ANALYSIS_SIMILARITY_THRESHOLD: ${self:custom.configs.AILogAnalysis.SimilarityThreshold, "0.85"}
+    AI_ANALYSIS_MAX_LOGS_PER_BATCH: ${self:custom.configs.AILogAnalysis.MaxLogsPerBatch, "100"}
+  tags:
+    monitoring: true
+    ai-analysis: true

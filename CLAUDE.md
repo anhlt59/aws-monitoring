@@ -59,8 +59,21 @@ The application consists of two serverless stacks:
 #### Master Stack
 - Central monitoring system deployed once
 - Processes monitoring events, sends notifications, provides APIs
-- Lambda functions: HandleMonitoringEvents, UpdateDeployment, DailyReport
+- Lambda functions: HandleMonitoringEvents, UpdateDeployment, DailyReport, **AILogAnalysis**
 - API Gateway endpoints for agent management and event querying
+
+#### AI-Powered Log Analysis (New)
+- **Lambda**: AILogAnalysis (runs every 10 minutes)
+- **Purpose**: Automatically analyze error logs using OpenAI GPT
+- **Features**:
+  - Duplicate detection (>85% similarity)
+  - Sensitive data removal (AWS keys, IPs, emails, etc.)
+  - Pattern identification and categorization
+  - Severity assessment (0-4 scale)
+  - Actionable solution recommendations
+  - Daily deduplication to optimize costs
+- **Storage**: Context and LogAnalysis tables in DynamoDB
+- **Documentation**: See `docs/ai_log_analysis.md`
 
 #### Agent Stack
 - Deployed to each monitored AWS account

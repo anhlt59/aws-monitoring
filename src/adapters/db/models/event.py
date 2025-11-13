@@ -14,6 +14,7 @@ class EventPersistence(DynamoModel, discriminator="EVENT"):
     detail = UnicodeAttribute(null=False)
     detail_type = UnicodeAttribute(null=True)
     resources = ListAttribute(null=True, default=lambda: [])
+    analysis_id = UnicodeAttribute(null=True)  # Link to AI log analysis result
     published_at = NumberAttribute(null=False)
     expired_at = NumberAttribute(null=True)
     updated_at = NumberAttribute(null=False)

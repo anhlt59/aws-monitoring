@@ -68,6 +68,7 @@ functions:
   HandleMonitoringEvents: ${file(infra/master/functions/HandleMonitoringEvents.yml):function}
   UpdateDeployment: ${file(infra/master/functions/UpdateDeployment.yml):function}
   DailyReport: ${file(infra/master/functions/DailyReport.yml):function}
+  AILogAnalysis: ${file(infra/master/functions/AILogAnalysis.yml):function}
 
 #  # API -------------------------------------------------------------------------
 #  # Events

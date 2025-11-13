@@ -14,6 +14,7 @@ class Event(BaseModel):
     detail: dict
     detail_type: str | None = None
     resources: list[str] = []
+    analysis_id: str | None = None  # Link to AI log analysis result
     published_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
 

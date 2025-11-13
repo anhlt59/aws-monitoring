@@ -21,3 +21,10 @@ MonitoringConfigs:
   MonitoringWebhookUrl: "https://hooks.slack.com/services/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"
   DeploymentWebhookUrl: "https://hooks.slack.com/services/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"
   ReportWebhookUrl: "https://hooks.slack.com/services/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"
+
+AILogAnalysis:
+  OpenAIApiKey: ${env:OPENAI_API_KEY}  # Set via environment variable
+  OpenAIModel: "gpt-4o-mini"
+  LookbackMinutes: 10
+  SimilarityThreshold: 0.85
+  MaxLogsPerBatch: 100
