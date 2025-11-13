@@ -1,4 +1,4 @@
-.PHONY: help active install coverage test bootstrap deploy package destroy
+.PHONY: help active install coverage test mon bootstrap deploy package destroy
 .DEFAULT_GOAL := help
 stage         := local
 
@@ -23,6 +23,8 @@ activate: ## Activate the virtual environment.
 # RUNNING ========================================================================
 start: ## Start the local server.
 	@bash ops/development/start.sh
+mon: ## Launch the profile manager
+	@bash ops/development/mon.sh start $(ARGS)
 
 # BOOTSTRAP ========================================================================
 bootstrap: ## Prepare s3 and iam roles.
