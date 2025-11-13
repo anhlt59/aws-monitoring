@@ -10,8 +10,9 @@ APP_VERSION = "1.0.0"
 YAML_EXTENSIONS = [".yml", ".yaml"]
 
 # Default directories
-DEFAULT_CONFIG_DIR = Path("infra/master/configs")
-AGENT_CONFIG_DIR = Path("infra/agent/configs")
+DEFAULT_CONFIG_DIR = Path("infra/configs")
+# Legacy paths (kept for backward compatibility)
+AGENT_CONFIG_DIR = Path("infra/configs")  # Now unified with master configs
 
 # UI Constants
 MAX_DISPLAY_ITEMS = 20
