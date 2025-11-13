@@ -1,4 +1,4 @@
-.PHONY: help active install coverage test bootstrap deploy package destroy
+.PHONY: help active install coverage test monterm bootstrap deploy package destroy
 .DEFAULT_GOAL := help
 stage         := local
 
@@ -23,6 +23,8 @@ activate: ## Activate the virtual environment.
 # RUNNING ========================================================================
 start: ## Start the local server.
 	@bash ops/development/start.sh
+monterm: ## Launch the profile manager (use 'make monterm ARGS="--agent"' for agent configs)
+	@bash ops/tools/monterm.sh start $(ARGS)
 
 # BOOTSTRAP ========================================================================
 bootstrap: ## Prepare s3 and iam roles.

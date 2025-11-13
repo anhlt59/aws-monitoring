@@ -30,7 +30,9 @@ local = [
   "ruff~=0.14.0",
   "bandit~=1.8.0",
   "rich~=14.2.0",
-  "SuperClaude>=4.1.0"
+  "SuperClaude>=4.1.0",
+  "questionary~=2.0.0",
+  "pyyaml~=6.0.0",
 ]
 # Testing dependencies. -------------------------------------
 test = [
