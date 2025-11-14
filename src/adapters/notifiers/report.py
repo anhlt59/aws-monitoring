@@ -41,6 +41,6 @@ class ReportNotifier:
             },
         )
 
-    def report(self, events: list[Event]):
+    async def report(self, events: list[Event]):
         message = self.events_to_report(events)
-        self.client.send(message)
+        await self.client.send(message)

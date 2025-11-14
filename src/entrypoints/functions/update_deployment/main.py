@@ -1,3 +1,5 @@
+import asyncio
+
 from src.adapters.aws.data_classes import CfnStackEvent, event_source
 from src.adapters.db.repositories import AgentRepository
 from src.adapters.notifiers import EventNotifier, SlackClient
@@ -25,14 +27,16 @@ def handler(event: CfnStackEvent, context):
         # Validate that this is a CloudFormation event
         # CfnStackEvent will throw KeyError for non-CloudFormation events
         # This maintains backward compatibility with test expectations
-        update_deployment_use_case(
-            account=event.account,
-            region=event.region,
-            status=event.stack_data.status,  # Will raise KeyError for non-CFN events
-            deployed_at=datetime_str_to_timestamp(event.time),
-            event_data=event,  # Pass original event for notification
-            agent_repo=agent_repo,
-            notifier=notifier,
+        asyncio.run(
+            update_deployment_use_case(
+                account=event.account,
+                region=event.region,
+                status=event.stack_data.status,  # Will raise KeyError for non-CFN events
+                deployed_at=datetime_str_to_timestamp(event.time),
+                event_data=event,  # Pass original event for notification
+                agent_repo=agent_repo,
+                notifier=notifier,
+            )
         )
     except KeyError as e:
         logger.error(f"Invalid CloudFormation event structure: missing {e}")

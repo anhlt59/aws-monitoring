@@ -1,7 +1,7 @@
-from typing import Iterable
+from typing import AsyncIterable
 
-import boto3
-from types_boto3_lambda.client import LambdaClient
+import aioboto3
+from types_aioboto3_lambda.client import LambdaClient
 from types_boto3_lambda.type_defs import FunctionConfigurationTypeDef
 
 from src.common.constants import AWS_ENDPOINT, AWS_REGION
@@ -15,21 +15,24 @@ class FunctionConfiguration(FunctionConfigurationTypeDef):
 
 # Service -----------------------------------
 class LambdaService(metaclass=SingletonMeta):
-    client: LambdaClient
-
     def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
-        self.client = boto3.client("lambda", region_name=region, endpoint_url=endpoint_url)
+        self.region = region
+        self.endpoint_url = endpoint_url
+        self.session = aioboto3.Session()
 
-    def list_functions(self, **kwargs) -> Iterable[FunctionConfiguration]:
+    async def list_functions(self, **kwargs) -> AsyncIterable[FunctionConfiguration]:
         try:
-            response = self.client.list_functions(**kwargs)
+            async with self.session.client("lambda", region_name=self.region, endpoint_url=self.endpoint_url) as client:
+                response = await client.list_functions(**kwargs)
 
-            for function in response.get("Functions", []):
-                tags = self.client.list_tags(Resource=function["FunctionArn"]).get("Tags", {})
-                yield FunctionConfiguration(**function, Tags=tags)
+                for function in response.get("Functions", []):
+                    tags_response = await client.list_tags(Resource=function["FunctionArn"])
+                    tags = tags_response.get("Tags", {})
+                    yield FunctionConfiguration(**function, Tags=tags)
 
-            if cursor := response.get("NextMarker"):
-                yield from self.list_functions(Marker=cursor)
+                if cursor := response.get("NextMarker"):
+                    async for func in self.list_functions(Marker=cursor):
+                        yield func
 
         except Exception as e:
             raise InternalServerError(f"An unexpected error occurred while listing Lambda functions: {e}")

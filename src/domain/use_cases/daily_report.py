@@ -5,7 +5,7 @@ from src.domain.models.event import ListEventsDTO
 from src.domain.ports import IEventRepository, IReportNotifier
 
 
-def daily_report_use_case(event_repo: IEventRepository, notifier: IReportNotifier):
+async def daily_report_use_case(event_repo: IEventRepository, notifier: IReportNotifier):
     """Daily report use-case.
     1. Fetch events of previous day from the database.
     2. Generate a report & send the report to the subscribers.
@@ -14,7 +14,7 @@ def daily_report_use_case(event_repo: IEventRepository, notifier: IReportNotifie
     end_date = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
     start_date = end_date - timedelta(days=1)
 
-    result = event_repo.list(
+    result = await event_repo.list(
         ListEventsDTO(
             start_date=int(start_date.timestamp()),
             end_date=int(end_date.timestamp()),
@@ -24,4 +24,4 @@ def daily_report_use_case(event_repo: IEventRepository, notifier: IReportNotifie
     logger.debug(f"Fetched {len(result.items)} events for daily report")
 
     # 2. Generate a report & send the report to the subscribers.
-    notifier.report(result.items)
+    await notifier.report(result.items)

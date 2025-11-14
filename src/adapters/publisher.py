@@ -11,7 +11,7 @@ class Publisher:
     def __init__(self, client: EventBridgeService) -> None:
         self.client = client
 
-    def publish(self, messages: list[Message]) -> None:
+    async def publish(self, messages: list[Message]) -> None:
         """Publish domain messages to EventBridge.
 
         Args:
@@ -27,4 +27,4 @@ class Publisher:
             }
             for message in messages
         ]
-        self.client.put_events(entries)
+        await self.client.put_events(entries)

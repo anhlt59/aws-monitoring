@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-import requests
+import aiohttp
 from pydantic import BaseModel
 
 from src.common.utils.template import render_template
@@ -17,14 +17,16 @@ class SlackClient:
         self.webhook_url = webhook_url
         self.timeout = timeout
 
-    def send(self, message: Message):
+    async def send(self, message: Message):
         headers = {"Content-Type": "application/json"}
         payload = {
             "text": message.body or "",
             "attachments": message.attachments if message.attachments else [],
         }
-        response = requests.post(self.webhook_url, headers=headers, json=payload, timeout=self.timeout)
-        response.raise_for_status()
+        timeout = aiohttp.ClientTimeout(total=self.timeout)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.post(self.webhook_url, headers=headers, json=payload) as response:
+                response.raise_for_status()
 
 
 def render_message(template_file: str, context: dict | None = None) -> Message:

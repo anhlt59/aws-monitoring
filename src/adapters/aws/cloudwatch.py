@@ -1,7 +1,7 @@
-import time
+import asyncio
 
-import boto3
-from types_boto3_logs.client import CloudWatchLogsClient
+import aioboto3
+from types_aioboto3_logs.client import CloudWatchLogsClient
 from types_boto3_logs.type_defs import ResultFieldTypeDef
 
 from src.common.constants import AWS_ENDPOINT, AWS_REGION
@@ -11,12 +11,12 @@ from src.common.meta import SingletonMeta
 
 
 class CloudwatchLogService(metaclass=SingletonMeta):
-    client: CloudWatchLogsClient
-
     def __init__(self, region=AWS_REGION, endpoint_url=AWS_ENDPOINT):
-        self.client = boto3.client("logs", region_name=region, endpoint_url=endpoint_url)
+        self.region = region
+        self.endpoint_url = endpoint_url
+        self.session = aioboto3.Session()
 
-    def query_logs(
+    async def query_logs(
         self,
         log_group_names: list[str],
         query_string: str,
@@ -26,24 +26,28 @@ class CloudwatchLogService(metaclass=SingletonMeta):
         delay: int = 1,
     ) -> list[ResultFieldTypeDef]:
         logger.debug(f"Querying logs for groups: {log_group_names} from {start_time} to {end_time}")
-        query_time = time.time()
-        # start the query
-        start_query_response = self.client.start_query(
-            logGroupNames=log_group_names,
-            queryString=query_string,
-            startTime=start_time,
-            endTime=end_time,
-        )
-        query_id = start_query_response.get("queryId")
 
-        # Wait for the query to complete
-        response = {"status": "Running"}
-        while response.get("status") == "Running":
-            if time.time() - query_time > timeout:
-                raise RequestTimeoutError(
-                    f"CloudWatch Logs Insights query timed out after {timeout}s for log groups: {log_group_names}"
-                )
-            time.sleep(delay)
-            response = self.client.get_query_results(queryId=query_id)
-        logger.debug(f"Query completed with status: {response.get('status')}")
-        return response.get("results", [])
+        async with self.session.client("logs", region_name=self.region, endpoint_url=self.endpoint_url) as client:
+            start_time_stamp = asyncio.get_event_loop().time()
+
+            # start the query
+            start_query_response = await client.start_query(
+                logGroupNames=log_group_names,
+                queryString=query_string,
+                startTime=start_time,
+                endTime=end_time,
+            )
+            query_id = start_query_response.get("queryId")
+
+            # Wait for the query to complete
+            response = {"status": "Running"}
+            while response.get("status") == "Running":
+                if asyncio.get_event_loop().time() - start_time_stamp > timeout:
+                    raise RequestTimeoutError(
+                        f"CloudWatch Logs Insights query timed out after {timeout}s for log groups: {log_group_names}"
+                    )
+                await asyncio.sleep(delay)
+                response = await client.get_query_results(queryId=query_id)
+
+            logger.debug(f"Query completed with status: {response.get('status')}")
+            return response.get("results", [])

@@ -180,6 +180,6 @@ class EventNotifier:
             case _:
                 raise ValueError(f"Unknown event source: {event.source}")
 
-    def notify(self, event: EventBridgeEvent):
+    async def notify(self, event: EventBridgeEvent):
         message = self.event_to_message(event)
-        self.client.send(message)
+        await self.client.send(message)

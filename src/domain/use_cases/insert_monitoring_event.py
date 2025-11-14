@@ -7,7 +7,7 @@ from src.domain.ports.notifier import IEventNotifier
 from src.domain.ports.repositories import IEventRepository
 
 
-def insert_monitoring_event_use_case(event: EventBridgeEvent, event_repo: IEventRepository, notifier: IEventNotifier):
+async def insert_monitoring_event_use_case(event: EventBridgeEvent, event_repo: IEventRepository, notifier: IEventNotifier):
     """Insert monitoring event use-case.
     1. Insert the event into the database.
     2. Notify the event to the subscribers.
@@ -23,9 +23,9 @@ def insert_monitoring_event_use_case(event: EventBridgeEvent, event_repo: IEvent
         resources=event.resources,
         published_at=datetime_str_to_timestamp(event.time),
     )
-    event_repo.create(model)
+    await event_repo.create(model)
     logger.info(f"Event<{model.id}> inserted")
 
     # 2. Notify the event via the notifier
-    notifier.notify(event)
+    await notifier.notify(event)
     logger.info(f"Sent Event<{model.id}> successfully")

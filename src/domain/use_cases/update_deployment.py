@@ -3,7 +3,7 @@ from src.domain.models.agent import Agent, UpdateAgentDTO
 from src.domain.ports import IAgentRepository, IEventNotifier
 
 
-def update_deployment_use_case(
+async def update_deployment_use_case(
     account: str,
     region: str,
     status: str,
@@ -30,8 +30,8 @@ def update_deployment_use_case(
         from AWS-specific event structures (CfnStackEvent).
     """
     # 1. Insert/Update the agent information in the database.
-    if agent_repo.exists(account):
-        agent_repo.update(
+    if await agent_repo.exists(account):
+        await agent_repo.update(
             account,
             UpdateAgentDTO(
                 region=region,
@@ -40,7 +40,7 @@ def update_deployment_use_case(
             ),
         )
     else:
-        agent_repo.create(
+        await agent_repo.create(
             Agent(
                 id=account,
                 region=region,
@@ -51,5 +51,5 @@ def update_deployment_use_case(
     logger.info(f"Upserted Agent<{account}> successfully")
 
     # 2. Notify the event to the subscribers.
-    notifier.notify(event_data)
+    await notifier.notify(event_data)
     logger.info("Deployment event notification sent successfully")

@@ -1,3 +1,5 @@
+import asyncio
+
 from src.adapters.aws.data_classes import EventBridgeEvent, event_source
 from src.adapters.db.repositories import EventRepository
 from src.adapters.notifiers import EventNotifier, SlackClient
@@ -16,7 +18,7 @@ def handler(event: EventBridgeEvent, context):
     logger.debug(event.raw_event)
 
     try:
-        insert_monitoring_event_use_case(event, event_repo, notifier)
+        asyncio.run(insert_monitoring_event_use_case(event, event_repo, notifier))
     except Exception:
         logger.exception("Error occurred while handling monitoring event")
         raise

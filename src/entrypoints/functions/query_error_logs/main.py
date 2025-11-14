@@ -1,3 +1,4 @@
+import asyncio
 import os
 from datetime import UTC, datetime, timedelta
 
@@ -38,7 +39,7 @@ def handler(event, context):
             timeout=CW_INSIGHTS_QUERY_TIMEOUT,
             chunk_size=CW_LOG_GROUPS_CHUNK_SIZE,
         )
-        query_error_logs_use_case(query, log_service, publisher)
+        asyncio.run(query_error_logs_use_case(query, log_service, publisher))
     except Exception:
         logger.exception("Error occurred while querying error logs")
         raise

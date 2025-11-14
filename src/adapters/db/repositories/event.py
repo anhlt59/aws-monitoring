@@ -9,11 +9,11 @@ class EventRepository(DynamoRepository):
     model_cls = EventPersistence
     mapper = EventMapper
 
-    def get(self, id: str) -> Event:
-        model = self._get(hash_key="EVENT", range_key=id)
+    async def get(self, id: str) -> Event:
+        model = await self._get(hash_key="EVENT", range_key=id)
         return self.mapper.to_model(model)
 
-    def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
+    async def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
         if dto is None:
             dto = ListEventsDTO()
 
@@ -29,7 +29,7 @@ class EventRepository(DynamoRepository):
         last_evaluated_key = base64_to_json(dto.cursor) if dto.cursor else None
         scan_index_forward = "asc" == dto.direction
 
-        result = self._query(
+        result = await self._query(
             hash_key="EVENT",
             range_key_condition=range_key_condition,
             last_evaluated_key=last_evaluated_key,
@@ -43,9 +43,9 @@ class EventRepository(DynamoRepository):
             cursor=result.last_evaluated_key,
         )
 
-    def create(self, entity: Event):
+    async def create(self, entity: Event):
         model = EventMapper.to_persistence(entity)
-        self._create(model)
+        await self._create(model)
 
-    def delete(self, id: str):
-        self._delete(hash_key="EVENT", range_key=id)
+    async def delete(self, id: str):
+        await self._delete(hash_key="EVENT", range_key=id)

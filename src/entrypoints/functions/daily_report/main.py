@@ -1,3 +1,5 @@
+import asyncio
+
 from src.adapters.db.repositories import EventRepository
 from src.adapters.notifiers import ReportNotifier, SlackClient
 from src.common.constants import REPORT_WEBHOOK_URL
@@ -11,7 +13,7 @@ notifier = ReportNotifier(client=SlackClient(REPORT_WEBHOOK_URL))
 # @logger.inject_lambda_context(log_event=True)
 def handler(event, context) -> None:
     try:
-        daily_report_use_case(event_repo, notifier)
+        asyncio.run(daily_report_use_case(event_repo, notifier))
     except Exception:
         logger.exception("Error occurred while generating daily report")
         raise

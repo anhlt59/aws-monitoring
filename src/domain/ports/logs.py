@@ -1,13 +1,13 @@
 from datetime import datetime
-from typing import Iterable, Protocol
+from typing import AsyncIterable, Protocol
 
 from src.domain.models.logs import LogQueryResult
 
 
 class ILogService(Protocol):
-    def list_monitoring_log_groups_by_tag(self, tag_name: str, tag_value: str) -> Iterable[str]: ...
+    async def list_monitoring_log_groups_by_tag(self, tag_name: str, tag_value: str) -> AsyncIterable[str]: ...
 
-    def query_logs(
+    async def query_logs(
         self,
         log_group_names: list[str],
         query_string: str,
@@ -15,4 +15,4 @@ class ILogService(Protocol):
         end_time: datetime,
         timeout: int = 15,
         delay: int = 1,
-    ) -> Iterable[LogQueryResult]: ...
+    ) -> AsyncIterable[LogQueryResult]: ...
