@@ -1,0 +1,1612 @@
+openapi: 3.0.3
+info:
+  title: AWS Monitoring API
+  description: |
+    RESTful API for AWS Monitoring System - A serverless multi-account monitoring solution
+    that provides comprehensive visibility into AWS resources, applications, and infrastructure.
+
+    ## Features
+    - Real-time event monitoring across multiple AWS accounts
+    - Agent deployment and management
+    - Daily and custom reporting
+    - Advanced filtering and search capabilities
+    - User authentication and authorization
+
+    ## Authentication
+    All endpoints (except /auth/*) require JWT authentication via Bearer token in the Authorization header.
+
+    ## Rate Limiting
+    - 100 requests per minute for authenticated users
+    - 10 requests per minute for authentication endpoints
+
+    ## Pagination
+    List endpoints support cursor-based pagination with the following parameters:
+    - `page`: Page number (default: 1)
+    - `page_size`: Items per page (default: 20, max: 100)
+
+  version: 1.0.0
+  contact:
+    name: AWS Monitoring API Support
+    email: support@aws-monitoring.example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.aws-monitoring.example.com/v1
+    description: Production server
+  - url: https://staging-api.aws-monitoring.example.com/v1
+    description: Staging server
+  - url: http://localhost:3001/v1
+    description: Local development server (LocalStack)
+
+tags:
+  - name: Authentication
+    description: User authentication and token management
+  - name: Dashboard
+    description: Dashboard statistics and overview data
+  - name: Events
+    description: Monitoring events management
+  - name: Agents
+    description: Monitoring agents deployment and management
+  - name: Reports
+    description: Daily and custom reports generation
+  - name: Users
+    description: User profile management
+  - name: Settings
+    description: Application settings and configuration
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ==================== Authentication ====================
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user with email and password
+      operationId: login
+      security: []  # No authentication required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePassword123!
+                remember_me:
+                  type: boolean
+                  default: false
+                  description: Extend token expiration to 30 days
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: JWT access token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  refresh_token:
+                    type: string
+                    description: JWT refresh token for obtaining new access tokens
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                  token_type:
+                    type: string
+                    example: Bearer
+                  expires_in:
+                    type: integer
+                    description: Access token expiration time in seconds
+                    example: 3600
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Obtain a new access token using a refresh token
+      operationId: refreshToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  description: JWT refresh token
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    example: Bearer
+                  expires_in:
+                    type: integer
+                    example: 3600
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidate current access token
+      operationId: logout
+      responses:
+        '204':
+          description: Logout successful
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ==================== Dashboard ====================
+  /dashboard/stats:
+    get:
+      tags:
+        - Dashboard
+      summary: Get dashboard statistics
+      description: Retrieve summary statistics for the dashboard
+      operationId: getDashboardStats
+      responses:
+        '200':
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_events:
+                    type: integer
+                    example: 419
+                  critical_events:
+                    type: integer
+                    example: 12
+                  high_events:
+                    type: integer
+                    example: 45
+                  medium_events:
+                    type: integer
+                    example: 128
+                  low_events:
+                    type: integer
+                    example: 234
+                  active_agents:
+                    type: integer
+                    example: 6
+                  inactive_agents:
+                    type: integer
+                    example: 1
+                  affected_accounts:
+                    type: integer
+                    example: 8
+                  period:
+                    type: string
+                    description: Time period for statistics
+                    example: last_24h
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /dashboard/timeline:
+    get:
+      tags:
+        - Dashboard
+      summary: Get events timeline
+      description: Retrieve events timeline data for dashboard chart
+      operationId: getEventsTimeline
+      parameters:
+        - name: days
+          in: query
+          description: Number of days to retrieve
+          schema:
+            type: integer
+            default: 7
+            minimum: 1
+            maximum: 30
+        - name: severity
+          in: query
+          description: Filter by severity level
+          schema:
+            $ref: '#/components/schemas/Severity'
+      responses:
+        '200':
+          description: Events timeline data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          format: date
+                          example: "2024-01-15"
+                        count:
+                          type: integer
+                          example: 45
+                        by_severity:
+                          type: object
+                          properties:
+                            critical:
+                              type: integer
+                            high:
+                              type: integer
+                            medium:
+                              type: integer
+                            low:
+                              type: integer
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ==================== Events ====================
+  /events:
+    get:
+      tags:
+        - Events
+      summary: List events
+      description: Retrieve paginated list of monitoring events with optional filters
+      operationId: listEvents
+      parameters:
+        - name: account
+          in: query
+          description: Filter by AWS account ID
+          schema:
+            type: string
+            example: "123456789012"
+        - name: region
+          in: query
+          description: Filter by AWS region
+          schema:
+            type: string
+            example: "us-east-1"
+        - name: source
+          in: query
+          description: Filter by event source
+          schema:
+            type: string
+            example: "aws.lambda"
+        - name: severity
+          in: query
+          description: Filter by severity level (can specify multiple)
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Severity'
+          style: form
+          explode: true
+        - name: detail_type
+          in: query
+          description: Filter by event detail type
+          schema:
+            type: string
+            example: "Lambda Error"
+        - name: start_date
+          in: query
+          description: Filter events from this date (Unix timestamp)
+          schema:
+            type: integer
+            example: 1705276800
+        - name: end_date
+          in: query
+          description: Filter events until this date (Unix timestamp)
+          schema:
+            type: integer
+            example: 1705363200
+        - name: search
+          in: query
+          description: Full-text search in event details
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: sort
+          in: query
+          description: Sort field and order (prefix with - for descending)
+          schema:
+            type: string
+            default: "-published_at"
+            example: "-severity,published_at"
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvents'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /events/{id}:
+    get:
+      tags:
+        - Events
+      summary: Get event by ID
+      description: Retrieve detailed information about a specific event
+      operationId: getEventById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Event ID
+          schema:
+            type: string
+            example: "evt-123456789"
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    patch:
+      tags:
+        - Events
+      summary: Update event
+      description: Update event metadata (e.g., acknowledge, add notes)
+      operationId: updateEvent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                acknowledged:
+                  type: boolean
+                notes:
+                  type: string
+                  maxLength: 1000
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 10
+      responses:
+        '200':
+          description: Event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /events/{id}/related:
+    get:
+      tags:
+        - Events
+      summary: Get related events
+      description: Retrieve events related to the specified event
+      operationId: getRelatedEvents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+      responses:
+        '200':
+          description: List of related events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  total:
+                    type: integer
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /events/export:
+    get:
+      tags:
+        - Events
+      summary: Export events
+      description: Export filtered events in specified format
+      operationId: exportEvents
+      parameters:
+        - name: format
+          in: query
+          required: true
+          description: Export format
+          schema:
+            type: string
+            enum: [csv, json, pdf]
+        - name: account
+          in: query
+          schema:
+            type: string
+        - name: region
+          in: query
+          schema:
+            type: string
+        - name: severity
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Severity'
+        - name: start_date
+          in: query
+          schema:
+            type: integer
+        - name: end_date
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Exported file
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /events/accounts:
+    get:
+      tags:
+        - Events
+      summary: Get unique accounts
+      description: Retrieve list of unique AWS account IDs that have events
+      operationId: getEventAccounts
+      responses:
+        '200':
+          description: List of account IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "123456789012"
+
+  /events/regions:
+    get:
+      tags:
+        - Events
+      summary: Get unique regions
+      description: Retrieve list of unique AWS regions that have events
+      operationId: getEventRegions
+      responses:
+        '200':
+          description: List of regions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "us-east-1"
+
+  # ==================== Agents ====================
+  /agents:
+    get:
+      tags:
+        - Agents
+      summary: List agents
+      description: Retrieve list of all monitoring agents
+      operationId: listAgents
+      parameters:
+        - name: status
+          in: query
+          description: Filter by agent status
+          schema:
+            $ref: '#/components/schemas/AgentStatus'
+        - name: region
+          in: query
+          description: Filter by AWS region
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Search by account ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of agents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Agent'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Agents
+      summary: Deploy new agent
+      description: Deploy monitoring agent to a new AWS account
+      operationId: deployAgent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account
+                - region
+              properties:
+                account:
+                  type: string
+                  description: AWS Account ID
+                  pattern: '^\d{12}$'
+                  example: "123456789012"
+                region:
+                  type: string
+                  description: AWS Region
+                  example: "us-east-1"
+                config:
+                  type: object
+                  description: Agent configuration
+                  properties:
+                    query_string:
+                      type: string
+                      description: CloudWatch Logs Insights query
+                    query_duration:
+                      type: integer
+                      description: Query time range in seconds
+                      default: 300
+                    chunk_size:
+                      type: integer
+                      description: Number of log groups per query
+                      default: 10
+      responses:
+        '201':
+          description: Agent deployment initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '409':
+          description: Agent already exists for this account/region
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /agents/{account}:
+    get:
+      tags:
+        - Agents
+      summary: Get agent details
+      description: Retrieve detailed information about a specific agent
+      operationId: getAgent
+      parameters:
+        - name: account
+          in: path
+          required: true
+          description: AWS Account ID
+          schema:
+            type: string
+            pattern: '^\d{12}$'
+      responses:
+        '200':
+          description: Agent details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDetail'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      tags:
+        - Agents
+      summary: Update agent
+      description: Update agent configuration
+      operationId: updateAgent
+      parameters:
+        - name: account
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  type: object
+                  properties:
+                    query_string:
+                      type: string
+                    query_duration:
+                      type: integer
+                    chunk_size:
+                      type: integer
+      responses:
+        '200':
+          description: Agent updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags:
+        - Agents
+      summary: Delete agent
+      description: Remove monitoring agent from AWS account
+      operationId: deleteAgent
+      parameters:
+        - name: account
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Agent deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /agents/{account}/metrics:
+    get:
+      tags:
+        - Agents
+      summary: Get agent metrics
+      description: Retrieve performance metrics for a specific agent
+      operationId: getAgentMetrics
+      parameters:
+        - name: account
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          description: Time period for metrics
+          schema:
+            type: string
+            enum: [1h, 24h, 7d, 30d]
+            default: "24h"
+      responses:
+        '200':
+          description: Agent metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentMetrics'
+
+  /agents/{account}/health:
+    get:
+      tags:
+        - Agents
+      summary: Get agent health
+      description: Retrieve health status for a specific agent
+      operationId: getAgentHealth
+      parameters:
+        - name: account
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentHealth'
+
+  /agents/{account}/redeploy:
+    post:
+      tags:
+        - Agents
+      summary: Redeploy agent
+      description: Trigger agent redeployment
+      operationId: redeployAgent
+      parameters:
+        - name: account
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Redeployment initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+
+  # ==================== Reports ====================
+  /reports/daily:
+    get:
+      tags:
+        - Reports
+      summary: Get daily report
+      description: Retrieve daily monitoring report for specified date
+      operationId: getDailyReport
+      parameters:
+        - name: date
+          in: query
+          required: true
+          description: Report date in YYYY-MM-DD format
+          schema:
+            type: string
+            format: date
+            example: "2024-01-15"
+      responses:
+        '200':
+          description: Daily report data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyReport'
+        '404':
+          description: Report not found for specified date
+
+  /reports/custom:
+    post:
+      tags:
+        - Reports
+      summary: Generate custom report
+      description: Create a custom report with specified parameters
+      operationId: generateCustomReport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - start_date
+                - end_date
+              properties:
+                start_date:
+                  type: integer
+                  description: Start date (Unix timestamp)
+                  example: 1705276800
+                end_date:
+                  type: integer
+                  description: End date (Unix timestamp)
+                  example: 1705363200
+                accounts:
+                  type: array
+                  items:
+                    type: string
+                  description: Filter by specific accounts
+                regions:
+                  type: array
+                  items:
+                    type: string
+                  description: Filter by specific regions
+                severity:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Severity'
+                format:
+                  type: string
+                  enum: [json, pdf, csv]
+                  default: json
+      responses:
+        '200':
+          description: Custom report generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomReport'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /reports:
+    get:
+      tags:
+        - Reports
+      summary: List reports
+      description: Retrieve list of previously generated reports
+      operationId: listReports
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [daily, custom]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportSummary'
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  page_size:
+                    type: integer
+
+  /reports/{id}/download:
+    get:
+      tags:
+        - Reports
+      summary: Download report
+      description: Download a previously generated report
+      operationId: downloadReport
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [json, pdf, csv]
+      responses:
+        '200':
+          description: Report file
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              schema:
+                type: string
+                format: binary
+
+  # ==================== Users ====================
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user
+      description: Retrieve current user profile
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      description: Update current user profile information
+      operationId: updateCurrentUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/me/change-password:
+    post:
+      tags:
+        - Users
+      summary: Change password
+      description: Change current user password
+      operationId: changePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_password
+                - new_password
+              properties:
+                current_password:
+                  type: string
+                  format: password
+                new_password:
+                  type: string
+                  format: password
+                  minLength: 8
+      responses:
+        '204':
+          description: Password changed successfully
+        '400':
+          description: Invalid current password or new password doesn't meet requirements
+
+  # ==================== Settings ====================
+  /settings/notifications:
+    get:
+      tags:
+        - Settings
+      summary: Get notification settings
+      description: Retrieve user notification preferences
+      operationId: getNotificationSettings
+      responses:
+        '200':
+          description: Notification settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+
+    put:
+      tags:
+        - Settings
+      summary: Update notification settings
+      description: Update user notification preferences
+      operationId: updateNotificationSettings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSettings'
+      responses:
+        '200':
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+
+  /settings/system:
+    get:
+      tags:
+        - Settings
+      summary: Get system settings
+      description: Retrieve system configuration (admin only)
+      operationId: getSystemSettings
+      responses:
+        '200':
+          description: System settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemSettings'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+    put:
+      tags:
+        - Settings
+      summary: Update system settings
+      description: Update system configuration (admin only)
+      operationId: updateSystemSettings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemSettings'
+      responses:
+        '200':
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemSettings'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+# ==================== Components ====================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login endpoint
+
+  schemas:
+    # ===== Core Entities =====
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique event identifier
+          example: "evt-123456789"
+        account:
+          type: string
+          description: AWS Account ID
+          example: "123456789012"
+        region:
+          type: string
+          description: AWS Region
+          example: "us-east-1"
+        source:
+          type: string
+          description: Event source
+          example: "aws.lambda"
+        detail:
+          type: object
+          description: Event-specific details
+          additionalProperties: true
+        detail_type:
+          type: string
+          description: Type of event detail
+          example: "Lambda Error"
+        severity:
+          $ref: '#/components/schemas/Severity'
+        resources:
+          type: array
+          description: Affected AWS resources
+          items:
+            type: string
+          example: ["arn:aws:lambda:us-east-1:123:function:my-function"]
+        published_at:
+          type: integer
+          description: Event publication timestamp (Unix)
+          example: 1705327845
+        updated_at:
+          type: integer
+          description: Last update timestamp (Unix)
+          example: 1705327890
+        acknowledged:
+          type: boolean
+          description: Whether event has been acknowledged
+          default: false
+        notes:
+          type: string
+          description: User notes about the event
+        tags:
+          type: array
+          description: Custom tags
+          items:
+            type: string
+
+    Agent:
+      type: object
+      properties:
+        account:
+          type: string
+          description: AWS Account ID
+          example: "123456789012"
+        region:
+          type: string
+          description: AWS Region
+          example: "us-east-1"
+        status:
+          $ref: '#/components/schemas/AgentStatus'
+        deployed_at:
+          type: integer
+          description: Deployment timestamp (Unix)
+          example: 1704067200
+        created_at:
+          type: integer
+          description: Creation timestamp (Unix)
+          example: 1704067200
+
+    AgentDetail:
+      allOf:
+        - $ref: '#/components/schemas/Agent'
+        - type: object
+          properties:
+            config:
+              type: object
+              properties:
+                query_string:
+                  type: string
+                query_duration:
+                  type: integer
+                chunk_size:
+                  type: integer
+            last_execution:
+              type: integer
+              description: Last execution timestamp
+            events_published:
+              type: integer
+              description: Total events published
+
+    AgentMetrics:
+      type: object
+      properties:
+        account:
+          type: string
+        period:
+          type: string
+          example: "24h"
+        events_published:
+          type: integer
+          description: Number of events published
+          example: 1234
+        errors_detected:
+          type: integer
+          description: Number of errors detected
+          example: 45
+        average_query_duration:
+          type: number
+          description: Average query duration in seconds
+          example: 2.3
+        log_groups_monitored:
+          type: integer
+          description: Number of log groups monitored
+          example: 12
+
+    AgentHealth:
+      type: object
+      properties:
+        account:
+          type: string
+        region:
+          type: string
+        is_healthy:
+          type: boolean
+          example: true
+        last_heartbeat:
+          type: integer
+          description: Last heartbeat timestamp
+        uptime_percentage:
+          type: number
+          description: Uptime percentage
+          example: 99.8
+        error_rate:
+          type: number
+          description: Error rate percentage
+          example: 0.2
+        last_error:
+          type: string
+          description: Last error message
+
+    DailyReport:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: "2024-01-15"
+        summary:
+          type: object
+          properties:
+            total_events:
+              type: integer
+            critical_events:
+              type: integer
+            high_events:
+              type: integer
+            medium_events:
+              type: integer
+            low_events:
+              type: integer
+            affected_accounts:
+              type: integer
+            active_agents:
+              type: integer
+        events_by_account:
+          type: array
+          items:
+            type: object
+            properties:
+              account:
+                type: string
+              region:
+                type: string
+              event_count:
+                type: integer
+              critical_count:
+                type: integer
+        events_by_severity:
+          type: array
+          items:
+            type: object
+            properties:
+              severity:
+                $ref: '#/components/schemas/Severity'
+              count:
+                type: integer
+              percentage:
+                type: number
+        top_errors:
+          type: array
+          items:
+            type: object
+            properties:
+              error_type:
+                type: string
+              count:
+                type: integer
+              affected_resources:
+                type: array
+                items:
+                  type: string
+        agent_health:
+          type: array
+          items:
+            type: object
+            properties:
+              account:
+                type: string
+              region:
+                type: string
+              status:
+                $ref: '#/components/schemas/AgentStatus'
+              is_healthy:
+                type: boolean
+
+    CustomReport:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: integer
+        parameters:
+          type: object
+          properties:
+            start_date:
+              type: integer
+            end_date:
+              type: integer
+            accounts:
+              type: array
+              items:
+                type: string
+            regions:
+              type: array
+              items:
+                type: string
+        data:
+          type: object
+          description: Report data structure (similar to DailyReport)
+
+    ReportSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [daily, custom]
+        date:
+          type: string
+          format: date
+        created_at:
+          type: integer
+        event_count:
+          type: integer
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "usr-123456"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        name:
+          type: string
+          example: "John Doe"
+        role:
+          type: string
+          enum: [admin, operator, viewer]
+          example: "operator"
+        permissions:
+          type: array
+          items:
+            type: string
+          example: ["view:events", "view:agents", "manage:agents"]
+        created_at:
+          type: integer
+        last_login:
+          type: integer
+
+    NotificationSettings:
+      type: object
+      properties:
+        email_enabled:
+          type: boolean
+          default: true
+        slack_enabled:
+          type: boolean
+          default: false
+        severity_preferences:
+          type: object
+          properties:
+            critical:
+              type: string
+              enum: [always, business_hours, digest, never]
+              default: always
+            high:
+              type: string
+              enum: [always, business_hours, digest, never]
+              default: business_hours
+            medium:
+              type: string
+              enum: [always, business_hours, digest, never]
+              default: digest
+            low:
+              type: string
+              enum: [always, business_hours, digest, never]
+              default: digest
+        digest_frequency:
+          type: string
+          enum: [daily, weekly]
+          default: daily
+
+    SystemSettings:
+      type: object
+      properties:
+        retention_days:
+          type: integer
+          description: Event retention period in days
+          default: 90
+        slack_webhook_url:
+          type: string
+          format: uri
+          description: Slack webhook URL for notifications
+        default_query_string:
+          type: string
+          description: Default CloudWatch Logs query
+        max_agents:
+          type: integer
+          description: Maximum number of agents allowed
+          default: 50
+
+    # ===== Enums =====
+    Severity:
+      type: integer
+      description: Event severity level
+      enum: [0, 1, 2, 3, 4]
+      x-enum-varnames: [Unknown, Low, Medium, High, Critical]
+      example: 4
+
+    AgentStatus:
+      type: string
+      enum:
+        - CREATE_COMPLETE
+        - CREATE_IN_PROGRESS
+        - CREATE_FAILED
+        - UPDATE_COMPLETE
+        - UPDATE_IN_PROGRESS
+        - UPDATE_FAILED
+        - DELETE_COMPLETE
+        - DELETE_IN_PROGRESS
+        - DELETE_FAILED
+        - ROLLBACK_COMPLETE
+        - ROLLBACK_IN_PROGRESS
+      example: CREATE_COMPLETE
+
+    # ===== Pagination =====
+    PaginatedEvents:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        total:
+          type: integer
+          description: Total number of items
+          example: 419
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        page_size:
+          type: integer
+          description: Items per page
+          example: 20
+        has_more:
+          type: boolean
+          description: Whether more pages are available
+          example: true
+
+    # ===== Error Responses =====
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid request parameters"
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+        timestamp:
+          type: integer
+          description: Error timestamp (Unix)
+
+  responses:
+    BadRequestError:
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "BAD_REQUEST"
+            message: "Invalid request parameters"
+            details:
+              field: "account"
+              error: "Must be a 12-digit number"
+
+    UnauthorizedError:
+      description: Unauthorized - Invalid or missing authentication
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "UNAUTHORIZED"
+            message: "Invalid or expired token"
+
+    ForbiddenError:
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "FORBIDDEN"
+            message: "Insufficient permissions to access this resource"
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "NOT_FOUND"
+            message: "Resource not found"
+
+    TooManyRequestsError:
+      description: Too many requests - Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "RATE_LIMIT_EXCEEDED"
+            message: "Too many requests. Please try again later"
+      headers:
+        X-RateLimit-Limit:
+          description: Request limit per time window
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          description: Remaining requests in current time window
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          description: Time when rate limit resets (Unix timestamp)
+          schema:
+            type: integer
