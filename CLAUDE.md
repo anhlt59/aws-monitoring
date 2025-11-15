@@ -257,8 +257,16 @@ poetry run pytest tests/ --cov=src --cov-report=html
 
 ## Additional Instructions
 
+### Backend Documentation
 - Project structure: @docs/project_structure.md
 - Database schema: @docs/db.md
 - Architecture overview: @docs/overview.md
 - Development guide: @docs/development.md
 - Deployment guide: @docs/deployment.md
+
+### Frontend Documentation
+- Frontend overview: @docs/frontend-overview.md
+- Frontend architecture: @docs/frontend-design.md
+- TypeScript types reference: @docs/frontend-types-reference.md
+- Implementation guide: @docs/frontend-implementation-guide.md
+- Quick start guide: @docs/frontend-quick-start.md
