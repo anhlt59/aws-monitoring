@@ -331,3 +331,11 @@ django_celery/media
 .serverless
 serverless.log
 ops/local/data
+
+# Frontend specific
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+frontend/.env.local
+frontend/.env.*.local
+frontend/node_modules/
