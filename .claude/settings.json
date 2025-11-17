@@ -1,0 +1,254 @@
+{
+  "claudeDocs": {
+    "enabled": true,
+    "coreDocs": [
+      ".claude/core/RULES.md",
+      ".claude/core/PRINCIPLES.md",
+      ".claude/core/RESEARCH_CONFIG.md",
+      ".claude/core/BUSINESS_SYMBOLS.md"
+    ],
+    "projectDocs": [
+      "CLAUDE.md",
+      "backend/CLAUDE.md",
+      "frontend/CLAUDE.md"
+    ],
+    "priority": "core-first"
+  },
+  "customInstructions": {
+    "global": [
+      "Follow all rules in .claude/core/RULES.md with strict priority adherence (🔴 CRITICAL > 🟡 IMPORTANT > 🟢 RECOMMENDED)",
+      "Apply software engineering principles from .claude/core/PRINCIPLES.md",
+      "Use business analysis symbols from .claude/core/BUSINESS_SYMBOLS.md for strategic discussions",
+      "Default to PARALLEL execution for all independent operations - sequential ONLY with explicit justification",
+      "Always start sessions with git status check and feature branch verification",
+      "Use TodoWrite for tasks with 3+ steps, maintaining active progress tracking"
+    ],
+    "backend": [
+      "Follow hexagonal architecture: Domain → Ports → Adapters",
+      "Use specific exception types, never broad Exception handlers",
+      "All code requires type hints and Pydantic validation",
+      "Maintain 90%+ test coverage with pytest and moto",
+      "See backend/CLAUDE.md for detailed backend guidelines"
+    ],
+    "frontend": [
+      "Use Vue 3 Composition API with <script setup> exclusively",
+      "Enforce strict TypeScript types, no 'any' types",
+      "Follow Pinia composition style for state management",
+      "Use Tailwind CSS for styling, maintain responsive design",
+      "See frontend/CLAUDE.md for detailed frontend guidelines"
+    ]
+  },
+  "workflow": {
+    "taskPattern": "Understand → Plan (with parallelization) → TodoWrite → Execute → Track → Validate",
+    "planningMode": "unified",
+    "parallelizationDefault": true,
+    "validationRequired": true,
+    "checkpointInterval": 1800,
+    "sessionPattern": "/sc:load → Work → Checkpoint (30min) → /sc:save"
+  },
+  "quality": {
+    "noPartialFeatures": true,
+    "noTodoComments": true,
+    "noMockImplementations": true,
+    "completionMindset": "start-it-finish-it",
+    "testingRequired": true,
+    "lintBeforeCommit": true,
+    "typeCheckRequired": true
+  },
+  "scope": {
+    "buildOnlyWhatAsked": true,
+    "mvpFirst": true,
+    "noEnterpriseBlame": true,
+    "yagniEnforcement": true,
+    "simpleFirst": true
+  },
+  "codeOrganization": {
+    "followExistingPatterns": true,
+    "descriptiveNaming": true,
+    "consistentConventions": true,
+    "separationOfConcerns": true,
+    "noMixedConventions": true
+  },
+  "workspace": {
+    "cleanAfterOperations": true,
+    "noArtifactPollution": true,
+    "tempFileCleanup": true,
+    "sessionEndCleanup": true,
+    "professionalHygiene": true
+  },
+  "failure": {
+    "rootCauseAnalysis": true,
+    "neverSkipTests": true,
+    "neverSkipValidation": true,
+    "debugSystematically": true,
+    "fixDontWorkaround": true,
+    "investigateToolFailures": true
+  },
+  "communication": {
+    "noProfessionalHonesty": true,
+    "noMarketingLanguage": true,
+    "noFakeMetrics": true,
+    "evidenceBasedClaims": true,
+    "criticalAssessment": true,
+    "realisticLanguage": true
+  },
+  "git": {
+    "alwaysCheckStatusFirst": true,
+    "featureBranchesOnly": true,
+    "incrementalCommits": true,
+    "verifyBeforeCommit": true,
+    "createRestorePoints": true,
+    "descriptiveMessages": true,
+    "conventionalCommits": true
+  },
+  "toolOptimization": {
+    "bestToolSelection": true,
+    "parallelEverything": true,
+    "agentDelegation": true,
+    "mcpServerUsage": true,
+    "batchOperations": true,
+    "powerfulSearch": true,
+    "efficiencyFirst": true
+  },
+  "fileOrganization": {
+    "thinkBeforeWrite": true,
+    "claudeDocsDirectory": "claudedocs/",
+    "testsDirectory": ["tests/", "__tests__/", "test/"],
+    "scriptsDirectory": ["scripts/", "tools/", "bin/"],
+    "checkExistingPatterns": true,
+    "noScatteredTests": true,
+    "purposeBasedOrganization": true
+  },
+  "safety": {
+    "frameworkRespect": true,
+    "patternAdherence": true,
+    "transactionSafe": true,
+    "systematicChanges": true,
+    "absolutePathsOnly": true,
+    "noAutoCommit": true
+  },
+  "temporalAwareness": {
+    "alwaysVerifyCurrentDate": true,
+    "neverAssumeFromCutoff": true,
+    "explicitTimeReferences": true,
+    "versionContext": true
+  },
+  "research": {
+    "strategy": "unified",
+    "maxHops": 5,
+    "confidenceThreshold": 0.7,
+    "memoryEnabled": true,
+    "parallelization": true,
+    "parallelFirst": true
+  },
+  "agentOrchestration": {
+    "autoSelection": true,
+    "postImplementationDocumentation": true,
+    "mistakeDetection": true,
+    "knowledgeCapture": true,
+    "monthlyMaintenance": true
+  },
+  "decisionTrees": {
+    "fileOperations": {
+      "readBeforeWrite": true,
+      "understandPatterns": true,
+      "placeAppropriately": true,
+      "safetyCheck": true
+    },
+    "newFeature": {
+      "scopeClear": true,
+      "todoWriteIfComplex": true,
+      "followPatterns": true,
+      "runTestsFirst": true,
+      "checkDependencies": true
+    },
+    "toolSelection": {
+      "multiFileEdits": "MultiEdit",
+      "complexAnalysis": "Task agent",
+      "codeSearch": "Grep",
+      "documentation": "Context7 MCP"
+    }
+  },
+  "quickActions": {
+    "critical": [
+      "git status && git branch",
+      "Read before Write/Edit",
+      "Feature branches only",
+      "Root cause analysis",
+      "Absolute paths"
+    ],
+    "important": [
+      "TodoWrite for >3 steps",
+      "Complete all implementations",
+      "Build only what's asked",
+      "Professional language",
+      "Clean workspace"
+    ],
+    "recommended": [
+      "Parallel operations",
+      "Descriptive naming",
+      "MCP tools over basic",
+      "Batch operations"
+    ]
+  },
+  "projectSpecific": {
+    "architecture": {
+      "backend": "hexagonal",
+      "frontend": "layered"
+    },
+    "techStack": {
+      "backend": {
+        "runtime": "Python 3.13",
+        "framework": "Serverless Framework 4.x",
+        "database": "DynamoDB with PynamoDB",
+        "validation": "Pydantic v2.11.0",
+        "testing": "Pytest, Moto, LocalStack"
+      },
+      "frontend": {
+        "framework": "Vue 3",
+        "language": "TypeScript 5.9",
+        "buildTool": "Vite 7.x",
+        "stateManagement": "Pinia 3.x",
+        "styling": "Tailwind CSS 3.x",
+        "testing": "Vitest 4.x"
+      }
+    },
+    "testCoverage": {
+      "backend": {
+        "minimum": 88,
+        "target": 90,
+        "critical": 100
+      },
+      "frontend": {
+        "minimum": 80,
+        "target": 90,
+        "critical": 100
+      }
+    },
+    "commonCommands": {
+      "install": "make install",
+      "test": "make test",
+      "coverage": "make coverage",
+      "start": "make start",
+      "deploy": "make deploy stage=local"
+    }
+  },
+  "documentation": {
+    "rootGuide": "CLAUDE.md",
+    "backendGuide": "backend/CLAUDE.md",
+    "frontendGuide": "frontend/CLAUDE.md",
+    "additionalDocs": [
+      "docs/project_structure.md",
+      "docs/db.md",
+      "docs/overview.md",
+      "docs/frontend-overview.md",
+      "docs/api-specification.yaml"
+    ]
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-11-17",
+    "description": "Claude Code settings for AWS Monitoring full-stack serverless application",
+    "maintainer": "Development Team"
+  }
+}
