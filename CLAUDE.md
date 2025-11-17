@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Rules
+
+**IMPORTANT**: All behavioral rules, workflow patterns, and quality standards in that file MUST follow rules defined in [.claude/RULES.md](.claude/RULES.md)
+
 ## Project Overview
 
 This is a full-stack serverless AWS monitoring application with:
