@@ -1,0 +1,202 @@
+{
+  "project": {
+    "name": "AWS Monitoring",
+    "description": "Serverless multi-account AWS monitoring solution",
+    "version": "1.0.0"
+  },
+  "agents": {
+    "enabled": true,
+    "auto_select": true,
+    "available": [
+      {
+        "name": "backend-architect",
+        "path": ".claude/agents/backend-architect.md",
+        "description": "Serverless AWS architecture and hexagonal design",
+        "keywords": ["architecture", "serverless", "aws", "lambda", "hexagonal", "design"]
+      },
+      {
+        "name": "frontend-architect",
+        "path": ".claude/agents/frontend-architect.md",
+        "description": "Modern web applications and UI/UX",
+        "keywords": ["frontend", "ui", "ux", "react", "api", "dashboard"]
+      },
+      {
+        "name": "python-expert",
+        "path": ".claude/agents/python-expert.md",
+        "description": "Python best practices and optimization",
+        "keywords": ["python", "pydantic", "typing", "optimization", "performance"]
+      },
+      {
+        "name": "refactoring-expert",
+        "path": ".claude/agents/refactoring-expert.md",
+        "description": "Code improvement and technical debt reduction",
+        "keywords": ["refactor", "improve", "clean", "debt", "patterns"]
+      },
+      {
+        "name": "repo-index",
+        "path": ".claude/agents/repo-index.md",
+        "description": "Codebase navigation and documentation",
+        "keywords": ["explore", "find", "locate", "structure", "map"]
+      },
+      {
+        "name": "requirements-analyst",
+        "path": ".claude/agents/requirements-analyst.md",
+        "description": "Requirements gathering and analysis",
+        "keywords": ["requirements", "analysis", "specification", "acceptance"]
+      },
+      {
+        "name": "root-cause-analyst",
+        "path": ".claude/agents/root-cause-analyst.md",
+        "description": "Debugging and troubleshooting",
+        "keywords": ["debug", "troubleshoot", "error", "issue", "investigate"]
+      },
+      {
+        "name": "system-architect",
+        "path": ".claude/agents/system-architect.md",
+        "description": "Distributed systems and cloud architecture",
+        "keywords": ["system", "distributed", "cloud", "scalability", "reliability"]
+      },
+      {
+        "name": "technical-writer",
+        "path": ".claude/agents/technical-writer.md",
+        "description": "Documentation and API docs",
+        "keywords": ["documentation", "docs", "api", "guide", "readme"]
+      }
+    ]
+  },
+  "commands": {
+    "enabled": true,
+    "prefix": "/",
+    "available": [
+      {
+        "name": "brainstorm",
+        "path": ".claude/commands/brainstorm.md",
+        "description": "Facilitate creative brainstorming for features and solutions",
+        "usage": "/brainstorm [topic]"
+      },
+      {
+        "name": "analyze",
+        "path": ".claude/commands/analyze.md",
+        "description": "Perform deep analysis of code, architecture, or issues",
+        "usage": "/analyze [target] [focus]"
+      },
+      {
+        "name": "research",
+        "path": ".claude/commands/research.md",
+        "description": "Research technologies, patterns, and best practices",
+        "usage": "/research [topic]"
+      },
+      {
+        "name": "design",
+        "path": ".claude/commands/design.md",
+        "description": "Design new features or architectural solutions",
+        "usage": "/design [feature]"
+      },
+      {
+        "name": "implement",
+        "path": ".claude/commands/implement.md",
+        "description": "Implement features with tests and documentation",
+        "usage": "/implement [feature]"
+      },
+      {
+        "name": "index",
+        "path": ".claude/commands/index.md",
+        "description": "Map and index the codebase structure",
+        "usage": "/index [scope]"
+      },
+      {
+        "name": "help",
+        "path": ".claude/commands/help.md",
+        "description": "Get help with the project, commands, agents, and modes",
+        "usage": "/help [topic]"
+      },
+      {
+        "name": "test",
+        "path": ".claude/commands/test.md",
+        "description": "Run tests, analyze coverage, and improve test quality",
+        "usage": "/test [target]"
+      }
+    ]
+  },
+  "mcp": {
+    "enabled": true,
+    "servers": [
+      {
+        "name": "chrome-devtools",
+        "path": ".claude/mcp/chrome-devtools.md",
+        "description": "Browser automation, performance analysis, and debugging",
+        "capabilities": ["performance", "network", "console", "debugging"]
+      },
+      {
+        "name": "context7",
+        "path": ".claude/mcp/context7.md",
+        "description": "Official documentation and technical references",
+        "capabilities": ["documentation", "api-reference", "best-practices"]
+      },
+      {
+        "name": "playwright",
+        "path": ".claude/mcp/playwright.md",
+        "description": "Cross-browser automation and testing",
+        "capabilities": ["testing", "automation", "api-testing", "visual-testing"]
+      },
+      {
+        "name": "sequential",
+        "path": ".claude/mcp/sequential.md",
+        "description": "Multi-step reasoning and systematic analysis",
+        "capabilities": ["reasoning", "analysis", "planning", "debugging"]
+      }
+    ]
+  },
+  "modes": {
+    "enabled": true,
+    "auto_select": true,
+    "available": [
+      {
+        "name": "brainstorming",
+        "path": ".claude/modes/brainstorming.md",
+        "description": "Creative exploration and idea generation",
+        "triggers": ["brainstorm", "ideas", "explore", "creative"]
+      },
+      {
+        "name": "deep-research",
+        "path": ".claude/modes/deep-research.md",
+        "description": "Comprehensive investigation with web search",
+        "triggers": ["research", "investigate", "learn", "how to"]
+      },
+      {
+        "name": "orchestration",
+        "path": ".claude/modes/orchestration.md",
+        "description": "Efficient multi-tool coordination",
+        "triggers": ["complex", "multi-step", "parallel", "batch"]
+      },
+      {
+        "name": "task-management",
+        "path": ".claude/modes/task-management.md",
+        "description": "Systematic task organization",
+        "triggers": ["implement", "feature", "fix", "refactor"]
+      },
+      {
+        "name": "token-efficiency",
+        "path": ".claude/modes/token-efficiency.md",
+        "description": "Optimize context usage",
+        "triggers": ["large codebase", "quick", "simple", "efficient"]
+      }
+    ]
+  },
+  "preferences": {
+    "architecture": "hexagonal",
+    "test_coverage_target": 90,
+    "python_version": "3.13",
+    "framework": "serverless-4",
+    "deployment_pattern": "master-agent"
+  },
+  "documentation": {
+    "root": ".claude/README.md",
+    "guidelines": "CLAUDE.md",
+    "architecture": "docs/overview.md",
+    "structure": "docs/project_structure.md",
+    "database": "docs/db.md",
+    "development": "docs/development.md",
+    "deployment": "docs/deployment.md"
+  }
+}
