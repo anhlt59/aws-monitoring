@@ -30,8 +30,6 @@ plugins:
 useDotenv: true
 
 custom:
-  # load the configuration corresponding to a specific $stage
-  custom:
   version: v1.0.1
   # load the configuration corresponding to a specific $stage
   configs: ${file(../infra/configs/${self:provider.stage}.yml)}
