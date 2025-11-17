@@ -7,9 +7,9 @@ source "${SCRIPT_DIR}/base.sh"
 STAGE="${1:-local}"
 
 if [[ "$STAGE" == "local" ]]; then
-    TEMPLATE_FILE="serverless.local.yml"
+    TEMPLATE_FILE="backend/serverless.local.yml"
 else
-    TEMPLATE_FILE="serverless.yml"
+    TEMPLATE_FILE="backend/serverless.yml"
 fi
 
 echo -e "${BLUE}===============================${RESET}"

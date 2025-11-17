@@ -51,9 +51,9 @@ useDotenv: true
 custom:
   version: v1.0.1
   # load the configuration corresponding to a specific $stage
-  configs: ${file(infra/configs/${self:provider.stage}.yml)}
+  configs: ${file(../infra/configs/${self:provider.stage}.yml)}
   # plugins
-  pythonRequirements: ${file(infra/plugins/python_requirements.yml):pythonRequirements}
+  pythonRequirements: ${file(../infra/plugins/python_requirements.yml):pythonRequirements}
 
 package:
   individually: true
@@ -69,22 +69,22 @@ package:
 # Functions (merged)
 functions:
   # functions
-  HandleMonitoringEvents: ${file(infra/functions/HandleMonitoringEvents.yml):function}
-  UpdateDeployment: ${file(infra/functions/UpdateDeployment.yml):function}
-  DailyReport: ${file(infra/functions/DailyReport.yml):function}
+  HandleMonitoringEvents: ${file(../infra/functions/HandleMonitoringEvents.yml):function}
+  UpdateDeployment: ${file(../infra/functions/UpdateDeployment.yml):function}
+  DailyReport: ${file(../infra/functions/DailyReport.yml):function}
 
   # agent functions
-  QueryErrorLogs: ${file(infra/functions/QueryErrorLogs.yml):function}
+  QueryErrorLogs: ${file(../infra/functions/QueryErrorLogs.yml):function}
 
 #  # API -------------------------------------------------------------------------
 #  # Events
-#  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
-#  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
+#  GetEvent: ${file(../infra/functions/api/Event-GetItem.yml):function}
+#  ListEvents: ${file(../infra/functions/api/Event-ListItems.yml):function}
 #
 #  # Agents
-#  GetAgent: ${file(infra/functions/api/Agent-GetItem.yml):function}
-#  ListAgents: ${file(infra/functions/api/Agent-ListItems.yml):function}
-#  UpdateAgent: ${file(infra/functions/api/Agent-UpdateItem.yml):function}
+#  GetAgent: ${file(../infra/functions/api/Agent-GetItem.yml):function}
+#  ListAgents: ${file(../infra/functions/api/Agent-ListItems.yml):function}
+#  UpdateAgent: ${file(../infra/functions/api/Agent-UpdateItem.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------
@@ -96,16 +96,16 @@ resources:
   # -----------------------------------------------------------------------------
   Resources:
     # IAM
-    LambdaFunctionRole: ${file(infra/resources/iam.yml):LambdaFunctionRole}
-    LambdaFunctionPolicy: ${file(infra/resources/iam.yml):LambdaFunctionPolicy}
-    EventBridgeRole: ${file(infra/resources/iam.yml):EventBridgeRole}
-    EventBridgePolicy: ${file(infra/resources/iam.yml):EventBridgePolicy}
+    LambdaFunctionRole: ${file(../infra/resources/iam.yml):LambdaFunctionRole}
+    LambdaFunctionPolicy: ${file(../infra/resources/iam.yml):LambdaFunctionPolicy}
+    EventBridgeRole: ${file(../infra/resources/iam.yml):EventBridgeRole}
+    EventBridgePolicy: ${file(../infra/resources/iam.yml):EventBridgePolicy}
     # EventBridge
-    MonitoringEventRule: ${file(infra/resources/event_bridge.yml):MonitoringEventRule}
-    DeploymentEventRule: ${file(infra/resources/event_bridge.yml):DeploymentEventRule}
+    MonitoringEventRule: ${file(../infra/resources/event_bridge.yml):MonitoringEventRule}
+    DeploymentEventRule: ${file(../infra/resources/event_bridge.yml):DeploymentEventRule}
     # SQS
-    MonitoringEventRuleDLQ: ${file(infra/resources/sqs.yml):MonitoringEventRuleDLQ}
+    MonitoringEventRuleDLQ: ${file(../infra/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB
-    DynamoDBTable: ${file(infra/resources/dynamodb.yml):DynamoDBTable}
+    DynamoDBTable: ${file(../infra/resources/dynamodb.yml):DynamoDBTable}
   # -----------------------------------------------------------------------------
   Outputs: { }

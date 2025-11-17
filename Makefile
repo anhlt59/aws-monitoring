@@ -44,6 +44,6 @@ destroy: ## Destroy a deployment.
 
 # TESTING ==========================================================================
 test: ## Run the tests.
-	@pytest --cov=src tests/
+	@cd backend && pytest --cov=src tests/
 coverage: ## Check code coverage.
 	@bash ops/development/coverage.sh
