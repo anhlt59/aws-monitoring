@@ -47,7 +47,7 @@ if ! poetry --version >/dev/null 2>&1; then
 fi
 # Install dependencies
 echo -e "${GREEN}Installing python dependencies...${RESET}"
-poetry install
+cd "${BASE_DIR}/backend" && poetry install
 
 # ==================================================================================
 # INSTALL NODE VENV

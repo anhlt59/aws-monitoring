@@ -8,8 +8,8 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-# Change to project root
-cd "$PROJECT_ROOT"
+# Change to backend directory to run poetry
+cd "$PROJECT_ROOT/backend"
 
 # Check if poetry is available
 if ! command -v poetry &> /dev/null; then
@@ -17,6 +17,9 @@ if ! command -v poetry &> /dev/null; then
     echo "Please install Poetry: https://python-poetry.org/docs/#installation"
     exit 1
 fi
+
+# Set PYTHONPATH to include the project root so ops module can be found
+export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 
 # Run the application with poetry
 exec poetry run python -m ops.tools.mon.main "$@"

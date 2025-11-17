@@ -19,9 +19,9 @@ if [[ "$STAGE" == "local" ]]; then
         echo -e "${YELLOW}Use 'make start' to start LocalStack.${RESET}"
         exit 1
     fi
-    TEMPLATE_FILE="serverless.local.yml"
+    TEMPLATE_FILE="backend/serverless.local.yml"
 else
-    TEMPLATE_FILE="serverless.yml"
+    TEMPLATE_FILE="backend/serverless.yml"
 fi
 
 echo -e "${BLUE}===============================${RESET}"
