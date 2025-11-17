@@ -32,7 +32,7 @@ aws-monitoring/
 ## Quick Start
 
 ### For Backend Development
-👉 **See [backend/CLAUDE.md](backend/CLAUDE.md) for detailed backend guide**
+👉 **See [docs/claude/BACKEND_INDEX.md](docs/claude/BACKEND_INDEX.md) for detailed backend guide**
 
 ```bash
 make install        # Install dependencies
@@ -42,7 +42,7 @@ make test           # Run tests
 ```
 
 ### For Frontend Development
-👉 **See [frontend/CLAUDE.md](frontend/CLAUDE.md) for detailed frontend guide**
+👉 **See [docs/claude/FRONTEND_INDEX.md](docs/claude/FRONTEND_INDEX.md) for detailed frontend guide**
 
 ```bash
 cd frontend
@@ -53,14 +53,7 @@ npm run test        # Run tests
 
 ## Core Rules
 
-- At the end of each task, summarize what has been completed and what remains
-- **Backend**: Follow hexagonal architecture principles: Domain → Ports → Adapters
-- **Frontend**: Follow composition API patterns and single responsibility components
-- Maintain test coverage above 90% for both backend and frontend
-- Use specific exception types in Python, avoid broad `except Exception` handlers
-- All new code must include type hints (Python) and proper TypeScript types (Frontend)
-- Use Pydantic validation for backend data models
-- Follow Vue 3 Composition API with `<script setup>` syntax in frontend
+- All behavioral rules, workflow patterns, and quality standards in that file MUST follow rules defined in [.claude/RULES.md](.claude/RULES.md)
 
 ## Architecture Overview
 
@@ -154,7 +147,7 @@ make deploy       # Deploy backend
 make test         # Run tests
 ```
 
-See [backend/CLAUDE.md](backend/CLAUDE.md) for detailed backend workflows.
+See [docs/claude/BACKEND_INDEX.md](docs/claude/BACKEND_INDEX.md) for detailed backend workflows.
 
 ### Frontend-Only Development
 
@@ -166,7 +159,7 @@ npm run test      # Run tests
 npm run lint      # Lint code
 ```
 
-See [frontend/CLAUDE.md](frontend/CLAUDE.md) for detailed frontend workflows.
+See [docs/claude/FRONTEND_INDEX.md](docs/claude/FRONTEND_INDEX.md) for detailed frontend workflows.
 
 ## Git Workflow
 
@@ -193,14 +186,14 @@ chore: update dependencies
 ## Documentation
 
 ### Backend Documentation
-- **Development Guide**: [backend/CLAUDE.md](backend/CLAUDE.md)
+- **Development Guide**: [docs/claude/BACKEND_INDEX.md](docs/claude/BACKEND_INDEX.md)
 - Project structure: [docs/project_structure.md](docs/project_structure.md)
 - Database schema: [docs/db.md](docs/db.md)
 - Architecture overview: [docs/overview.md](docs/overview.md)
 - Deployment guide: [docs/deployment.md](docs/deployment.md)
 
 ### Frontend Documentation
-- **Development Guide**: [frontend/CLAUDE.md](frontend/CLAUDE.md)
+- **Development Guide**: [docs/claude/FRONTEND_INDEX.md](docs/claude/FRONTEND_INDEX.md)
 - Frontend overview: [docs/frontend-overview.md](docs/frontend-overview.md)
 - Quick start: [docs/frontend-quick-start.md](docs/frontend-quick-start.md)
 - Design documentation: [docs/frontend-design.md](docs/frontend-design.md)
@@ -231,7 +224,7 @@ chore: update dependencies
 - **Import errors**: Ensure virtual environment is activated
 - **Test failures**: Check LocalStack is running
 
-See [backend/CLAUDE.md](backend/CLAUDE.md) for detailed troubleshooting.
+See [docs/claude/BACKEND_INDEX.md](docs/claude/BACKEND_INDEX.md) for detailed troubleshooting.
 
 #### Frontend Issues
 - **Dependency conflicts**: Delete `node_modules` and `package-lock.json`, run `npm install`
@@ -239,7 +232,7 @@ See [backend/CLAUDE.md](backend/CLAUDE.md) for detailed troubleshooting.
 - **Build failures**: Check for missing environment variables
 - **API connection issues**: Verify backend is running on expected port
 
-See [frontend/CLAUDE.md](frontend/CLAUDE.md) for detailed troubleshooting.
+See [docs/claude/FRONTEND_INDEX.md](docs/claude/FRONTEND_INDEX.md) for detailed troubleshooting.
 
 ## Tech Stack Summary
 
@@ -261,6 +254,6 @@ See [frontend/CLAUDE.md](frontend/CLAUDE.md) for detailed troubleshooting.
 ## Additional Resources
 
 For detailed development guides:
-- 📖 **Backend**: [backend/CLAUDE.md](backend/CLAUDE.md)
-- 📖 **Frontend**: [frontend/CLAUDE.md](frontend/CLAUDE.md)
+- 📖 **Backend**: [docs/claude/BACKEND_INDEX.md](docs/claude/BACKEND_INDEX.md)
+- 📖 **Frontend**: [docs/claude/FRONTEND_INDEX.md](docs/claude/FRONTEND_INDEX.md)
 - 📚 **Documentation**: [docs/](docs/)

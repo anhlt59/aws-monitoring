@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [],
+    "deny": [
+      "Read(./.env*)",
+      "Read(.venv/*)",
+      "Read(.serverless/*)",
+      "Read(htmlcov/*)",
+      "Read(*/__pycache__/*)"
+    ],
+    "ask": []
+  }
+}
