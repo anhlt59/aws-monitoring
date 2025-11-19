@@ -33,18 +33,18 @@ make bootstrap-cm
 The bootstrap process creates:
 
 - **S3 Bucket:** An S3 bucket in the same region as your application to store the artifacts for your serverless
-   application. For example, `neos-monitoring-deployment`. 
+   application. For example, `neos-monitoring-deployment`.
 - **IAM Roles:** An IAM role that will be used to deploy the CloudFormation stack. The required permissions are
-   defined in the `infra/roles/deployment_policy.json.tpl` file.
+   defined in the `backend/infra/roles/deployment_policy.json.tpl` file.
 
 ### 2. Environment-Specific Configuration
 
 The project uses a two-stack approach for deployment:
 
 - **Master Stack:** There is only one master stack (except for local development). The configuration files for the
-  master stack are located in the `infra/master/configs` directory.
+  master stack are located in the `backend/infra/configs` directory.
 - **Agent Stack:** Each environment has its own agent stack. The configuration files for the agent stack are located in
-  the `infra/agent/configs` directory.
+  the `backend/infra/configs` directory.
 
 
 ## Deployment Process

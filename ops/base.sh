@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 export BASE_DIR=$(cd "$(dirname "$(dirname "$(dirname "$0")")")" && pwd)
+export BACKEND_DIR="${BASE_DIR}/backend"
+export FRONTEND_DIR="${BASE_DIR}/frontend"
 export PY_VENV="${BASE_DIR}/.venv/python"
 export NODE_VENV="${BASE_DIR}/.venv/node"
 
