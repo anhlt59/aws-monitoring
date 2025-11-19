@@ -1,5 +1,6 @@
 """Utility functions for monterm."""
 
+import shlex
 import subprocess
 from typing import Any
 
@@ -108,11 +109,19 @@ def format_yaml_value(value: Any) -> str:
 def execute_command(command: str) -> int:
     """
     Run the command and capture output in real-time.
-    :param command: (str) command to run
-    :return: int
+
+    Note: This function uses shlex.split() to safely parse the command string.
+    Ensure that the command comes from a trusted source to prevent command injection.
+
+    Security: Commands are constructed from:
+    - Hardcoded make commands (e.g., "make start", "make test")
+    - Validated stage parameters (alphanumeric, hyphens, underscores only)
+
+    :param command: (str) command to run (must be from a trusted source)
+    :return: int (exit code of the command)
     """
-    process = subprocess.Popen(
-        command.split(),
+    process = subprocess.Popen(  # nosec B603
+        shlex.split(command),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         universal_newlines=True,

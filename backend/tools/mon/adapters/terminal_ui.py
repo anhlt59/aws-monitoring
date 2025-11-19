@@ -313,10 +313,19 @@ class TerminalUI:
             Stage name or None if cancelled
         """
 
+        def validate_stage(text: str) -> bool | str:
+            """Validate stage name contains only safe characters."""
+            if len(text) == 0:
+                return "Stage name cannot be empty"
+            # Only allow alphanumeric characters, hyphens, and underscores
+            if not all(c.isalnum() or c in ("-", "_") for c in text):
+                return "Stage name can only contain letters, numbers, hyphens, and underscores"
+            return True
+
         stage = questionary.text(
             "Stage:",
             default="local",
-            validate=lambda text: len(text) > 0 or "Stage name cannot be empty",
+            validate=validate_stage,
             style=self.default_style,
             instruction="Enter stage name (e.g., local, neos) · Ctrl+C to cancel",
         ).ask()
