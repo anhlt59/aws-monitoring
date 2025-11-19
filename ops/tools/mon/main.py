@@ -230,12 +230,12 @@ def cli():
     "--config-dir",
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
     default=None,
-    help="Configuration directory path (default: infra/master/configs)",
+    help="Configuration directory path (default: backend/infra/configs)",
 )
 @click.option(
     "--agent",
     is_flag=True,
-    help="Use agent configuration directory (infra/agent/configs)",
+    help="Use agent configuration directory (backend/infra/configs)",
 )
 def start(config_dir: Path | None, agent: bool) -> None:
     """Start the interactive profile manager."""

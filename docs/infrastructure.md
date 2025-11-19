@@ -27,11 +27,11 @@ The master stack consists of the following resources:
 
   | Method | Path              | Description        | Function                                                                 |
   | ------ | ----------------- | ------------------ | ------------------------------------------------------------------------ |
-  | GET    | /events           | List events        | [Master-ListEvents](../infra/functions/api/Event-ListItems.yml)   |
-  | PUT    | /events/{eventId} | Update event by ID | [Master-UpdateEvent](../infra/functions/api/Event-UpdateItem.yml) |
-  | GET    | /agents           | List agents        | [Master-ListAgents](../infra/functions/api/Agent-ListItems.yml)   |
-  | GET    | /agents/{agentId} | Get agent by ID    | [Master-GetAgent](../infra/functions/api/Agent-GetItem.yml)       |
-  | PUT    | /agents/{agentId} | Update agent by ID | [Master-UpdateAgent](../infra/functions/api/Agent-UpdateItem.yml) |
+  | GET    | /events           | List events        | [Master-ListEvents](../backend/infra/functions/api/Event-ListItems.yml)   |
+  | PUT    | /events/{eventId} | Update event by ID | [Master-UpdateEvent](../backend/infra/functions/api/Event-UpdateItem.yml) |
+  | GET    | /agents           | List agents        | [Master-ListAgents](../backend/infra/functions/api/Agent-ListItems.yml)   |
+  | GET    | /agents/{agentId} | Get agent by ID    | [Master-GetAgent](../backend/infra/functions/api/Agent-GetItem.yml)       |
+  | PUT    | /agents/{agentId} | Update agent by ID | [Master-UpdateAgent](../backend/infra/functions/api/Agent-UpdateItem.yml) |
 
 ## Agent Stack
 

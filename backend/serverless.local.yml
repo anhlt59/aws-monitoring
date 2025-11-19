@@ -32,7 +32,7 @@ useDotenv: true
 custom:
   version: v1.0.1
   # load the configuration corresponding to a specific $stage
-  configs: ${file(../infra/configs/${self:provider.stage}.yml)}
+  configs: ${file(infra/configs/${self:provider.stage}.yml)}
   # plugins
   localstack:
     stages: [local]
@@ -40,7 +40,7 @@ custom:
     lambda:
       mountCode: true
     autostart: true
-  pythonRequirements: ${file(../infra/plugins/python_requirements.yml):pythonRequirements}
+  pythonRequirements: ${file(infra/plugins/python_requirements.yml):pythonRequirements}
 
 package:
   individually: false
