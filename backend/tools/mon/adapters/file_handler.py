@@ -5,8 +5,8 @@ from typing import Any
 
 import yaml
 
-from ops.tools.mon.constants import YAML_EXTENSIONS
-from ops.tools.mon.models.profile import ProfileData, ProfileMetadata
+from ..constants import YAML_EXTENSIONS
+from ..models.profile import ProfileData, ProfileMetadata
 
 
 class YAMLFileHandler:
@@ -88,7 +88,7 @@ class YAMLFileHandler:
         Raises:
             ValueError: If the profile data is invalid
         """
-        from ops.tools.mon.utils import validate_yaml_structure
+        from .utils import validate_yaml_structure
 
         yaml_data = profile_data.to_yaml()
 

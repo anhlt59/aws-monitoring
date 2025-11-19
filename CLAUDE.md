@@ -21,13 +21,13 @@ aws-monitoring/
 │   ├── src/          # Source code (domain, adapters, entrypoints)
 │   ├── tests/        # Test files
 │   ├── statics/      # Jinja templates for notifications
+│   ├── infra/        # Infrastructure as Code (Serverless Framework configs)
 │   ├── CLAUDE.md     # 📖 Backend development guide
 │   └── ...
 ├── frontend/         # Vue 3 frontend
 │   ├── src/          # Frontend source (pages, components, store, etc.)
 │   ├── CLAUDE.md     # 📖 Frontend development guide
 │   └── ...
-├── infra/           # Infrastructure as Code (Serverless Framework)
 ├── ops/             # Operations and deployment scripts
 ├── docs/            # Documentation
 └── Makefile         # Common development commands
@@ -100,7 +100,6 @@ cd frontend && npm run dev      # Start frontend
 # Backend only
 make test                       # Run backend tests
 make coverage                   # Generate coverage report
-make mon                        # Launch monitoring profile manager
 
 # Frontend only
 cd frontend
@@ -214,7 +213,7 @@ chore: update dependencies
 
 - **Backend source**: `backend/src/`
 - **Frontend source**: `frontend/src/`
-- **Infrastructure**: `infra/`
+- **Infrastructure**: `backend/infra/`
 - **Tests**: `backend/tests/`, `frontend/src/__tests__/`
 - **Documentation**: `docs/`
 - **Configuration**: `backend/pyproject.toml`, `frontend/package.json`

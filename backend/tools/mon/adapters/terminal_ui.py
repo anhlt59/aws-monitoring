@@ -8,8 +8,8 @@ from questionary import Choice, Question, Separator, Style
 from rich.console import Console
 from rich.table import Table
 
-from ops.tools.mon.models.profile import ProfileData, ProfileField, ProfileMetadata
-from ops.tools.mon.utils import execute_command
+from ..models.profile import ProfileData, ProfileField, ProfileMetadata
+from ..utils import execute_command
 
 
 class TerminalUI:
@@ -167,7 +167,7 @@ class TerminalUI:
             New value, or None if cancelled
         """
         # Format the current value for display
-        from ops.tools.mon.utils import format_yaml_value
+        from .utils import format_yaml_value
 
         current_value = format_yaml_value(field.value)
 

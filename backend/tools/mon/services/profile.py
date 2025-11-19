@@ -3,9 +3,9 @@
 from pathlib import Path
 from typing import Any
 
-from ops.tools.mon.adapters.file_handler import YAMLFileHandler
-from ops.tools.mon.models.profile import ProfileData, ProfileField, ProfileMetadata
-from ops.tools.mon.utils import flatten_dict, format_yaml_value
+from ..adapters.file_handler import YAMLFileHandler
+from ..models.profile import ProfileData, ProfileField, ProfileMetadata
+from ..utils import flatten_dict, format_yaml_value
 
 
 class ProfileService:

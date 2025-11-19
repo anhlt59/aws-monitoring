@@ -9,6 +9,7 @@ source "${SCRIPT_DIR}/base.sh"
 # Start LocalStack if not already running
 start_localstack
 
+cd "$BACKEND_DIR"
 # Deploy initial stack if not exists
 STACK_STATUS=$(
   aws cloudformation describe-stacks \
@@ -20,11 +21,11 @@ STACK_STATUS=$(
 )
 if [ "$STACK_STATUS" == "STACK_NOT_FOUND" ]; then
     echo -e "${ORANGE}Stack '${STACK_NAME}' not found in LocalStack. Deploying initial stack...${RESET}"
-    echo -e "${BLUE}pnpm exec sls deploy --stage local --config backend/serverless.local.yml${RESET}"
-    pnpm exec sls deploy --stage local --config backend/serverless.local.yml
+    echo -e "${BLUE}pnpm exec sls deploy --stage local --config serverless.local.yml${RESET}"
+    pnpm exec sls deploy --stage local --config serverless.local.yml
 fi
 
 # Run ServerlessFramework
-echo -e "${GREEN}${BOLD}Starting 'master' in offline mode...${RESET}"
-echo -e "${BLUE}pnpm exec sls offline start --stage local --config backend/serverless.local.yml${RESET}"
-pnpm exec sls offline start --stage local --config backend/serverless.local.yml
+echo -e "${GREEN}${BOLD}Starting 'serverless' in offline mode...${RESET}"
+echo -e "${BLUE}pnpm exec sls offline start --stage local --config serverless.local.yml${RESET}"
+pnpm exec sls offline start --stage local --config serverless.local.yml

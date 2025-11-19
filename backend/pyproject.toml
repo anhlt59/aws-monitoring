@@ -4,7 +4,6 @@ version = "1.0.0"
 description = ""
 authors = [{ name = "AnhLT59" }]
 license = { text = "MIT" }
-readme = "README.md"
 
 
 # base dependencies -----------------------------------------
@@ -69,7 +68,7 @@ testpaths = ["tests"]
 
 # scripts ---------------------------------------------------
 [project.scripts]
-awsmon = "ops.pyscripts.cli:main"
+mon = "tools.mon.cli:main"
 
 # plugins ---------------------------------------------------
 [tool.poetry.requires-plugins]

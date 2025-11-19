@@ -76,7 +76,7 @@ class ProfileData(BaseModel):
         Returns:
             List of flattened keys (e.g., ['Region', 'Profile', 'IAM.DeploymentRole'])
         """
-        from ops.tools.mon.utils import flatten_dict
+        from .utils import flatten_dict
 
         flattened = flatten_dict(self.raw_data)
         return sorted(flattened.keys())
@@ -91,7 +91,7 @@ class ProfileData(BaseModel):
         Returns:
             Value at the specified key path
         """
-        from ops.tools.mon.utils import flatten_dict
+        from .utils import flatten_dict
 
         flattened = flatten_dict(self.raw_data)
         return flattened.get(key)
@@ -104,7 +104,7 @@ class ProfileData(BaseModel):
             key: Flattened key (e.g., 'IAM.DeploymentRole')
             value: New value to set
         """
-        from ops.tools.mon.utils import flatten_dict, unflatten_dict
+        from .utils import flatten_dict, unflatten_dict
 
         flattened = flatten_dict(self.raw_data)
         flattened[key] = value

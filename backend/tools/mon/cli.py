@@ -5,9 +5,9 @@ from pathlib import Path
 
 import click
 
-from ops.tools.mon.adapters.terminal_ui import TerminalUI
-from ops.tools.mon.constants import AGENT_CONFIG_DIR, DEFAULT_CONFIG_DIR
-from ops.tools.mon.services.profile import ProfileService
+from .adapters.terminal_ui import TerminalUI
+from .constants import AGENT_CONFIG_DIR, DEFAULT_CONFIG_DIR
+from .services.profile import ProfileService
 
 
 class MonTermApp:
@@ -230,12 +230,12 @@ def cli():
     "--config-dir",
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
     default=None,
-    help="Configuration directory path (default: infra/master/configs)",
+    help="Configuration directory path (default: backend/infra/configs)",
 )
 @click.option(
     "--agent",
     is_flag=True,
-    help="Use agent configuration directory (infra/agent/configs)",
+    help="Use agent configuration directory (backend/infra/configs)",
 )
 def start(config_dir: Path | None, agent: bool) -> None:
     """Start the interactive profile manager."""

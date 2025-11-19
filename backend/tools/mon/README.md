@@ -36,14 +36,12 @@ make mon
 ./ops/development/mon.sh start
 
 # Using Python module directly
-poetry run python -m ops.tools.mon.main start
+poetry run python -m .main start
 ```
 
 The dashboard provides quick access to:
 
 ```
-🏠 Mon Dashboard
-
 👤 Profiles
   • 2 profiles
 
@@ -80,14 +78,14 @@ For quick, non-interactive operations:
 ```bash
 ./ops/development/mon.sh list
 # or
-poetry run python -m ops.tools.mon.main list
+poetry run python -m .main list
 ```
 
 **View Profile Contents:**
 ```bash
 ./ops/development/mon.sh show local
 # or
-poetry run python -m ops.tools.mon.main show local
+poetry run python -m .main show local
 ```
 
 ### Profile Editor Navigation
@@ -177,13 +175,13 @@ Lambda:
 
 ```bash
 # Test the list command
-poetry run python -m ops.tools.mon.main list
+poetry run python -m .main list
 
 # Test the show command
-poetry run python -m ops.tools.mon.main show local
+poetry run python -m .main show local
 
 # Test interactive mode (requires terminal)
-poetry run python -m ops.tools.mon.main start
+poetry run python -m .main start
 ```
 
 ## Dependencies
@@ -201,7 +199,7 @@ poetry run python -m ops.tools.mon.main start
 Make sure you're running the command from the project root directory, or specify the full path:
 
 ```bash
-poetry run python -m ops.tools.mon.main start --config-dir /full/path/to/configs
+poetry run python -m .main start --config-dir /full/path/to/configs
 ```
 
 ### "Profile not found"
@@ -210,10 +208,10 @@ Ensure the profile name is correct (without the `.yml` or `.yaml` extension):
 
 ```bash
 # Correct
-poetry run python -m ops.tools.mon.main show local
+poetry run python -m .main show local
 
 # Incorrect
-poetry run python -m ops.tools.mon.main show local.yml
+poetry run python -m .main show local.yml
 ```
 
 ### Import Errors
