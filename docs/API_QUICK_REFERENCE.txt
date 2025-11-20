@@ -1,0 +1,197 @@
+================================================================================
+AWS MONITORING BACKEND - API ENDPOINTS QUICK REFERENCE
+================================================================================
+
+DEPLOYED (Currently Active)
+================================================================================
+
+EVENT-DRIVEN FUNCTIONS (EventBridge Triggers):
+
+1. Handle Monitoring Events
+   Trigger: EventBridge (AWS Health, GuardDuty, custom events)
+   Handler: src.entrypoints.functions.handle_monitoring_events.main.handler
+   Output: Slack notifications
+
+2. Update Deployment
+   Trigger: EventBridge (CloudFormation stack events)
+   Handler: src.entrypoints.functions.update_deployment.main.handler
+   Purpose: Track agent deployment status
+
+SCHEDULED FUNCTIONS (CloudWatch Events):
+
+3. Daily Report
+   Schedule: 0 0 * * ? * (daily at midnight UTC)
+   Handler: src.entrypoints.functions.daily_report.main.handler
+   Output: Slack notification with daily report
+
+4. Query Error Logs
+   Schedule: Configurable (env var)
+   Handler: src.entrypoints.functions.query_error_logs.main.handler
+   Purpose: Query CloudWatch Logs Insights for errors
+
+================================================================================
+NOT DEPLOYED (Code Ready, Need to Uncomment in serverless.yml)
+================================================================================
+
+REST API ENDPOINTS:
+
+GET /events
+  Query Params: start_date, end_date, limit, direction, cursor
+  Handler: src.entrypoints.apigw.events.main.handler
+  Handler Path: backend/src/entrypoints/apigw/events/main.py
+  Config File: backend/infra/functions/api/Event-ListItems.yml
+  
+GET /events/{event_id}
+  Handler: src.entrypoints.apigw.events.main.handler
+  Config File: backend/infra/functions/api/Event-GetItem.yml
+
+GET /agents
+  Handler: src.entrypoints.apigw.agents.main.handler
+  Handler Path: backend/src/entrypoints/apigw/agents/main.py
+  Config File: backend/infra/functions/api/Agent-ListItems.yml
+
+GET /agents/{agent_id}
+  Handler: src.entrypoints.apigw.agents.main.handler
+  Config File: backend/infra/functions/api/Agent-GetItem.yml
+
+PUT /agents/{agent_id}
+  Handler: src.entrypoints.apigw.agents.main.handler
+  Config File: backend/infra/functions/api/Agent-UpdateItem.yml
+
+================================================================================
+PLANNED (OpenAPI Spec Defined, Not Yet Implemented)
+================================================================================
+
+AUTHENTICATION:
+  POST /auth/login              (email, password)
+  POST /auth/refresh            (refresh_token)
+  POST /auth/logout
+
+DASHBOARD:
+  GET /dashboard/stats          (GET summary statistics)
+  GET /dashboard/timeline       (GET events timeline)
+
+EVENTS (Extended):
+  PATCH /events/{id}            (acknowledge, notes, tags)
+  GET /events/{id}/related
+  GET /events/export            (CSV/JSON/PDF)
+  GET /events/accounts          (unique accounts)
+  GET /events/regions           (unique regions)
+
+AGENTS (Extended):
+  POST /agents                  (deploy new agent)
+  DELETE /agents/{account}      (delete agent)
+  GET /agents/{account}/metrics (performance metrics)
+  GET /agents/{account}/health  (health status)
+  POST /agents/{account}/redeploy
+
+REPORTS:
+  GET /reports/daily?date={date}
+  POST /reports/custom
+  GET /reports
+  GET /reports/{id}/download
+
+USERS:
+  GET /users/me
+  PUT /users/me
+  POST /users/me/change-password
+
+SETTINGS:
+  GET /settings/notifications
+  PUT /settings/notifications
+  GET /settings/system          (admin)
+  PUT /settings/system          (admin)
+
+================================================================================
+KEY FILES & LOCATIONS
+================================================================================
+
+Main Configuration:
+  backend/serverless.yml        - Main deployment config (API functions commented out)
+  backend/serverless.local.yml  - Local overrides
+
+API Handlers (Not Deployed):
+  backend/src/entrypoints/apigw/events/main.py
+  backend/src/entrypoints/apigw/agents/main.py
+  backend/src/entrypoints/apigw/base.py
+
+Event Functions (Deployed):
+  backend/src/entrypoints/functions/handle_monitoring_events/main.py
+  backend/src/entrypoints/functions/update_deployment/main.py
+  backend/src/entrypoints/functions/daily_report/main.py
+  backend/src/entrypoints/functions/query_error_logs/main.py
+
+Repositories:
+  backend/src/adapters/db/repositories/event.py
+  backend/src/adapters/db/repositories/agent.py
+
+Database Models:
+  backend/src/adapters/db/models/event.py
+  backend/src/adapters/db/models/agent.py
+
+Documentation:
+  docs/api-specification.yaml   - Full OpenAPI spec
+  docs/screen-api-mapping.md    - Frontend-to-API mapping
+
+================================================================================
+TO ENABLE REST API ENDPOINTS
+================================================================================
+
+1. Open backend/serverless.yml
+2. Uncomment lines 78-86 (the API functions section)
+3. Run: make deploy stage=local
+4. Endpoints will be available at API Gateway URL
+
+The endpoints are fully implemented but just not enabled in the deployment.
+
+================================================================================
+DATA MODELS
+================================================================================
+
+EVENT:
+  {
+    "id": str,
+    "account": str,
+    "region": str,
+    "source": str,
+    "detail_type": str,
+    "detail": dict,
+    "severity": int (0-4),
+    "resources": [str],
+    "published_at": int (unix),
+    "updated_at": int (unix),
+    "acknowledged": bool,
+    "notes": str,
+    "tags": [str]
+  }
+
+AGENT:
+  {
+    "account": str (12 digits),
+    "region": str,
+    "status": str (CloudFormation status),
+    "deployed_at": int (unix),
+    "created_at": int (unix)
+  }
+
+================================================================================
+ENVIRONMENT VARIABLES
+================================================================================
+
+Global:
+  SERVICE = "monitoring"
+  STAGE = "dev" / "local" / "prod"
+  AWS_DYNAMODB_TABLE = "monitoring-local" (default)
+  POWERTOOLS_LOG_LEVEL = "INFO"
+  POWERTOOLS_SERVICE_NAME = varies by function
+
+Function-Specific:
+  MONITORING_WEBHOOK_URL       (Slack webhook)
+  DEPLOYMENT_WEBHOOK_URL       (Slack webhook)
+  REPORT_WEBHOOK_URL           (Slack webhook)
+  CW_INSIGHTS_QUERY_STRING     (CloudWatch Logs query)
+  CW_INSIGHTS_QUERY_DURATION   (300 seconds default)
+  CW_INSIGHTS_QUERY_TIMEOUT    (15 seconds default)
+  CW_LOGS_DELIVERY_LATENCY     (15 seconds default)
+
+================================================================================

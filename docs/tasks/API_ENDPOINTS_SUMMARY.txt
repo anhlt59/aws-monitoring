@@ -1,0 +1,206 @@
+================================================================================
+MISSING BACKEND API ENDPOINTS - QUICK REFERENCE
+================================================================================
+
+SUMMARY
+-------
+Total Missing: 31 endpoints
+Partially Done: 2 endpoints (events GET operations)
+Total Required: 33 endpoints
+
+================================================================================
+AUTHENTICATION API - 4 endpoints (CRITICAL PRIORITY)
+================================================================================
+
+POST   /api/auth/login           ❌ Login with email/password
+POST   /api/auth/logout          ❌ Logout current user
+GET    /api/auth/me              ❌ Get current user profile
+POST   /api/auth/refresh         ❌ Refresh access token
+
+Dependencies: pyjwt, bcrypt, passlib
+Estimated: 40-60 hours
+Timeline: Week 1-2
+
+================================================================================
+EVENTS API - 2 additional endpoints (HIGH PRIORITY)
+================================================================================
+
+GET    /api/events               ✅ List events (implemented, not deployed)
+GET    /api/events/{id}          ✅ Get event details (implemented, not deployed)
+DELETE /api/events/{id}          ❌ Delete event
+POST   /api/events/{id}/create-task ❌ Create task from event
+
+Dependencies: None (extends existing)
+Estimated: 8-12 hours
+Timeline: Week 2
+
+================================================================================
+TASKS API - 7 endpoints (HIGH PRIORITY)
+================================================================================
+
+GET    /api/tasks                ❌ List tasks with filters
+GET    /api/tasks/{id}           ❌ Get task details
+POST   /api/tasks                ❌ Create new task
+PUT    /api/tasks/{id}           ❌ Update task
+DELETE /api/tasks/{id}           ❌ Delete task
+POST   /api/tasks/{id}/comments  ❌ Add comment to task
+PUT    /api/tasks/{id}/status    ❌ Update task status
+
+Dependencies: None
+Estimated: 35-45 hours
+Timeline: Week 3-4
+
+================================================================================
+USERS API - 5 endpoints (HIGH PRIORITY)
+================================================================================
+
+GET    /api/users                ❌ List users (admin/manager)
+GET    /api/users/{id}           ❌ Get user details
+POST   /api/users                ❌ Create user (admin only)
+PUT    /api/users/{id}           ❌ Update user
+DELETE /api/users/{id}           ❌ Delete user (admin only)
+
+Dependencies: Authentication API
+Estimated: 25-35 hours
+Timeline: Week 5
+
+================================================================================
+DASHBOARD API - 4 endpoints (MEDIUM PRIORITY)
+================================================================================
+
+GET    /api/dashboard/overview        ❌ Get all stats
+GET    /api/dashboard/events-stats    ❌ Event statistics
+GET    /api/dashboard/tasks-stats     ❌ Task statistics
+GET    /api/dashboard/users-stats     ❌ User statistics
+
+Dependencies: Events, Tasks, Users APIs
+Estimated: 16-24 hours
+Timeline: Week 6
+
+================================================================================
+CONFIGURATION API - 8 endpoints (MEDIUM PRIORITY)
+================================================================================
+
+GET    /api/config/aws-accounts       ❌ List AWS accounts
+GET    /api/config/aws-accounts/{id}  ❌ Get AWS account
+POST   /api/config/aws-accounts       ❌ Create AWS account
+PUT    /api/config/aws-accounts/{id}  ❌ Update AWS account
+DELETE /api/config/aws-accounts/{id}  ❌ Delete AWS account
+POST   /api/config/aws-accounts/{id}/test ❌ Test connection
+GET    /api/config/monitoring         ❌ Get monitoring config
+PUT    /api/config/monitoring         ❌ Update monitoring config
+
+Dependencies: None (refactor existing agents API)
+Estimated: 32-48 hours
+Timeline: Week 7-8
+
+================================================================================
+IMPLEMENTATION PHASES
+================================================================================
+
+PHASE 1 (Critical - Must-have for MVP)
+  - Authentication API (4 endpoints)
+  - Events API (2 endpoints)
+  - Tasks API (7 endpoints)
+  Total: 13 endpoints, 83-117 hours, 4-5 weeks
+
+PHASE 2 (Important - Enhanced functionality)
+  - Users API (5 endpoints)
+  - Dashboard API (4 endpoints)
+  Total: 9 endpoints, 41-59 hours, 2 weeks
+
+PHASE 3 (Nice-to-have - Additional features)
+  - Configuration API (8 endpoints)
+  Total: 8 endpoints, 32-48 hours, 1-2 weeks
+
+GRAND TOTAL: 30 new endpoints, 156-224 hours, 7-9 weeks
+
+================================================================================
+TECHNICAL REQUIREMENTS
+================================================================================
+
+Dependencies to Add:
+  - pyjwt ^2.8.0
+  - bcrypt ^4.1.2
+  - passlib ^1.7.4
+  - python-jose ^3.3.0 (optional)
+
+DynamoDB Tables Needed:
+  - User (with email-index, role-index GSIs)
+  - Task (with assigned-user-index, status-index, event-id-index GSIs)
+  - TaskComment (task-id-index GSI)
+  - MonitoringConfig
+
+Files to Create: ~80+ new files
+  - Domain entities: 4
+  - Use cases: 25+
+  - Repositories: 3
+  - Services: 2
+  - API handlers: 30+
+  - Tests: 50+
+  - Config files: 6+
+
+================================================================================
+QUICK START GUIDE
+================================================================================
+
+1. Review detailed docs:
+   - docs/MISSING_API_ENDPOINTS.md (comprehensive guide)
+   - docs/tasks/BACKEND_API_IMPLEMENTATION_TASKS.md (task checklist)
+
+2. Start with Phase 1 - Authentication:
+   - Set up JWT and password hashing
+   - Create User domain model
+   - Implement auth endpoints
+   - Test with frontend login page
+
+3. Enable existing Events API:
+   - Uncomment lines 78-86 in backend/infra/functions/serverless.yml
+   - Deploy and test
+
+4. Continue with Tasks API:
+   - Full CRUD for tasks
+   - Task comments system
+   - Task-event linking
+
+5. Complete remaining APIs in order
+
+================================================================================
+FILES TO REFERENCE
+================================================================================
+
+Documentation:
+  - docs/MISSING_API_ENDPOINTS.md
+  - docs/tasks/BACKEND_API_IMPLEMENTATION_TASKS.md
+  - docs/api-specification.yaml
+
+Existing Code Examples:
+  - backend/src/domain/entities/event.py (domain model example)
+  - backend/src/adapters/repositories/event_repository.py (repository example)
+  - backend/src/entrypoints/apigw/events/ (handler examples)
+  - backend/infra/functions/events.yml (serverless config example)
+
+Frontend API Expectations:
+  - frontend/src/api/modules/auth.api.ts
+  - frontend/src/api/modules/events.api.ts
+  - frontend/src/api/modules/tasks.api.ts
+  - frontend/src/api/modules/users.api.ts
+  - frontend/src/api/modules/dashboard.api.ts
+  - frontend/src/api/modules/config.api.ts
+
+================================================================================
+NEXT ACTIONS
+================================================================================
+
+1. ✅ Review missing endpoints documentation
+2. ⬜ Approve implementation plan
+3. ⬜ Create feature branch: feat/auth-api
+4. ⬜ Add JWT dependencies to pyproject.toml
+5. ⬜ Implement Authentication API (Phase 1, Task 1)
+6. ⬜ Test with frontend
+7. ⬜ Continue with remaining endpoints
+
+================================================================================
+Last Updated: 2025-11-20
+Status: Ready for Implementation
+================================================================================
