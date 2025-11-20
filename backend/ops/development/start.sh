@@ -3,13 +3,13 @@
 set -euo pipefail
 
 STACK_NAME=monitoring-local
-SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+SCRIPT_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
 
 # Start LocalStack if not already running
 start_localstack
 
-cd "$BACKEND_DIR"
+cd "$BASE_DIR"
 # Deploy initial stack if not exists
 STACK_STATUS=$(
   aws cloudformation describe-stacks \

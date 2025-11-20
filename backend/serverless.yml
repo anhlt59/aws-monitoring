@@ -59,10 +59,10 @@ package:
   excludeDevDependencies: true
   patterns:
     - "!./**"
+    - src/adapters/**/?*.py
     - src/common/**/?*.py
-    - src/infras/**/?*.py
-    - src/modules/**/?*.py
-    - src/modules/**/?*.py
+    - src/domain/**/?*.py
+    - src/entrypoints/**/?*.py
     - statics/*/?*
 
 # Functions (merged)

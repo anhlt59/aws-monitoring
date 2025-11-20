@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
-
+# ==================================================================================
+# Deployment script for AWS monitoring project
+#
+# Usage:
+#   $ deploy.sh [stage]
+# Arguments:
+#   - stage: The deployment stage (e.g., 'local')
+# ==================================================================================
 set -euo pipefail
 
-SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+SCRIPT_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
 STAGE="${1:-local}"
 
@@ -18,10 +25,9 @@ else
 fi
 
 echo -e "${BLUE}===============================${RESET}"
-echo -e "${BLUE}Destroying 'monitoring'${RESET}"
+echo -e "${BLUE}Deploy 'monitoring'${RESET}"
 echo -e "${BLUE}* Stage ${STAGE}${RESET}"
 echo -e "${BLUE}===============================${RESET}\n"
 
-cd "$BACKEND_DIR"
-echo -e "${BLUE}pnpm exec sls remove --stage ${STAGE} --config ${TEMPLATE_FILE}${RESET}"
-pnpm exec sls remove --stage "$STAGE" --config "$TEMPLATE_FILE"
+echo -e "${BLUE}pnpm exec sls deploy --stage ${STAGE} --config ${TEMPLATE_FILE}${RESET}"
+pnpm exec sls deploy --stage "$STAGE" --config "$TEMPLATE_FILE"

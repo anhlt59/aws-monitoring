@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+SCRIPT_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
 STAGE="${1:-local}"
 
@@ -28,13 +28,13 @@ echo -e "${BLUE}* AWS region   ${AWS_DEFAULT_REGION}${RESET}${RESET}"
 echo -e "${BLUE}===============================${RESET}\n"
 
 # Create folder .serverless in current directory
-DEPLOYMENT_DIR="${BACKEND_DIR}/.serverless"
+DEPLOYMENT_DIR="${BASE_DIR}/.serverless"
 mkdir -p "$DEPLOYMENT_DIR"
 
 # Copy the config file
 CONFIG_FILE="${DEPLOYMENT_DIR}/config.yml"
-cp "${BACKEND_DIR}/infra/configs/${STAGE}.yml" "$CONFIG_FILE"
-cp -r "${BACKEND_DIR}/infra/roles/" "$DEPLOYMENT_DIR"
+cp "${BASE_DIR}/infra/configs/${STAGE}.yml" "$CONFIG_FILE"
+cp -r "${BASE_DIR}/infra/roles/" "$DEPLOYMENT_DIR"
 AWS_DEFAULT_REGION="$(yq e '.Region' "$CONFIG_FILE")"
 AWS_PROFILE="$(yq e '.Profile' "$CONFIG_FILE")"
 export AWS_DEFAULT_REGION

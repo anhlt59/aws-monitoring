@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-SCRIPT_DIR=$(cd "$(dirname "$(dirname "$0")")" && pwd)
+SCRIPT_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 source "${SCRIPT_DIR}/base.sh"
 STAGE="${1:-local}"
 
@@ -17,6 +17,5 @@ echo -e "${BLUE}Packaging 'monitoring'${RESET}"
 echo -e "${BLUE}* Stage ${STAGE}${RESET}"
 echo -e "${BLUE}===============================${RESET}\n"
 
-cd "$BACKEND_DIR"
 echo -e "${BLUE}pnpm exec sls package --stage ${STAGE} --config ${TEMPLATE_FILE}${RESET}"
 pnpm exec sls package --stage "$STAGE" --config "$TEMPLATE_FILE"
