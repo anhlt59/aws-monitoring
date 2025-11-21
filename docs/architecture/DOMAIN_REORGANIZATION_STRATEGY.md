@@ -12,22 +12,25 @@
 ```
 backend/src/domain/
 ├── models/
-│   ├── event.py
-│   ├── agent.py
-│   ├── user.py
-│   ├── task.py
-│   ├── config.py
+│   ├── event.py        # AWS monitoring events
+│   ├── logs.py         # CloudWatch log entries
+│   ├── messages.py     # EventBridge messages
+│   ├── user.py         # (to be added)
+│   ├── task.py         # (to be added)
+│   ├── config.py       # (to be added)
 │   └── ... (growing)
 ├── use_cases/
 │   ├── events/
-│   ├── auth/
-│   ├── tasks/
-│   ├── users/
+│   ├── auth/           # (to be added)
+│   ├── tasks/          # (to be added)
+│   ├── users/          # (to be added)
 │   └── ... (growing)
 └── ports/
     ├── repositories/
     └── services/
 ```
+
+**Note:** Agent model removed - AWS account tracking merged into Configuration context
 
 ### Problems
 - ❌ All domains mixed together
@@ -55,8 +58,8 @@ Based on your system, I recommend these bounded contexts:
 │  │    Context       │  │    Context       │                │
 │  │                  │  │                  │                │
 │  │  - Event         │  │  - Task          │                │
-│  │  - Agent         │  │  - Comment       │                │
-│  │  - Alert         │  │  - Assignment    │                │
+│  │  - Alert         │  │  - Comment       │                │
+│  │  - Threshold     │  │  - Assignment    │                │
 │  └────────┬─────────┘  └────────┬─────────┘                │
 │           │                     │                           │
 │           │    ┌────────────────┴────────┐                  │
@@ -72,7 +75,7 @@ Based on your system, I recommend these bounded contexts:
 │                │   CONFIGURATION  │                          │
 │                │     Context      │                          │
 │                │                  │                          │
-│                │  - AwsAccount    │                          │
+│                │  - AwsAccount    │  (includes agent status) │
 │                │  - MonitoringCfg │                          │
 │                │  - ServiceConfig │                          │
 │                └──────────────────┘                          │
@@ -94,8 +97,7 @@ Based on your system, I recommend these bounded contexts:
 **Responsibility:** Monitor AWS resources, collect events, process alerts
 
 **Domain Entities:**
-- Event (monitoring event)
-- Agent (deployed monitor)
+- Event (monitoring event from AWS services)
 - Alert (processed notification)
 - MetricThreshold
 - ResourceFilter
@@ -103,12 +105,13 @@ Based on your system, I recommend these bounded contexts:
 **Use Cases:**
 - CollectEvent
 - ProcessAlert
-- DeployAgent
-- UpdateAgentStatus
 - QueryEventHistory
+- FilterEvents
 - GenerateReport
 
 **Owns:** Event data collection and alert processing
+
+**Note:** AWS account configuration (previously "Agent") moved to Configuration Context
 
 ---
 
@@ -161,19 +164,22 @@ Based on your system, I recommend these bounded contexts:
 **Responsibility:** Configure AWS accounts, monitoring settings, system parameters
 
 **Domain Entities:**
-- AwsAccount
+- AwsAccount (includes deployment/agent status)
 - MonitoringConfig
 - ServiceConfig
 - NotificationSettings
 
 **Use Cases:**
 - RegisterAwsAccount
+- UpdateAccountStatus (deployment status)
 - TestConnection
 - UpdateMonitoringConfig
 - EnableService
 - ConfigureThresholds
 
-**Owns:** All system and monitoring configuration
+**Owns:** All system and monitoring configuration, including AWS account registration and deployment tracking
+
+**Note:** Absorbed "Agent" functionality - AwsAccount now tracks deployment status and monitoring state
 
 ---
 
@@ -207,7 +213,7 @@ backend/src/
     ├── monitoring/          # Monitoring Context
     │   ├── models/
     │   │   ├── event.py    # Full Event entity (owns it)
-    │   │   └── agent.py
+    │   │   └── alert.py
     │   ├── use_cases/
     │   └── ports/
     │
@@ -504,22 +510,22 @@ backend/src/
 │   │   ├── models/
 │   │   │   ├── __init__.py
 │   │   │   ├── event.py             # Owns Event entity
-│   │   │   ├── agent.py
-│   │   │   └── alert.py
+│   │   │   ├── alert.py
+│   │   │   └── metric_threshold.py
 │   │   ├── use_cases/
 │   │   │   ├── __init__.py
 │   │   │   ├── collect_event.py
 │   │   │   ├── process_alert.py
-│   │   │   └── query_events.py
+│   │   │   ├── query_events.py
+│   │   │   └── filter_events.py
 │   │   ├── ports/
 │   │   │   ├── repositories/
-│   │   │   │   ├── event_repository.py
-│   │   │   │   └── agent_repository.py
+│   │   │   │   └── event_repository.py
 │   │   │   └── services/
-│   │   │       └── alert_service.py
+│   │   │       ├── alert_service.py
+│   │   │       └── notification_service.py
 │   │   └── events/                   # Domain events published
-│   │       ├── event_occurred.py
-│   │       └── agent_deployed.py
+│   │       └── event_occurred.py
 │   │
 │   ├── task_management/              # TASK MANAGEMENT CONTEXT
 │   │   ├── __init__.py
@@ -569,19 +575,24 @@ backend/src/
 │       ├── __init__.py
 │       ├── models/
 │       │   ├── __init__.py
-│       │   ├── aws_account.py
-│       │   └── monitoring_config.py
+│       │   ├── aws_account.py       # Includes deployment/agent status
+│       │   ├── monitoring_config.py
+│       │   └── service_config.py
 │       ├── use_cases/
 │       │   ├── __init__.py
 │       │   ├── register_account.py
+│       │   ├── update_account_status.py  # Track deployment
+│       │   ├── test_connection.py
 │       │   └── update_config.py
 │       ├── ports/
 │       │   ├── repositories/
+│       │   │   ├── account_repository.py
 │       │   │   └── config_repository.py
 │       │   └── services/
 │       │       └── aws_connection_service.py
 │       └── events/
-│           └── account_registered.py
+│           ├── account_registered.py
+│           └── account_deployed.py
 │
 ├── application/                      # Application services
 │   ├── __init__.py

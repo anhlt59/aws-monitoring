@@ -635,10 +635,20 @@ DeleteComment (Optional)
 **File:** `backend/src/domain/models/config.py`
 
 ```python
+class AwsAccountStatus(str, Enum):
+    """AWS Account deployment/monitoring status."""
+    PENDING = "pending"          # Account registered, not deployed
+    DEPLOYING = "deploying"      # Deployment in progress
+    ACTIVE = "active"            # Deployed and monitoring
+    FAILED = "failed"            # Deployment failed
+    DISABLED = "disabled"        # Monitoring disabled
+
 class AwsAccount(BaseModel):
     """
     AWS Account configuration for monitoring.
     Represents an AWS account that is being monitored.
+
+    Note: Replaces previous "Agent" model - now includes deployment/monitoring status.
     """
 
     # Identity
@@ -652,9 +662,11 @@ class AwsAccount(BaseModel):
     secret_access_key: str | None = None  # AWS secret key (encrypted)
     role_arn: str | None = None           # IAM role ARN (preferred)
 
-    # Status
-    is_active: bool = True     # Monitoring enabled/disabled
-    last_sync: int | None = None  # Last successful connection test
+    # Deployment/Monitoring Status (previously Agent fields)
+    status: AwsAccountStatus = AwsAccountStatus.PENDING
+    deployed_at: int | None = None        # When monitoring was deployed
+    last_sync: int | None = None          # Last successful connection test
+    is_active: bool = True                # Monitoring enabled/disabled
 
     # Timestamps
     created_at: int = Field(default_factory=current_utc_timestamp)
@@ -719,6 +731,38 @@ def uses_role_auth(self) -> bool:
 def uses_key_auth(self) -> bool:
     """Check if using access key authentication."""
     return self.access_key_id is not None
+
+def is_deployed(self) -> bool:
+    """Check if account is deployed and actively monitoring."""
+    return self.status == AwsAccountStatus.ACTIVE
+
+def is_pending_deployment(self) -> bool:
+    """Check if account is awaiting deployment."""
+    return self.status in (AwsAccountStatus.PENDING, AwsAccountStatus.DEPLOYING)
+
+def mark_deployed(self) -> None:
+    """Mark account as successfully deployed."""
+    self.status = AwsAccountStatus.ACTIVE
+    self.deployed_at = current_utc_timestamp()
+    self.updated_at = current_utc_timestamp()
+
+def mark_deployment_failed(self) -> None:
+    """Mark account deployment as failed."""
+    self.status = AwsAccountStatus.FAILED
+    self.updated_at = current_utc_timestamp()
+
+def disable_monitoring(self) -> None:
+    """Disable monitoring for this account."""
+    self.status = AwsAccountStatus.DISABLED
+    self.is_active = False
+    self.updated_at = current_utc_timestamp()
+
+def enable_monitoring(self) -> None:
+    """Re-enable monitoring for this account."""
+    if self.deployed_at:
+        self.status = AwsAccountStatus.ACTIVE
+        self.is_active = True
+        self.updated_at = current_utc_timestamp()
 
 def update_last_sync(self, success: bool) -> None:
     """Update last sync timestamp."""
@@ -1149,8 +1193,10 @@ backend/src/domain/use_cases/
 1. **User** - Authentication and authorization
 2. **Task** - Work items from events or manual creation
 3. **TaskComment** - Discussion on tasks
-4. **AwsAccount** - AWS account monitoring configuration
+4. **AwsAccount** - AWS account monitoring configuration (replaces Agent model, includes deployment status)
 5. **MonitoringConfig** - Global monitoring settings
+
+**Note:** Agent model has been removed - its functionality is now part of AwsAccount entity
 
 ### 8.2 Design Principles Applied
 
