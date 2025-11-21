@@ -5,8 +5,8 @@ from enum import Enum
 from pydantic import Field, field_validator, model_validator
 from pydantic_core import ValidationInfo
 
-from backend.src.common.models import BaseModel
-from backend.src.common.utils.datetime_utils import current_utc_timestamp
+from src.common.models import BaseModel
+from src.common.utils.datetime_utils import current_utc_timestamp
 
 
 class TaskStatus(str, Enum):

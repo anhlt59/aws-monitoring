@@ -5,8 +5,8 @@ from enum import Enum
 
 from pydantic import Field, field_validator, model_validator
 
-from backend.src.common.models import BaseModel
-from backend.src.common.utils.datetime_utils import current_utc_timestamp
+from src.common.models import BaseModel
+from src.common.utils.datetime_utils import current_utc_timestamp
 
 
 class AwsAccountStatus(str, Enum):
@@ -148,9 +148,7 @@ class AwsAccount(BaseModel):
         """Return account info with masked credentials for safe display."""
         data = self.model_dump()
         if self.access_key_id:
-            data["access_key_id"] = (
-                f"{self.access_key_id[:4]}...{self.access_key_id[-4:]}"
-            )
+            data["access_key_id"] = f"{self.access_key_id[:4]}...{self.access_key_id[-4:]}"
         if self.secret_access_key:
             data["secret_access_key"] = "***REDACTED***"
         return data
@@ -284,9 +282,7 @@ class MonitoringConfig(BaseModel):
         service = self.get_service_config(service_name)
         return service.enabled if service else False
 
-    def update_service_config(
-        self, service_name: str, config: ServiceConfig, updated_by: str
-    ) -> None:
+    def update_service_config(self, service_name: str, config: ServiceConfig, updated_by: str) -> None:
         """Update or add service configuration."""
         for i, service in enumerate(self.services):
             if service.service_name == service_name.lower():
