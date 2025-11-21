@@ -37,7 +37,7 @@ LocalStack provides local AWS service emulation. The project is configured to us
 | AWS Service     | LocalStack Port | Purpose              |
 |-----------------|-----------------|----------------------|
 | Lambda          | 4566            | Function execution   |
-| DynamoDB        | 4566            | Event/Agent storage  |
+| DynamoDB        | 4566            | Data storage         |
 | EventBridge     | 4566            | Event routing        |
 | CloudWatch Logs | 4566            | Log storage          |
 | API Gateway     | 4566            | REST endpoints       |
@@ -65,8 +65,6 @@ docker logs localstack
 | `make install`      | Install all dependencies     | Python + Node.js + pre-commit |
 | `make activate`     | Activate virtual environment | Sources Poetry shell          |
 | `make start`        | Start LocalStack container   | Docker Compose up             |
-| `make start-master` | Start master stack offline   | Serverless Offline port 3000  |
-| `make start-agent`  | Start agent stack offline    | Serverless Offline port 3001  |
 
 ### Deployment Commands
 

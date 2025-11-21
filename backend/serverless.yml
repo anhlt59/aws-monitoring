@@ -69,21 +69,15 @@ package:
 functions:
   # functions
   HandleMonitoringEvents: ${file(infra/functions/HandleMonitoringEvents.yml):function}
-  UpdateDeployment: ${file(infra/functions/UpdateDeployment.yml):function}
   DailyReport: ${file(infra/functions/DailyReport.yml):function}
 
-  # agent functions
+  # monitoring functions
   QueryErrorLogs: ${file(infra/functions/QueryErrorLogs.yml):function}
 
-#  # API -------------------------------------------------------------------------
-#  # Events
-#  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
-#  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
-#
-#  # Agents
-#  GetAgent: ${file(infra/functions/api/Agent-GetItem.yml):function}
-#  ListAgents: ${file(infra/functions/api/Agent-ListItems.yml):function}
-#  UpdateAgent: ${file(infra/functions/api/Agent-UpdateItem.yml):function}
+  # API -------------------------------------------------------------------------
+  # Events
+  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
+  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------

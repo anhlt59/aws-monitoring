@@ -414,11 +414,7 @@ Uncomment lines 78-86 in `backend/serverless.yml`:
 #  # Events
 #  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
 #  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
-#
-#  # Agents
-#  GetAgent: ${file(infra/functions/api/Agent-GetItem.yml):function}
-#  ListAgents: ${file(infra/functions/api/Agent-ListItems.yml):function}
-#  UpdateAgent: ${file(infra/functions/api/Agent-UpdateItem.yml):function}
+
 ```
 
 Then redeploy with: `make deploy stage=local`

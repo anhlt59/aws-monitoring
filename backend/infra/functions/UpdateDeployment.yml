@@ -1,9 +1,0 @@
-function:
-  name: ${self:service}-${self:provider.stage}-UpdateDeployment
-  description: Update agent deployment status when agent's cloudformation stack is updated
-  handler: src.entrypoints.update_deployment.main.handler
-  environment:
-    POWERTOOLS_SERVICE_NAME: events
-    DEPLOYMENT_WEBHOOK_URL: ${self:custom.configs.MonitoringConfigs.Webhooks.Deployment}
-  tags:
-    monitoring: true
