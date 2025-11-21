@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
 PY_VENV="${ROOT_DIR}/backend/.venv"
-NODE_VENV="${ROOT_DIR}/node_modules"
+NODE_VENV="${ROOT_DIR}/.venv"
 
 # ==================================================================================
 # INSTALL PYTHON VENV
