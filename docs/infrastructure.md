@@ -14,7 +14,7 @@ configuration is defined in the following files:
 The monitoring-stack consists of the following resources:
 
 - **Lambda Functions:**
-  - `HandleMonitoringEvents`: Handles monitoring events from the agent stacks.
+  - `HandleMonitoringEvents`: Handles monitoring events.
   - `UpdateDeployment`: Updates the agent stacks with the latest configuration.
   - `DailyReport`: Generates a daily report of the monitoring system.
   - `QueryErrorLogs`: Queries CloudWatch Logs for errors and sends them to the master stack.
