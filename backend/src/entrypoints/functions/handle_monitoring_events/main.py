@@ -3,7 +3,7 @@ from src.adapters.db.repositories import EventRepository
 from src.adapters.notifiers import EventNotifier, SlackClient
 from src.common.constants import MONITORING_WEBHOOK_URL
 from src.common.logger import logger
-from src.domain.use_cases.insert_monitoring_event import insert_monitoring_event_use_case
+from src.domain.event.use_cases import insert_monitoring_event_use_case
 
 # Initialize services
 event_repo = EventRepository()

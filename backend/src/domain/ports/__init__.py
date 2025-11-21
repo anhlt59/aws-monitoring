@@ -1,10 +1,9 @@
 from .logs import ILogService
 from .notifier import IEventNotifier, IReportNotifier
 from .publisher import IPublisher
-from .repositories import IAgentRepository, IEventRepository
+from .repositories import IEventRepository
 
 __all__ = [
-    "IAgentRepository",
     "IEventRepository",
     "IPublisher",
     "IEventNotifier",

@@ -1,5 +1,4 @@
 import sys
-import time
 from pathlib import Path
 
 import pytest
@@ -11,8 +10,8 @@ sys.path.append(str(BASE_DIR))
 load_dotenv(BASE_DIR / ".env.local")
 
 # fmt: off
-from src.adapters.db.repositories import AgentRepository, EventRepository  # noqa
-from src.domain.models import Agent, Event  # noqa
+from src.adapters.db.repositories import EventRepository  # noqa
+from src.domain.models import Event  # noqa
 
 # fmt: on
 
@@ -21,15 +20,6 @@ from src.domain.models import Agent, Event  # noqa
 @pytest.fixture()
 def event_repo():
     repo = EventRepository()
-    yield repo
-    # Cleanup
-    for item in repo.list().items:
-        repo.delete(item.persistence_id)
-
-
-@pytest.fixture()
-def agent_repo():
-    repo = AgentRepository()
     yield repo
     # Cleanup
     for item in repo.list().items:
@@ -46,17 +36,3 @@ def dummy_event(event_repo):
     )
     event_repo.create(event)
     yield event
-
-
-@pytest.fixture
-def dummy_agent(agent_repo):
-    now = int(time.time())
-    agent = Agent(
-        id="000000000000",
-        region="us-east-1",
-        status="CREATE_COMPLETE",
-        deployed_at=now,
-        created_at=now,
-    )
-    agent_repo.create(agent)
-    yield agent

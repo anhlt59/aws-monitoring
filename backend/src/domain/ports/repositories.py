@@ -1,22 +1,7 @@
 from typing import Protocol
 
-from src.domain.models import AgentQueryResult, Event, EventQueryResult
-from src.domain.models.agent import Agent, UpdateAgentDTO
+from src.domain.models import Event, EventQueryResult
 from src.domain.models.event import ListEventsDTO
-
-
-class IAgentRepository(Protocol):
-    def get(self, id: str) -> Agent: ...
-
-    def list(self) -> AgentQueryResult: ...
-
-    def create(self, entity: Agent) -> None: ...
-
-    def update(self, id: str, dto: UpdateAgentDTO) -> None: ...
-
-    def delete(self, id: str) -> None: ...
-
-    def exists(self, id: str) -> bool: ...
 
 
 class IEventRepository(Protocol):
