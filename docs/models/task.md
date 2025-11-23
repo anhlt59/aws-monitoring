@@ -137,8 +137,6 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 | `gsi1sk`        | String    | GSI1 sort key: `STATUS#{status}#PRIORITY#{priority}#TASK#{id}` |
 | `gsi2pk`        | String    | GSI2 partition key: `STATUS#{status}`                          |
 | `gsi2sk`        | String    | GSI2 sort key: `CREATED#{created_at}#TASK#{id}`                |
-| `gsi3pk`        | String    | GSI3 partition key: `EVENT#{event_id}`                         |
-| `gsi3sk`        | String    | GSI3 sort key: `TASK#{id}`                                     |
 
 ## Example DynamoDB Record
 
@@ -162,9 +160,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
   "gsi1pk": "ASSIGNED#550e8400-e29b-41d4-a716-446655440000",
   "gsi1sk": "STATUS#open#PRIORITY#critical#TASK#660e8400-e29b-41d4-a716-446655440001",
   "gsi2pk": "STATUS#open",
-  "gsi2sk": "CREATED#1735689600#TASK#660e8400-e29b-41d4-a716-446655440001",
-  "gsi3pk": "EVENT#00000000-0000-0000-0000-000000000001",
-  "gsi3sk": "TASK#660e8400-e29b-41d4-a716-446655440001"
+  "gsi2sk": "CREATED#1735689600#TASK#660e8400-e29b-41d4-a716-446655440001"
 }
 ```
 
@@ -178,7 +174,6 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 | 4 | Get my tasks by status            | GSI1        | gsi1pk=`ASSIGNED#{user_id}` AND gsi1sk begins with `STATUS#{status}#` | User tasks filtered by status   |
 | 5 | List tasks by status              | GSI2        | gsi2pk=`STATUS#{status}`                                     | Sorted by creation time         |
 | 6 | List tasks by status & date range | GSI2        | gsi2pk=`STATUS#{status}` AND gsi2sk BETWEEN ranges           | Filter by status and time range |
-| 7 | Get tasks for an event            | GSI3        | gsi3pk=`EVENT#{event_id}`                                    | All tasks linked to an event    |
 
 ## Validation Rules
 
