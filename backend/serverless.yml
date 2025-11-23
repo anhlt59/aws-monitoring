@@ -75,6 +75,12 @@ functions:
   QueryErrorLogs: ${file(infra/functions/QueryErrorLogs.yml):function}
 
   # API -------------------------------------------------------------------------
+  # Auth
+  AuthLogin: ${file(infra/functions/api/Auth-Login.yml):function}
+  AuthRefresh: ${file(infra/functions/api/Auth-Refresh.yml):function}
+  AuthLogout: ${file(infra/functions/api/Auth-Logout.yml):function}
+  AuthMe: ${file(infra/functions/api/Auth-Me.yml):function}
+
   # Events
   GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
   ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}

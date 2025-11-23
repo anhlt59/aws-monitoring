@@ -1,0 +1,15 @@
+function:
+  name: ${self:service}-${self:provider.stage}-AuthRefresh
+  description: Refresh access token endpoint, triggered by API Gateway
+  handler: src.entrypoints.apigw.auth.main.handler
+  events:
+    - http:
+        method: POST
+        path: /auth/refresh
+        cors: true
+  environment:
+    POWERTOOLS_SERVICE_NAME: auth
+    JWT_SECRET_KEY: ${env:JWT_SECRET_KEY, "dev-secret-key-change-in-production"}
+    JWT_ALGORITHM: ${env:JWT_ALGORITHM, "HS256"}
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${env:JWT_ACCESS_TOKEN_EXPIRE_MINUTES, "60"}
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${env:JWT_REFRESH_TOKEN_EXPIRE_DAYS, "30"}
