@@ -4,23 +4,22 @@ The Task model represents work items created from monitoring events or manually 
 
 ## Entity Model
 
-| Field                | Type              | Description                                                        |
-|----------------------|-------------------|-------------------------------------------------------------------|
-| `id`                 | String            | Task UUID (generated on creation)                                  |
-| `title`              | String            | Short description (3-200 characters)                               |
-| `description`        | String            | Detailed description (10-5000 characters)                          |
-| `status`             | TaskStatus        | Task status: `open`, `in_progress`, or `closed`                    |
-| `priority`           | TaskPriority      | Priority: `critical`, `high`, `medium`, or `low`                   |
-| `assigned_user_id`   | String            | User ID of assignee                                                |
-| `assigned_user_name` | String            | Denormalized user name for display (optional)                      |
-| `event_id`           | String            | Source event ID if task was created from an event (optional)       |
-| `event_details`      | Object            | Denormalized snapshot of event data (optional)                     |
-| `due_date`           | Integer           | Unix timestamp for due date (optional)                             |
-| `created_at`         | Integer           | Unix timestamp of when task was created                            |
-| `updated_at`         | Integer           | Unix timestamp of when task was last updated                       |
-| `created_by`         | String            | User ID who created the task                                       |
-| `closed_at`          | Integer           | Unix timestamp of when task was closed (optional)                  |
-| `task_comments`      | Array<TaskComment>| Array of comments on this task, defaults to empty array            |
+| Field            | Type              | Description                                                        |
+|------------------|-------------------|-------------------------------------------------------------------|
+| `id`             | String            | Task UUID (generated on creation)                                  |
+| `title`          | String            | Short description (3-200 characters)                               |
+| `description`    | String            | Detailed description (10-5000 characters)                          |
+| `status`         | TaskStatus        | Task status: `open`, `in_progress`, or `closed`                    |
+| `priority`       | TaskPriority      | Priority: `critical`, `high`, `medium`, or `low`                   |
+| `assigned_user`  | AssignedUser      | Assigned user object with `{id, name}`                             |
+| `event_id`       | String            | Source event ID if task was created from an event (optional)       |
+| `event_details`  | Object            | Denormalized snapshot of event data (optional)                     |
+| `due_date`       | Integer           | Unix timestamp for due date (optional)                             |
+| `created_at`     | Integer           | Unix timestamp of when task was created                            |
+| `updated_at`     | Integer           | Unix timestamp of when task was last updated                       |
+| `created_by`     | String            | User ID who created the task                                       |
+| `closed_at`      | Integer           | Unix timestamp of when task was closed (optional)                  |
+| `task_comments`  | Array<TaskComment>| Array of comments on this task, defaults to empty array            |
 
 ### TaskStatus Enum
 
@@ -34,6 +33,15 @@ The Task model represents work items created from monitoring events or manually 
 - `high` - High priority
 - `medium` - Medium priority
 - `low` - Low priority
+
+### AssignedUser Structure
+
+The assigned user is stored as a nested object:
+
+| Field  | Type   | Description                       |
+|--------|--------|-----------------------------------|
+| `id`   | String | User ID of the assigned user      |
+| `name` | String | Denormalized user name for display|
 
 ### TaskComment Structure
 
@@ -70,8 +78,10 @@ When a task is linked to an event, the `event_details` field contains a snapshot
   "description": "A critical GuardDuty finding was detected indicating potential unauthorized access to an S3 bucket. Need to investigate the source IP and validate access patterns.",
   "status": "open",
   "priority": "critical",
-  "assigned_user_id": "550e8400-e29b-41d4-a716-446655440000",
-  "assigned_user_name": "John Doe",
+  "assigned_user": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "John Doe"
+  },
   "event_id": "00000000-0000-0000-0000-000000000001",
   "event_details": {
     "account": "123456789012",
@@ -106,30 +116,29 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 
 ## DynamoDB Schema
 
-| Field                | Type      | Description                                                    |
-|----------------------|-----------|----------------------------------------------------------------|
-| `pk`                 | String    | Partition key: `TASK`                                          |
-| `sk`                 | String    | Sort key: `TASK#{task_id}`                                     |
-| `title`              | String    | Task title                                                     |
-| `description`        | String    | Task description                                               |
-| `status`             | String    | Task status                                                    |
-| `priority`           | String    | Task priority                                                  |
-| `assigned_user_id`   | String    | Assigned user ID                                               |
-| `assigned_user_name` | String    | Assigned user name (denormalized)                              |
-| `event_id`           | String    | Source event ID (optional)                                     |
-| `event_details`      | String    | JSON string of event snapshot (optional)                       |
-| `due_date`           | Number    | Unix timestamp (optional)                                      |
-| `created_at`         | Number    | Unix timestamp                                                 |
-| `updated_at`         | Number    | Unix timestamp                                                 |
-| `created_by`         | String    | Creator user ID                                                |
-| `closed_at`          | Number    | Unix timestamp (optional)                                      |
-| `task_comments`      | String    | JSON array string of TaskComment objects                       |
-| `gsi1pk`             | String    | GSI1 partition key: `ASSIGNED#{user_id}`                       |
-| `gsi1sk`             | String    | GSI1 sort key: `STATUS#{status}#PRIORITY#{priority}#TASK#{id}` |
-| `gsi2pk`             | String    | GSI2 partition key: `STATUS#{status}`                          |
-| `gsi2sk`             | String    | GSI2 sort key: `CREATED#{created_at}#TASK#{id}`                |
-| `gsi3pk`             | String    | GSI3 partition key: `EVENT#{event_id}`                         |
-| `gsi3sk`             | String    | GSI3 sort key: `TASK#{id}`                                     |
+| Field           | Type      | Description                                                    |
+|-----------------|-----------|----------------------------------------------------------------|
+| `pk`            | String    | Partition key: `TASK`                                          |
+| `sk`            | String    | Sort key: `TASK#{task_id}`                                     |
+| `title`         | String    | Task title                                                     |
+| `description`   | String    | Task description                                               |
+| `status`        | String    | Task status                                                    |
+| `priority`      | String    | Task priority                                                  |
+| `assigned_user` | String    | JSON string of AssignedUser object `{id, name}`                |
+| `event_id`      | String    | Source event ID (optional)                                     |
+| `event_details` | String    | JSON string of event snapshot (optional)                       |
+| `due_date`      | Number    | Unix timestamp (optional)                                      |
+| `created_at`    | Number    | Unix timestamp                                                 |
+| `updated_at`    | Number    | Unix timestamp                                                 |
+| `created_by`    | String    | Creator user ID                                                |
+| `closed_at`     | Number    | Unix timestamp (optional)                                      |
+| `task_comments` | String    | JSON array string of TaskComment objects                       |
+| `gsi1pk`        | String    | GSI1 partition key: `ASSIGNED#{user_id}`                       |
+| `gsi1sk`        | String    | GSI1 sort key: `STATUS#{status}#PRIORITY#{priority}#TASK#{id}` |
+| `gsi2pk`        | String    | GSI2 partition key: `STATUS#{status}`                          |
+| `gsi2sk`        | String    | GSI2 sort key: `CREATED#{created_at}#TASK#{id}`                |
+| `gsi3pk`        | String    | GSI3 partition key: `EVENT#{event_id}`                         |
+| `gsi3sk`        | String    | GSI3 sort key: `TASK#{id}`                                     |
 
 ## Example DynamoDB Record
 
@@ -141,8 +150,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
   "description": "A critical GuardDuty finding was detected indicating potential unauthorized access to an S3 bucket. Need to investigate the source IP and validate access patterns.",
   "status": "open",
   "priority": "critical",
-  "assigned_user_id": "550e8400-e29b-41d4-a716-446655440000",
-  "assigned_user_name": "John Doe",
+  "assigned_user": "{\"id\":\"550e8400-e29b-41d4-a716-446655440000\",\"name\":\"John Doe\"}",
   "event_id": "00000000-0000-0000-0000-000000000001",
   "event_details": "{\"account\":\"123456789012\",\"region\":\"us-east-1\",\"source\":\"aws.guardduty\",\"severity\":\"critical\",\"detail_type\":\"GuardDuty Finding\"}",
   "due_date": 1735862400,
@@ -209,7 +217,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 
 ### State Mutations
 - `update_status(new_status)` - Update status and manage closed_at timestamp
-- `assign_to_user(user_id, user_name)` - Assign task to a user
+- `assign_to_user(assigned_user)` - Assign task to a user, accepts AssignedUser object `{id, name}`
 - `add_comment(user_id, user_name, comment_text)` - Add a new comment to task_comments array
 - `link_to_event(event_id, event_details)` - Link task to a source event
 
@@ -227,7 +235,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 - **ListTasks** - Filter by status/priority/assigned_user/event_id/date range, paginate, includes comment count
 - **CreateTaskFromEvent** - Fetch event, pre-fill description, link to event, set priority based on severity
 - **UpdateTaskStatus** - Change status, track history, update timestamps
-- **AssignTask** - Assign to user, update user name (denormalized)
+- **AssignTask** - Assign to user, update assigned_user object with {id, name}
 - **AddComment** - Validate comment text, create TaskComment object, append to task_comments array, update task.updated_at
 - **GetTaskComments** - Extract and return comments from task_comments array (sorted by created_at)
 - **DeleteComment** - Remove specific comment from task_comments array by comment ID
