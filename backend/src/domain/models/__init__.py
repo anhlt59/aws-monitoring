@@ -1,7 +1,7 @@
 from .base import BaseModel, PaginatedInputDTO, QueryResult
 from .config import (
-    AwsAccount,
-    AwsAccountStatus,
+    AwsConfig,
+    AwsConfigStatus,
     MonitoringConfig,
     ServiceConfig,
 )
@@ -10,7 +10,6 @@ from .logs import LogEntry, LogQueryResult
 from .messages import Message
 from .task import (
     Task,
-    TaskComment,
     TaskPriority,
     TaskStatus,
     TaskStatusHistory,
@@ -38,11 +37,10 @@ __all__ = [
     "Task",
     "TaskStatus",
     "TaskPriority",
-    "TaskComment",
     "TaskStatusHistory",
     # Configuration models
-    "AwsAccount",
-    "AwsAccountStatus",
+    "AwsConfig",
+    "AwsConfigStatus",
     "MonitoringConfig",
     "ServiceConfig",
 ]
