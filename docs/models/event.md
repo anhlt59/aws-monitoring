@@ -92,8 +92,6 @@ Event severity is represented as an integer from 0 to 5:
 | `published_at` | Number | Unix timestamp                                                               |
 | `updated_at`   | Number | Unix timestamp                                                               |
 | `expired_at`   | Number | Unix timestamp (for TTL)                                                     |
-| `gsi1pk`       | String | GSI1 partition key: `ACCOUNT#{account}`                                      |
-| `gsi1sk`       | String | GSI1 sort key: `EVENT#{published_at}-{event_id}`                             |
 | `gsi2pk`       | String | GSI2 partition key: `SOURCE#{source}`                                        |
 | `gsi2sk`       | String | GSI2 sort key: `EVENT#{published_at}-{event_id}`                             |
 
@@ -114,8 +112,6 @@ Event severity is represented as an integer from 0 to 5:
   "published_at": 1735689600,
   "updated_at": 1735689600,
   "expired_at": 1743465600,
-  "gsi1pk": "ACCOUNT#123456789012",
-  "gsi1sk": "EVENT#1735689600-00000000-0000-0000-0000-000000000000",
   "gsi2pk": "SOURCE#aws.cloudwatch",
   "gsi2sk": "EVENT#1735689600-00000000-0000-0000-0000-000000000000"
 }
@@ -128,10 +124,8 @@ Event severity is represented as an integer from 0 to 5:
 | 1 | Get event by ID                      | Table       | pk=`EVENT` AND sk=`EVENT#{published_at}-{event_id}`                   | Direct lookup (requires timestamp) |
 | 2 | List all events                      | Table       | pk=`EVENT`                                                            | All events, sorted by timestamp |
 | 3 | List events by time range            | Table       | pk=`EVENT` AND sk BETWEEN `EVENT#{start_time}` AND `EVENT#{end_time}` | Filter by time range            |
-| 4 | List events by account               | GSI1        | gsi1pk=`ACCOUNT#{account}`                                            | All events for account          |
-| 5 | List events by account & time range  | GSI1        | gsi1pk=`ACCOUNT#{account}` AND gsi1sk BETWEEN ranges                  | Account events in time range    |
-| 6 | List events by source                | GSI2        | gsi2pk=`SOURCE#{source}`                                              | All events from source          |
-| 7 | List events by source & time range   | GSI2        | gsi2pk=`SOURCE#{source}` AND gsi2sk BETWEEN ranges                    | Source events in time range     |
+| 4 | List events by source                | GSI2        | gsi2pk=`SOURCE#{source}`                                              | All events from source          |
+| 5 | List events by source & time range   | GSI2        | gsi2pk=`SOURCE#{source}` AND gsi2sk BETWEEN ranges                    | Source events in time range     |
 
 ## Validation Rules
 
