@@ -11,18 +11,19 @@ class EventRepository(DynamoRepository):
 
     def get(self, id: str) -> Event:
         model = self._get(hash_key="EVENT", range_key=id)
-        return self.mapper.to_model(model)
+        return self.mapper.to_entity(model)
 
     def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
+        """List all events with optional time range filtering."""
         if dto is None:
             dto = ListEventsDTO()
 
         if dto.start_date and dto.end_date:
-            range_key_condition = self.model_cls.sk.between(dto.start_date, dto.end_date)
+            range_key_condition = self.model_cls.sk.between(f"EVENT#{dto.start_date}", f"EVENT#{dto.end_date}")
         elif dto.start_date:
-            range_key_condition = self.model_cls.pk >= dto.start_date
+            range_key_condition = self.model_cls.sk >= f"EVENT#{dto.start_date}"
         elif dto.end_date:
-            range_key_condition = self.model_cls.pk <= dto.end_date
+            range_key_condition = self.model_cls.sk <= f"EVENT#{dto.end_date}"
         else:
             range_key_condition = None
 
@@ -38,10 +39,29 @@ class EventRepository(DynamoRepository):
         )
 
         return EventQueryResult(
-            items=[self.mapper.to_model(item) for item in result],
+            items=[self.mapper.to_entity(item) for item in result],
             limit=dto.limit,
             cursor=result.last_evaluated_key,
         )
+
+    def list_by_source(self, source: str, start_date: int | None = None, end_date: int | None = None) -> list[Event]:
+        """List events by source with optional time range."""
+        if start_date and end_date:
+            range_key_condition = self.model_cls.gsi1sk.between(f"EVENT#{start_date}", f"EVENT#{end_date}")
+        elif start_date:
+            range_key_condition = self.model_cls.gsi1sk >= f"EVENT#{start_date}"
+        elif end_date:
+            range_key_condition = self.model_cls.gsi1sk <= f"EVENT#{end_date}"
+        else:
+            range_key_condition = None
+
+        result = self._query(
+            hash_key=f"SOURCE#{source}",
+            range_key_condition=range_key_condition,
+            index=self.model_cls.gsi1,
+        )
+
+        return [self.mapper.to_entity(item) for item in result]
 
     def create(self, entity: Event):
         model = EventMapper.to_persistence(entity)

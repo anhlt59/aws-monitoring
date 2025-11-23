@@ -10,7 +10,7 @@ class EventMapper:
         return EventPersistence(
             # Keys
             pk="EVENT",
-            sk=model.persistence_id,
+            sk=model.id,
             # Attributes
             id=model.id,
             account=model.account,
@@ -25,7 +25,7 @@ class EventMapper:
             expired_at=model.expired_at,
             # GSI1 keys
             gsi1pk=f"SOURCE#{model.source}",
-            gsi1sk=f"EVENT#{model.persistence_id}",
+            gsi1sk=f"EVENT#{model.id}",
         )
 
     @classmethod

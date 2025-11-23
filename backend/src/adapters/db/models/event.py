@@ -16,9 +16,9 @@ class GSI1Index(GlobalSecondaryIndex):
 class EventPersistence(DynamoModel, discriminator="EVENT"):
     # Keys
     pk = KeyAttribute(hash_key=True, default="EVENT")
-    sk = KeyAttribute(range_key=True, prefix="EVENT#")  # EVENT#{published_at}-{event_id}
+    sk = KeyAttribute(range_key=True, prefix="EVENT#")  # EVENT#{id}
     # Attributes
-    id = UnicodeAttribute(null=False)
+    id = UnicodeAttribute(null=False)  # {published_at}-{event_id}
     account = UnicodeAttribute(null=False)
     region = UnicodeAttribute(null=False)
     source = UnicodeAttribute(null=False)
@@ -34,4 +34,4 @@ class EventPersistence(DynamoModel, discriminator="EVENT"):
     gsi1 = GSI1Index()
     # GSI1 index for querying by source
     gsi1pk = KeyAttribute(prefix="SOURCE#", null=False)  # SOURCE#{source}
-    gsi1sk = KeyAttribute(prefix="EVENT#", null=False)  # EVENT#{published_at}-{event_id}
+    gsi1sk = KeyAttribute(prefix="EVENT#", null=False)  # EVENT#{id}

@@ -11,7 +11,7 @@ SECONDS_PER_DAY = 86400
 
 # Model
 class Event(BaseModel):
-    id: str  # Event UUID
+    id: str  # PublishedAt + EventUUID
     account: str
     region: str
     source: str
@@ -22,10 +22,6 @@ class Event(BaseModel):
     published_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
     expired_at: int = Field(default_factory=lambda: current_utc_timestamp() + (DEFAULT_TTL_DAYS * SECONDS_PER_DAY))
-
-    @property
-    def persistence_id(self) -> str:
-        return f"{self.published_at}-{self.id}"
 
     @field_validator("account")
     @classmethod
@@ -40,6 +36,7 @@ class Event(BaseModel):
     def validate_region(cls, value: str) -> str:
         """Validate AWS region format."""
         import re
+
         if not re.match(r"^[a-z]{2}-[a-z]+-\d{1}$", value):
             raise ValueError("Invalid AWS region format")
         return value
