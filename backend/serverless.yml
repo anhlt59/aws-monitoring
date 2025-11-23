@@ -102,6 +102,19 @@ functions:
   ChangePassword: ${file(infra/functions/api/Users-ChangePassword.yml):function}
   DeleteUser: ${file(infra/functions/api/Users-Delete.yml):function}
 
+  # Dashboard
+  DashboardOverview: ${file(infra/functions/api/Dashboard-Overview.yml):function}
+  DashboardEventsStats: ${file(infra/functions/api/Dashboard-EventsStats.yml):function}
+  DashboardTasksStats: ${file(infra/functions/api/Dashboard-TasksStats.yml):function}
+  DashboardUsersStats: ${file(infra/functions/api/Dashboard-UsersStats.yml):function}
+
+  # Configuration
+  ConfigGetAws: ${file(infra/functions/api/Config-GetAws.yml):function}
+  ConfigUpdateAws: ${file(infra/functions/api/Config-UpdateAws.yml):function}
+  ConfigTestAws: ${file(infra/functions/api/Config-TestAws.yml):function}
+  ConfigGetMonitoring: ${file(infra/functions/api/Config-GetMonitoring.yml):function}
+  ConfigUpdateMonitoring: ${file(infra/functions/api/Config-UpdateMonitoring.yml):function}
+
 resources:
   # -----------------------------------------------------------------------------
   Parameters:

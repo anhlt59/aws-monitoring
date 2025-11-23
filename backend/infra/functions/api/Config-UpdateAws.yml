@@ -1,0 +1,13 @@
+function:
+  name: ${self:service}-${self:provider.stage}-ConfigUpdateAws
+  description: Update AWS configuration (admin only), triggered by API Gateway
+  handler: src.entrypoints.apigw.config.main.handler
+  events:
+    - http:
+        method: PUT
+        path: /config/aws
+        cors: true
+  environment:
+    POWERTOOLS_SERVICE_NAME: config
+    JWT_SECRET_KEY: ${env:JWT_SECRET_KEY, "dev-secret-key-change-in-production"}
+    JWT_ALGORITHM: ${env:JWT_ALGORITHM, "HS256"}
