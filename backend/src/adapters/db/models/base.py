@@ -1,6 +1,7 @@
 from typing import Any
 
 from pynamodb.attributes import DiscriminatorAttribute, UnicodeAttribute
+from pynamodb.indexes import Projection
 from pynamodb.models import Model
 
 from src.common.constants import AWS_DYNAMODB_TABLE, AWS_ENDPOINT, AWS_REGION
@@ -35,6 +36,9 @@ class DynamoMeta:
     table_name: str = AWS_DYNAMODB_TABLE
     host: str | None = AWS_ENDPOINT
     region: str | None = AWS_REGION
+    read_timeout_seconds: int = 10
+    index_name: str | None = None
+    projection: Projection | None = None
 
 
 class DynamoModel(Model):
