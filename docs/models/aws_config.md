@@ -48,29 +48,27 @@ The AWS Config model represents AWS accounts being monitored by the system. This
 
 ## DynamoDB Schema
 
-| Field          | Type    | Description                                   |
-|----------------|---------|-----------------------------------------------|
-| `pk`           | String  | Partition key: `CONFIG`                       |
-| `sk`           | String  | Sort key: `AWS#{id}`                          |
-| `account_id`   | String  | AWS Account ID                                |
-| `account_name` | String  | Friendly name                                 |
-| `region`       | String  | AWS region                                    |
-| `role_arn`     | String  | IAM role ARN (optional)                       |
-| `status`       | String  | Account status                                |
-| `deployed_at`  | Number  | Unix timestamp (optional)                     |
-| `last_sync`    | Number  | Unix timestamp (optional)                     |
-| `is_active`    | Boolean | Monitoring enabled                            |
-| `created_at`   | Number  | Unix timestamp                                |
-| `updated_at`   | Number  | Unix timestamp                                |
-| `gsi1pk`       | String  | GSI1 partition key: `ACCOUNT_ID#{account_id}` |
-| `gsi1sk`       | String  | GSI1 sort key: `AWS#{id}`                     |
+| Field          | Type    | Description               |
+|----------------|---------|---------------------------|
+| `pk`           | String  | Partition key: `CONFIG`   |
+| `sk`           | String  | Sort key: `AWS`           |
+| `account_id`   | String  | AWS Account ID            |
+| `account_name` | String  | Friendly name             |
+| `region`       | String  | AWS region                |
+| `role_arn`     | String  | IAM role ARN (optional)   |
+| `status`       | String  | Account status            |
+| `deployed_at`  | Number  | Unix timestamp (optional) |
+| `last_sync`    | Number  | Unix timestamp (optional) |
+| `is_active`    | Boolean | Monitoring enabled        |
+| `created_at`   | Number  | Unix timestamp            |
+| `updated_at`   | Number  | Unix timestamp            |
 
 ## Example DynamoDB Record
 
 ```json
 {
   "pk": "CONFIG",
-  "sk": "AWS#880e8400-e29b-41d4-a716-446655440003",
+  "sk": "AWS",
   "account_id": "123456789012",
   "account_name": "Production AWS Account",
   "region": "us-east-1",
@@ -80,20 +78,15 @@ The AWS Config model represents AWS accounts being monitored by the system. This
   "last_sync": 1735776000,
   "is_active": true,
   "created_at": 1735689600,
-  "updated_at": 1735776000,
-  "gsi1pk": "ACCOUNT_ID#123456789012",
-  "gsi1sk": "AWS#880e8400-e29b-41d4-a716-446655440003"
+  "updated_at": 1735776000
 }
 ```
 
 ## Access Patterns
 
-|   | Access Pattern                   | Table/Index | Key Condition                                                    | Notes                   |
-|:--|:---------------------------------|:------------|------------------------------------------------------------------|:------------------------|
-| 1 | Get AWS config by ID             | Table       | pk=`CONFIG` AND sk=`AWS#{id}`                                    | Direct lookup by ID     |
-| 2 | List all AWS configs             | Table       | pk=`CONFIG` AND sk begins with `AWS#`                            | All registered accounts |
-| 3 | Get AWS config by account ID     | GSI1        | gsi1pk=`ACCOUNT_ID#{account_id}`                                 | Lookup by AWS account ID|
-| 4 | List active AWS configs          | Table       | pk=`CONFIG` AND sk begins with `AWS#` with filter is_active=true | Only active accounts |
+|   | Access Pattern               | Table/Index | Key Condition            | Notes         |
+|:--|:-----------------------------|:------------|--------------------------|:--------------|
+| 1 | Get AWS config               | Table       | pk=`CONFIG` AND sk=`AWS` | Direct lookup |
 
 ## Validation Rules
 

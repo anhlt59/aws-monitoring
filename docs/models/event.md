@@ -92,8 +92,8 @@ Event severity is represented as an integer from 0 to 5:
 | `published_at` | Number | Unix timestamp                                                               |
 | `updated_at`   | Number | Unix timestamp                                                               |
 | `expired_at`   | Number | Unix timestamp (for TTL)                                                     |
-| `gsi2pk`       | String | GSI2 partition key: `SOURCE#{source}`                                        |
-| `gsi2sk`       | String | GSI2 sort key: `EVENT#{published_at}-{event_id}`                             |
+| `gsi1pk`       | String | GSI2 partition key: `SOURCE#{source}`                                        |
+| `gsi1sk`       | String | GSI2 sort key: `EVENT#{published_at}-{event_id}`                             |
 
 ## Example DynamoDB Record
 
@@ -112,8 +112,8 @@ Event severity is represented as an integer from 0 to 5:
   "published_at": 1735689600,
   "updated_at": 1735689600,
   "expired_at": 1743465600,
-  "gsi2pk": "SOURCE#aws.cloudwatch",
-  "gsi2sk": "EVENT#1735689600-00000000-0000-0000-0000-000000000000"
+  "gsi1pk": "SOURCE#aws.cloudwatch",
+  "gsi1sk": "EVENT#1735689600-00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -124,8 +124,8 @@ Event severity is represented as an integer from 0 to 5:
 | 1 | Get event by ID                      | Table       | pk=`EVENT` AND sk=`EVENT#{published_at}-{event_id}`                   | Direct lookup (requires timestamp) |
 | 2 | List all events                      | Table       | pk=`EVENT`                                                            | All events, sorted by timestamp |
 | 3 | List events by time range            | Table       | pk=`EVENT` AND sk BETWEEN `EVENT#{start_time}` AND `EVENT#{end_time}` | Filter by time range            |
-| 4 | List events by source                | GSI2        | gsi2pk=`SOURCE#{source}`                                              | All events from source          |
-| 5 | List events by source & time range   | GSI2        | gsi2pk=`SOURCE#{source}` AND gsi2sk BETWEEN ranges                    | Source events in time range     |
+| 4 | List events by source                | GSI2        | gsi1pk=`SOURCE#{source}`                                              | All events from source          |
+| 5 | List events by source & time range   | GSI2        | gsi1pk=`SOURCE#{source}` AND gsi1sk BETWEEN ranges                    | Source events in time range     |
 
 ## Validation Rules
 
@@ -225,5 +225,10 @@ Default severity mapping for common event types:
 | Security Hub Critical         | 5 (Emergency)    |
 | EC2 instance terminated       | 2 (Medium)       |
 | Lambda function error         | 3 (High)         |
+| Monitoring log (ERROR level)  | 3 (High)         |
+| Monitoring log (WARN level)   | 2 (Medium)       |
+| Monitoring log (INFO level)   | 1 (Low)          |
+| Monitoring metric threshold   | 2 (Medium)       |
+| Monitoring alert triggered    | 3 (High)         |
 
 **Note:** Severity can be customized via MonitoringConfig service-specific rules.
