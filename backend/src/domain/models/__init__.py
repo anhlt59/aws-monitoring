@@ -9,7 +9,9 @@ from .event import Event, EventQueryResult
 from .logs import LogEntry, LogQueryResult
 from .messages import Message
 from .task import (
+    AssignedUser,
     Task,
+    TaskComment,
     TaskPriority,
     TaskStatus,
     TaskStatusHistory,
@@ -38,6 +40,8 @@ __all__ = [
     "TaskStatus",
     "TaskPriority",
     "TaskStatusHistory",
+    "AssignedUser",
+    "TaskComment",
     # Configuration models
     "AwsConfig",
     "AwsConfigStatus",

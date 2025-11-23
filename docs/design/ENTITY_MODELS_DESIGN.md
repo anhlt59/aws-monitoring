@@ -305,8 +305,7 @@ class Task(BaseModel):
     closed_at: int | None = None      # When task was closed
 
     # Comments (nested array)
-    task_comments: list[dict] = []    # Array of comment objects
-    # [{"id": str, "user_id": str, "user_name": str, "comment": str, "created_at": int}]
+    comments: list[TaskComment] = []  # Array of comment objects
 
     # DynamoDB key
     @property
@@ -417,14 +416,14 @@ def assign_to_user(self, user_id: str, user_name: str) -> None:
 
 def add_comment(self, comment_id: str, user_id: str, user_name: str, comment: str) -> None:
     """Add a comment to the task."""
-    new_comment = {
-        "id": comment_id,
-        "user_id": user_id,
-        "user_name": user_name,
-        "comment": comment,
-        "created_at": current_utc_timestamp()
-    }
-    self.task_comments.append(new_comment)
+    new_comment = TaskComment(
+        id=comment_id,
+        user_id=user_id,
+        user_name=user_name,
+        comment=comment,
+        created_at=current_utc_timestamp()
+    )
+    self.comments.append(new_comment)
     self.updated_at = current_utc_timestamp()
 
 def link_to_event(self, event_id: str, event_details: dict) -> None:
@@ -456,7 +455,7 @@ class TaskPersistence(DynamoModel, discriminator="TASK"):
     status = UnicodeAttribute(null=False)
     priority = UnicodeAttribute(null=False)
     assigned_user = UnicodeAttribute(null=False)  # JSON string: {"id": str, "name": str}
-    task_comments = UnicodeAttribute(null=True)    # JSON string: array of comment objects
+    comments = UnicodeAttribute(null=True)        # JSON string: array of TaskComment objects
     event_id = UnicodeAttribute(null=True)
     event_details = UnicodeAttribute(null=True)    # JSON string
     due_date = NumberAttribute(null=True)
@@ -1034,7 +1033,7 @@ backend/src/domain/use_cases/
 ### 7.1 Entities Created
 
 1. **User** - Authentication and authorization (admin and user roles only)
-2. **Task** - Work items from events or manual creation (includes nested task_comments array and assigned_user object)
+2. **Task** - Work items from events or manual creation (includes nested comments array and assigned_user object)
 3. **AwsConfig** - AWS account monitoring configuration (replaces Agent model, includes deployment status, credentials stored in monitoring profile)
 4. **MonitoringConfig** - Global monitoring settings
 

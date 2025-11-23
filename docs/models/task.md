@@ -19,7 +19,7 @@ The Task model represents work items created from monitoring events or manually 
 | `updated_at`     | Integer           | Unix timestamp of when task was last updated                       |
 | `created_by`     | String            | User ID who created the task                                       |
 | `closed_at`      | Integer           | Unix timestamp of when task was closed (optional)                  |
-| `task_comments`  | Array<TaskComment>| Array of comments on this task, defaults to empty array            |
+| `comments`       | Array<TaskComment>| Array of comments on this task, defaults to empty array            |
 
 ### TaskStatus Enum
 
@@ -95,7 +95,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
   "updated_at": 1735689600,
   "created_by": "550e8400-e29b-41d4-a716-446655440000",
   "closed_at": null,
-  "task_comments": [
+  "comments": [
     {
       "id": "770e8400-e29b-41d4-a716-446655440001",
       "user_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -132,7 +132,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 | `updated_at`    | Number    | Unix timestamp                                                 |
 | `created_by`    | String    | Creator user ID                                                |
 | `closed_at`     | Number    | Unix timestamp (optional)                                      |
-| `task_comments` | String    | JSON array string of TaskComment objects                       |
+| `comments`      | String    | JSON array string of TaskComment objects                       |
 | `gsi1pk`        | String    | GSI1 partition key: `ASSIGNED#{user_id}`                       |
 | `gsi1sk`        | String    | GSI1 sort key: `STATUS#{status}#PRIORITY#{priority}#TASK#{id}` |
 | `gsi2pk`        | String    | GSI2 partition key: `STATUS#{status}`                          |
@@ -156,7 +156,7 @@ When a task is linked to an event, the `event_details` field contains a snapshot
   "updated_at": 1735689600,
   "created_by": "550e8400-e29b-41d4-a716-446655440000",
   "closed_at": null,
-  "task_comments": "[{\"id\":\"770e8400-e29b-41d4-a716-446655440001\",\"user_id\":\"550e8400-e29b-41d4-a716-446655440000\",\"user_name\":\"John Doe\",\"comment\":\"Starting investigation into this GuardDuty finding.\",\"created_at\":1735689600},{\"id\":\"770e8400-e29b-41d4-a716-446655440002\",\"user_id\":\"550e8400-e29b-41d4-a716-446655440000\",\"user_name\":\"John Doe\",\"comment\":\"Confirmed it's a false positive. The access pattern is from our automated backup system.\",\"created_at\":1735693200}]",
+  "comments": "[{\"id\":\"770e8400-e29b-41d4-a716-446655440001\",\"user_id\":\"550e8400-e29b-41d4-a716-446655440000\",\"user_name\":\"John Doe\",\"comment\":\"Starting investigation into this GuardDuty finding.\",\"created_at\":1735689600},{\"id\":\"770e8400-e29b-41d4-a716-446655440002\",\"user_id\":\"550e8400-e29b-41d4-a716-446655440000\",\"user_name\":\"John Doe\",\"comment\":\"Confirmed it's a false positive. The access pattern is from our automated backup system.\",\"created_at\":1735693200}]",
   "gsi1pk": "ASSIGNED#550e8400-e29b-41d4-a716-446655440000",
   "gsi1sk": "STATUS#open#PRIORITY#critical#TASK#660e8400-e29b-41d4-a716-446655440001",
   "gsi2pk": "STATUS#open",
@@ -213,27 +213,27 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 ### State Mutations
 - `update_status(new_status)` - Update status and manage closed_at timestamp
 - `assign_to_user(assigned_user)` - Assign task to a user, accepts AssignedUser object `{id, name}`
-- `add_comment(user_id, user_name, comment_text)` - Add a new comment to task_comments array
+- `add_comment(user_id, user_name, comment_text)` - Add a new comment to comments array
 - `link_to_event(event_id, event_details)` - Link task to a source event
 
 ### Comment Methods
-- `get_comment_count()` - Returns the length of task_comments array
+- `get_comment_count()` - Returns the length of comments array
 - `get_latest_comment()` - Returns the most recent comment (last item in array)
 - `get_comments_by_user(user_id)` - Filter comments by specific user
 
 ## Related Use Cases
 
-- **CreateTask** - Validate fields, set status to OPEN, assign to user, generate UUID, initialize empty task_comments array
-- **GetTask** - Fetch task by ID, includes all nested comments in task_comments array
+- **CreateTask** - Validate fields, set status to OPEN, assign to user, generate UUID, initialize empty comments array
+- **GetTask** - Fetch task by ID, includes all nested comments in comments array
 - **UpdateTask** - Validate permissions, update fields, track status changes
 - **DeleteTask** - Soft or hard delete, require admin permission
 - **ListTasks** - Filter by status/priority/assigned_user/event_id/date range, paginate, includes comment count
 - **CreateTaskFromEvent** - Fetch event, pre-fill description, link to event, set priority based on severity
 - **UpdateTaskStatus** - Change status, track history, update timestamps
 - **AssignTask** - Assign to user, update assigned_user object with {id, name}
-- **AddComment** - Validate comment text, create TaskComment object, append to task_comments array, update task.updated_at
-- **GetTaskComments** - Extract and return comments from task_comments array (sorted by created_at)
-- **DeleteComment** - Remove specific comment from task_comments array by comment ID
+- **AddComment** - Validate comment text, create TaskComment object, append to comments array, update task.updated_at
+- **GetTaskComments** - Extract and return comments from comments array (sorted by created_at)
+- **DeleteComment** - Remove specific comment from comments array by comment ID
 
 ## Priority Mapping from Event Severity
 

@@ -26,6 +26,34 @@ class TaskPriority(str, Enum):
     LOW = "low"
 
 
+class AssignedUser(BaseModel):
+    """Assigned user nested model."""
+
+    id: str  # User ID
+    name: str  # Denormalized user name for display
+
+
+class TaskComment(BaseModel):
+    """Task comment nested model."""
+
+    id: str  # Comment UUID
+    user_id: str  # User ID who created the comment
+    user_name: str  # Denormalized user name for display
+    comment: str  # Comment text (1-2000 characters)
+    created_at: int = Field(default_factory=current_utc_timestamp)
+
+    @field_validator("comment")
+    @classmethod
+    def validate_comment(cls, value: str) -> str:
+        """Validate comment text."""
+        value = value.strip()
+        if not value or len(value) < 1:
+            raise ValueError("Comment must be at least 1 character")
+        if len(value) > 2000:
+            raise ValueError("Comment cannot exceed 2000 characters")
+        return value
+
+
 class Task(BaseModel):
     """
     Task domain model.
@@ -44,7 +72,7 @@ class Task(BaseModel):
     priority: TaskPriority
 
     # Assignment (nested object)
-    assigned_user: dict  # {"id": str, "name": str} - Denormalized for display
+    assigned_user: AssignedUser  # Assigned user with id and name
 
     # Event Link (Optional)
     event_id: str | None = None  # Source event ID
@@ -67,8 +95,7 @@ class Task(BaseModel):
     closed_at: int | None = None  # When task was closed
 
     # Comments (nested array)
-    task_comments: list[dict] = []  # Array of comment objects
-    # [{"id": str, "user_id": str, "user_name": str, "comment": str, "created_at": int}]
+    comments: list[TaskComment] = []  # Array of comment objects
 
     @property
     def persistence_id(self) -> str:
@@ -163,7 +190,7 @@ class Task(BaseModel):
             user_id: User ID to assign
             user_name: User full name (denormalized)
         """
-        self.assigned_user = {"id": user_id, "name": user_name}
+        self.assigned_user = AssignedUser(id=user_id, name=user_name)
         self.updated_at = current_utc_timestamp()
 
     def add_comment(self, comment_id: str, user_id: str, user_name: str, comment: str) -> None:
@@ -176,14 +203,14 @@ class Task(BaseModel):
             user_name: User full name (denormalized)
             comment: Comment text
         """
-        new_comment = {
-            "id": comment_id,
-            "user_id": user_id,
-            "user_name": user_name,
-            "comment": comment,
-            "created_at": current_utc_timestamp(),
-        }
-        self.task_comments.append(new_comment)
+        new_comment = TaskComment(
+            id=comment_id,
+            user_id=user_id,
+            user_name=user_name,
+            comment=comment,
+            created_at=current_utc_timestamp(),
+        )
+        self.comments.append(new_comment)
         self.updated_at = current_utc_timestamp()
 
     def link_to_event(self, event_id: str, event_details: dict) -> None:
