@@ -12,7 +12,6 @@ class UserRole(str, Enum):
     """User role enumeration with permission hierarchy."""
 
     ADMIN = "admin"
-    MANAGER = "manager"
     USER = "user"
 
 
@@ -68,11 +67,10 @@ class User(BaseModel):
         """
         Check if user has required permission level.
 
-        Permission hierarchy: admin > manager > user
+        Permission hierarchy: admin > user
         """
         role_hierarchy = {
-            UserRole.ADMIN: 3,
-            UserRole.MANAGER: 2,
+            UserRole.ADMIN: 2,
             UserRole.USER: 1,
         }
         return role_hierarchy[self.role] >= role_hierarchy[required_role]
@@ -80,10 +78,6 @@ class User(BaseModel):
     def is_admin(self) -> bool:
         """Check if user is an admin."""
         return self.role == UserRole.ADMIN
-
-    def is_manager_or_above(self) -> bool:
-        """Check if user is manager or admin."""
-        return self.role in (UserRole.ADMIN, UserRole.MANAGER)
 
     def update_last_login(self) -> None:
         """Update last login timestamp to current time."""
@@ -133,27 +127,20 @@ class UserProfile(BaseModel):
             "update:own_profile",
         ]
 
-        manager_permissions = [
+        admin_permissions = [
             "read:all_tasks",
             "create:tasks",
             "update:tasks",
-            "delete:own_tasks",
-            "read:users",
-        ]
-
-        admin_permissions = [
+            "delete:tasks",
             "create:users",
             "update:users",
             "delete:users",
-            "delete:events",
-            "delete:tasks",
+            "read:users",
             "read:config",
             "update:config",
         ]
 
         if role == UserRole.ADMIN:
-            return base_permissions + manager_permissions + admin_permissions
-        elif role == UserRole.MANAGER:
-            return base_permissions + manager_permissions
+            return base_permissions + admin_permissions
         else:
             return base_permissions

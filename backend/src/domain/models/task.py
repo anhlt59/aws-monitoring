@@ -43,9 +43,8 @@ class Task(BaseModel):
     status: TaskStatus = TaskStatus.OPEN
     priority: TaskPriority
 
-    # Assignment
-    assigned_user_id: str
-    assigned_user_name: str | None = None  # Denormalized for display
+    # Assignment (nested object)
+    assigned_user: dict  # {"id": str, "name": str} - Denormalized for display
 
     # Event Link (Optional)
     event_id: str | None = None  # Source event ID
@@ -67,8 +66,9 @@ class Task(BaseModel):
     created_by: str  # User ID who created
     closed_at: int | None = None  # When task was closed
 
-    # Denormalized counts
-    comment_count: int = 0  # Number of comments
+    # Comments (nested array)
+    task_comments: list[dict] = []  # Array of comment objects
+    # [{"id": str, "user_id": str, "user_name": str, "comment": str, "created_at": int}]
 
     @property
     def persistence_id(self) -> str:
@@ -163,13 +163,27 @@ class Task(BaseModel):
             user_id: User ID to assign
             user_name: User full name (denormalized)
         """
-        self.assigned_user_id = user_id
-        self.assigned_user_name = user_name
+        self.assigned_user = {"id": user_id, "name": user_name}
         self.updated_at = current_utc_timestamp()
 
-    def increment_comment_count(self) -> None:
-        """Increment comment count when a comment is added."""
-        self.comment_count += 1
+    def add_comment(self, comment_id: str, user_id: str, user_name: str, comment: str) -> None:
+        """
+        Add a comment to the task.
+
+        Args:
+            comment_id: Comment UUID
+            user_id: User ID who created the comment
+            user_name: User full name (denormalized)
+            comment: Comment text
+        """
+        new_comment = {
+            "id": comment_id,
+            "user_id": user_id,
+            "user_name": user_name,
+            "comment": comment,
+            "created_at": current_utc_timestamp(),
+        }
+        self.task_comments.append(new_comment)
         self.updated_at = current_utc_timestamp()
 
     def link_to_event(self, event_id: str, event_details: dict) -> None:
@@ -183,44 +197,6 @@ class Task(BaseModel):
         self.event_id = event_id
         self.event_details = event_details
         self.updated_at = current_utc_timestamp()
-
-
-class TaskComment(BaseModel):
-    """
-    Task comment model.
-
-    Represents a comment on a task for discussion and updates.
-    """
-
-    # Identity
-    id: str  # Comment UUID
-    task_id: str
-
-    # Author
-    user_id: str
-    user_name: str  # Denormalized for display
-
-    # Content
-    comment: str
-
-    # Timestamp
-    created_at: int = Field(default_factory=current_utc_timestamp)
-
-    @property
-    def persistence_id(self) -> str:
-        """DynamoDB sort key for comment (chronologically ordered)."""
-        return f"{self.created_at}#{self.id}"
-
-    @field_validator("comment")
-    @classmethod
-    def validate_comment(cls, value: str) -> str:
-        """Validate comment is not empty."""
-        value = value.strip()
-        if not value or len(value) < 1:
-            raise ValueError("Comment cannot be empty")
-        if len(value) > 2000:
-            raise ValueError("Comment cannot exceed 2000 characters")
-        return value
 
 
 class TaskStatusHistory(BaseModel):

@@ -9,8 +9,8 @@ from src.common.models import BaseModel
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 
-class AwsAccountStatus(str, Enum):
-    """AWS Account deployment/monitoring status."""
+class AwsConfigStatus(str, Enum):
+    """AWS Config deployment/monitoring status."""
 
     PENDING = "pending"  # Account registered, not deployed
     DEPLOYING = "deploying"  # Deployment in progress
@@ -19,12 +19,13 @@ class AwsAccountStatus(str, Enum):
     DISABLED = "disabled"  # Monitoring disabled
 
 
-class AwsAccount(BaseModel):
+class AwsConfig(BaseModel):
     """
     AWS Account configuration for monitoring.
 
     Represents an AWS account that is being monitored.
     Note: Replaces previous "Agent" model - now includes deployment/monitoring status.
+    AWS credentials are stored in monitoring profile, not in this model.
     """
 
     # Identity
@@ -34,12 +35,10 @@ class AwsAccount(BaseModel):
 
     # AWS Connection
     region: str  # Primary AWS region
-    access_key_id: str | None = None  # AWS access key (encrypted)
-    secret_access_key: str | None = None  # AWS secret key (encrypted)
-    role_arn: str | None = None  # IAM role ARN (preferred)
+    role_arn: str | None = None  # IAM role ARN for cross-account access (optional)
 
     # Deployment/Monitoring Status (previously Agent fields)
-    status: AwsAccountStatus = AwsAccountStatus.PENDING
+    status: AwsConfigStatus = AwsConfigStatus.PENDING
     deployed_at: int | None = None  # When monitoring was deployed
     last_sync: int | None = None  # Last successful connection test
     is_active: bool = True  # Monitoring enabled/disabled
@@ -81,60 +80,35 @@ class AwsAccount(BaseModel):
             raise ValueError("Invalid AWS region format")
         return value
 
-    @model_validator(mode="after")
-    def validate_credentials(self):
-        """
-        Validate that credentials are provided.
-
-        Must have either:
-        - access_key_id + secret_access_key
-        - OR role_arn
-        """
-        has_keys = self.access_key_id and self.secret_access_key
-        has_role = self.role_arn
-
-        if not (has_keys or has_role):
-            raise ValueError("Must provide either access keys or role ARN")
-
-        return self
-
-    def uses_role_auth(self) -> bool:
-        """Check if using IAM role authentication."""
-        return self.role_arn is not None
-
-    def uses_key_auth(self) -> bool:
-        """Check if using access key authentication."""
-        return self.access_key_id is not None
-
     def is_deployed(self) -> bool:
         """Check if account is deployed and actively monitoring."""
-        return self.status == AwsAccountStatus.ACTIVE
+        return self.status == AwsConfigStatus.ACTIVE
 
     def is_pending_deployment(self) -> bool:
         """Check if account is awaiting deployment."""
-        return self.status in (AwsAccountStatus.PENDING, AwsAccountStatus.DEPLOYING)
+        return self.status in (AwsConfigStatus.PENDING, AwsConfigStatus.DEPLOYING)
 
     def mark_deployed(self) -> None:
         """Mark account as successfully deployed."""
-        self.status = AwsAccountStatus.ACTIVE
+        self.status = AwsConfigStatus.ACTIVE
         self.deployed_at = current_utc_timestamp()
         self.updated_at = current_utc_timestamp()
 
     def mark_deployment_failed(self) -> None:
         """Mark account deployment as failed."""
-        self.status = AwsAccountStatus.FAILED
+        self.status = AwsConfigStatus.FAILED
         self.updated_at = current_utc_timestamp()
 
     def disable_monitoring(self) -> None:
         """Disable monitoring for this account."""
-        self.status = AwsAccountStatus.DISABLED
+        self.status = AwsConfigStatus.DISABLED
         self.is_active = False
         self.updated_at = current_utc_timestamp()
 
     def enable_monitoring(self) -> None:
         """Re-enable monitoring for this account."""
         if self.deployed_at:
-            self.status = AwsAccountStatus.ACTIVE
+            self.status = AwsConfigStatus.ACTIVE
             self.is_active = True
             self.updated_at = current_utc_timestamp()
 
@@ -143,15 +117,6 @@ class AwsAccount(BaseModel):
         if success:
             self.last_sync = current_utc_timestamp()
         self.updated_at = current_utc_timestamp()
-
-    def mask_credentials(self) -> dict:
-        """Return account info with masked credentials for safe display."""
-        data = self.model_dump()
-        if self.access_key_id:
-            data["access_key_id"] = f"{self.access_key_id[:4]}...{self.access_key_id[-4:]}"
-        if self.secret_access_key:
-            data["secret_access_key"] = "***REDACTED***"
-        return data
 
 
 class ServiceConfig(BaseModel):
