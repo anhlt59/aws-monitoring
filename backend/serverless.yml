@@ -85,6 +85,15 @@ functions:
   GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
   ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
 
+  # Tasks
+  ListTasks: ${file(infra/functions/api/Tasks-List.yml):function}
+  GetTask: ${file(infra/functions/api/Tasks-Get.yml):function}
+  CreateTask: ${file(infra/functions/api/Tasks-Create.yml):function}
+  UpdateTask: ${file(infra/functions/api/Tasks-Update.yml):function}
+  UpdateTaskStatus: ${file(infra/functions/api/Tasks-UpdateStatus.yml):function}
+  DeleteTask: ${file(infra/functions/api/Tasks-Delete.yml):function}
+  AddTaskComment: ${file(infra/functions/api/Tasks-AddComment.yml):function}
+
 resources:
   # -----------------------------------------------------------------------------
   Parameters:

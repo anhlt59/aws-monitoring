@@ -1,0 +1,13 @@
+function:
+  name: ${self:service}-${self:provider.stage}-DeleteTask
+  description: Delete task (admin only), triggered by API Gateway
+  handler: src.entrypoints.apigw.tasks.main.handler
+  events:
+    - http:
+        method: DELETE
+        path: /tasks/{task_id}
+        cors: true
+  environment:
+    POWERTOOLS_SERVICE_NAME: tasks
+    JWT_SECRET_KEY: ${env:JWT_SECRET_KEY, "dev-secret-key-change-in-production"}
+    JWT_ALGORITHM: ${env:JWT_ALGORITHM, "HS256"}
