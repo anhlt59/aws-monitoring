@@ -116,7 +116,7 @@ The Monitoring Configuration model represents the global configuration for the m
 | Field            | Type      | Description                                                    |
 |------------------|-----------|----------------------------------------------------------------|
 | `pk`             | String    | Partition key: `CONFIG` (singleton)                            |
-| `sk`             | String    | Sort key: `MONITORING_CONFIG` (singleton)                      |
+| `sk`             | String    | Sort key: `MONITORING` (singleton)                      |
 | `services`       | String    | JSON string of service configurations array                    |
 | `global_settings`| String    | JSON string of global settings object                          |
 | `updated_at`     | Number    | Unix timestamp                                                 |
@@ -129,7 +129,7 @@ The Monitoring Configuration model represents the global configuration for the m
 ```json
 {
   "pk": "CONFIG",
-  "sk": "MONITORING_CONFIG",
+  "sk": "MONITORING",
   "services": "[{\"service_name\":\"cloudwatch\",\"enabled\":true,\"polling_interval\":300,\"thresholds\":{\"cpu_threshold\":80,\"memory_threshold\":90,\"error_rate_threshold\":5},\"resource_filters\":{\"resource_types\":[\"AWS::EC2::Instance\",\"AWS::RDS::DBInstance\"],\"tags\":{\"Environment\":\"production\",\"Team\":\"platform\"}},\"severity_rules\":[{\"metric\":\"cpu_utilization\",\"operator\":\">=\",\"value\":90,\"severity\":\"critical\"},{\"metric\":\"cpu_utilization\",\"operator\":\">=\",\"value\":70,\"severity\":\"high\"}]},{\"service_name\":\"guardduty\",\"enabled\":true,\"polling_interval\":180,\"thresholds\":{\"min_severity\":5},\"resource_filters\":{},\"severity_rules\":[{\"metric\":\"finding_severity\",\"operator\":\">=\",\"value\":8,\"severity\":\"critical\"},{\"metric\":\"finding_severity\",\"operator\":\">=\",\"value\":5,\"severity\":\"high\"}]}]",
   "global_settings": "{\"default_polling_interval\":300,\"alert_email_enabled\":true,\"alert_email_recipients\":[\"ops-team@example.com\",\"platform-alerts@example.com\"],\"alert_slack_enabled\":true,\"alert_slack_webhook\":\"https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX\",\"data_retention_days\":90,\"event_batch_size\":100}",
   "updated_at": 1735776000,
@@ -141,8 +141,8 @@ The Monitoring Configuration model represents the global configuration for the m
 
 |   | Access Pattern                      | Table/Index | Key Condition                                    | Notes                          |
 |:--|:------------------------------------|:------------|--------------------------------------------------|:-------------------------------|
-| 1 | Get monitoring configuration        | Table       | pk=`CONFIG` AND sk=`MONITORING_CONFIG`           | Singleton - always returns one |
-| 2 | Update monitoring configuration     | Table       | pk=`CONFIG` AND sk=`MONITORING_CONFIG`           | Update singleton record        |
+| 1 | Get monitoring configuration        | Table       | pk=`CONFIG` AND sk=`MONITORING`           | Singleton - always returns one |
+| 2 | Update monitoring configuration     | Table       | pk=`CONFIG` AND sk=`MONITORING`           | Update singleton record        |
 
 ## Validation Rules
 
