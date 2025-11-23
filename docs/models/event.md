@@ -167,28 +167,21 @@ Event severity is represented as an integer from 0 to 5:
 - `get_severity_label()` - Returns string label for severity level
 
 ### Resource Methods
-- `get_resource_count()` - Returns number of affected resources
-- `has_resources()` - Returns true if resources array is not empty
-- `get_resource_types()` - Extract resource types from ARNs
+- `get_resources()` - Returns array of `{type, arn}` objects parsed from resources
 
 ### State Checks
-- `is_expired()` - Returns true if current time > expired_at
 - `days_until_expiry()` - Returns number of days until expiration
 
 ### Data Access
 - `get_detail_field(field_path)` - Extract specific field from detail JSON
-- `get_alarm_name()` - Extract alarm name if CloudWatch event
-- `get_finding_type()` - Extract finding type if GuardDuty event
 
 ## Related Use Cases
 
 - **CreateEvent** - Validate event data, generate UUID, set published_at, calculate expired_at, store event
 - **GetEvent** - Fetch event by ID and timestamp
 - **ListEvents** - Query events with filters (account, source, time range, severity), paginate results
-- **DeleteEvent** - Remove event (admin only, before TTL expiration)
 - **GetEventDetail** - Fetch event and parse detail JSON for display
 - **FilterEventsBySeverity** - Query events above certain severity threshold
-- **GetRecentEvents** - Get most recent N events across all accounts
 - **CreateTaskFromEvent** - Create task linked to high-severity event
 
 ## TTL (Time To Live)
@@ -214,6 +207,9 @@ Common AWS event sources:
 | `aws.lambda`          | Lambda function errors                | Lambda Function Execution State Change |
 | `aws.ecs`             | ECS task and service events           | ECS Task State Change                  |
 | `aws.s3`              | S3 bucket events                      | Object Created, Object Deleted         |
+| `monitoring.logs`     | Crawled logs from CloudWatch Logs     | Monitoring log                         |
+| `monitoring.metrics`  | Crawled metrics from CloudWatch Metrics| Monitoring metric                      |
+| `monitoring.alerts`   | Crawled alerts from CloudWatch Alarms | Monitoring alerts                      |
 
 ## Severity Mapping
 
