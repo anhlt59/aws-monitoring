@@ -25,9 +25,8 @@ Timeline: Week 1-2
 EVENTS API - 2 additional endpoints (HIGH PRIORITY)
 ================================================================================
 
-GET    /api/events               ✅ List events (implemented, not deployed)
-GET    /api/events/{id}          ✅ Get event details (implemented, not deployed)
-DELETE /api/events/{id}          ❌ Delete event
+GET    /api/events                  ✅ List events (implemented, not deployed)
+GET    /api/events/{id}             ✅ Get event details (implemented, not deployed)
 POST   /api/events/{id}/create-task ❌ Create task from event
 
 Dependencies: None (extends existing)
@@ -81,14 +80,12 @@ Timeline: Week 6
 CONFIGURATION API - 8 endpoints (MEDIUM PRIORITY)
 ================================================================================
 
-GET    /api/config/aws-accounts       ❌ List AWS accounts
-GET    /api/config/aws-accounts/{id}  ❌ Get AWS account
-POST   /api/config/aws-accounts       ❌ Create AWS account
-PUT    /api/config/aws-accounts/{id}  ❌ Update AWS account
-DELETE /api/config/aws-accounts/{id}  ❌ Delete AWS account
-POST   /api/config/aws-accounts/{id}/test ❌ Test connection
-GET    /api/config/monitoring         ❌ Get monitoring config
-PUT    /api/config/monitoring         ❌ Update monitoring config
+GET    /api/config/aws           ❌ Get AWS config
+POST   /api/config/aws           ❌ Create AWS config
+PUT    /api/config/aws           ❌ Update AWS config
+POST   /api/config/aws/{id}/test ❌ Test connection
+GET    /api/config/monitoring    ❌ Get monitoring config
+PUT    /api/config/monitoring    ❌ Update monitoring config
 
 Dependencies: None (refactor existing agents API)
 Estimated: 32-48 hours
