@@ -75,7 +75,7 @@ Based on your system, I recommend these bounded contexts:
 │                │   CONFIGURATION  │                          │
 │                │     Context      │                          │
 │                │                  │                          │
-│                │  - AwsAccount    │  (includes agent status) │
+│                │  - AwsConfig     │  (includes agent status) │
 │                │  - MonitoringCfg │                          │
 │                │  - ServiceConfig │                          │
 │                └──────────────────┘                          │
@@ -119,8 +119,7 @@ Based on your system, I recommend these bounded contexts:
 **Responsibility:** Manage work items, track progress, collaborate
 
 **Domain Entities:**
-- Task
-- TaskComment
+- Task (includes nested task_comments array and assigned_user object)
 - TaskAssignment
 - TaskStatusHistory
 - Workflow
@@ -164,7 +163,7 @@ Based on your system, I recommend these bounded contexts:
 **Responsibility:** Configure AWS accounts, monitoring settings, system parameters
 
 **Domain Entities:**
-- AwsAccount (includes deployment/agent status)
+- AwsConfig (includes deployment/agent status, credentials stored in monitoring profile)
 - MonitoringConfig
 - ServiceConfig
 - NotificationSettings
@@ -179,7 +178,7 @@ Based on your system, I recommend these bounded contexts:
 
 **Owns:** All system and monitoring configuration, including AWS account registration and deployment tracking
 
-**Note:** Absorbed "Agent" functionality - AwsAccount now tracks deployment status and monitoring state
+**Note:** Absorbed "Agent" functionality - AwsConfig now tracks deployment status and monitoring state. AWS credentials are stored in monitoring profile, not in the database.
 
 ---
 
@@ -219,10 +218,10 @@ backend/src/
     │
     ├── task_management/     # Task Management Context
     │   ├── models/
-    │   │   ├── task.py
-    │   │   │   # References EventId, not full Event
-    │   │   │   # Stores minimal event metadata
-    │   │   └── comment.py
+    │   │   └── task.py      # Includes nested task_comments array
+    │   │       # References EventId, not full Event
+    │   │       # Stores minimal event metadata
+    │   │       # Includes nested assigned_user object
     │   ├── use_cases/
     │   └── ports/
     │
@@ -453,10 +452,10 @@ class Task(BaseModel):
 **2. User Reference in Task (Use UserId + Denormalization)**
 
 ```python
-# Task stores UserId (shared kernel) + user name
+# Task stores UserId (shared kernel) + user name in nested object
 class Task(BaseModel):
-    assigned_user_id: UserId
-    assigned_user_name: str  # Denormalized, may become stale
+    assigned_user: AssignedUser  # Nested: {id, name}
+    # Denormalized user name may become stale
 ```
 
 **3. Cross-Context Queries (Use Repository Facades)**
@@ -531,8 +530,7 @@ backend/src/
 │   │   ├── __init__.py
 │   │   ├── models/
 │   │   │   ├── __init__.py
-│   │   │   ├── task.py              # References EventId
-│   │   │   ├── comment.py
+│   │   │   ├── task.py              # References EventId, includes nested task_comments
 │   │   │   └── source_event.py      # Task's view of event
 │   │   ├── use_cases/
 │   │   │   ├── __init__.py
@@ -541,8 +539,7 @@ backend/src/
 │   │   │   └── add_comment.py
 │   │   ├── ports/
 │   │   │   ├── repositories/
-│   │   │   │   ├── task_repository.py
-│   │   │   │   └── comment_repository.py
+│   │   │   │   └── task_repository.py
 │   │   │   └── services/
 │   │   ├── adapters/                 # Anti-corruption layer
 │   │   │   └── event_translator.py
@@ -575,7 +572,7 @@ backend/src/
 │       ├── __init__.py
 │       ├── models/
 │       │   ├── __init__.py
-│       │   ├── aws_account.py       # Includes deployment/agent status
+│       │   ├── aws_config.py        # Includes deployment/agent status
 │       │   ├── monitoring_config.py
 │       │   └── service_config.py
 │       ├── use_cases/
