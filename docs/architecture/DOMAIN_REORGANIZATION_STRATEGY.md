@@ -119,7 +119,7 @@ Based on your system, I recommend these bounded contexts:
 **Responsibility:** Manage work items, track progress, collaborate
 
 **Domain Entities:**
-- Task (includes nested task_comments array and assigned_user object)
+- Task (includes nested comments array and assigned_user object)
 - TaskAssignment
 - TaskStatusHistory
 - Workflow
@@ -218,7 +218,7 @@ backend/src/
     │
     ├── task_management/     # Task Management Context
     │   ├── models/
-    │   │   └── task.py      # Includes nested task_comments array
+    │   │   └── task.py      # Includes nested comments array
     │   │       # References EventId, not full Event
     │   │       # Stores minimal event metadata
     │   │       # Includes nested assigned_user object
@@ -530,7 +530,7 @@ backend/src/
 │   │   ├── __init__.py
 │   │   ├── models/
 │   │   │   ├── __init__.py
-│   │   │   ├── task.py              # References EventId, includes nested task_comments
+│   │   │   ├── task.py              # References EventId, includes nested comments
 │   │   │   └── source_event.py      # Task's view of event
 │   │   ├── use_cases/
 │   │   │   ├── __init__.py
