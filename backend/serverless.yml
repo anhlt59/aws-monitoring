@@ -94,6 +94,14 @@ functions:
   DeleteTask: ${file(infra/functions/api/Tasks-Delete.yml):function}
   AddTaskComment: ${file(infra/functions/api/Tasks-AddComment.yml):function}
 
+  # Users
+  ListUsers: ${file(infra/functions/api/Users-List.yml):function}
+  GetUser: ${file(infra/functions/api/Users-Get.yml):function}
+  CreateUser: ${file(infra/functions/api/Users-Create.yml):function}
+  UpdateUser: ${file(infra/functions/api/Users-Update.yml):function}
+  ChangePassword: ${file(infra/functions/api/Users-ChangePassword.yml):function}
+  DeleteUser: ${file(infra/functions/api/Users-Delete.yml):function}
+
 resources:
   # -----------------------------------------------------------------------------
   Parameters:

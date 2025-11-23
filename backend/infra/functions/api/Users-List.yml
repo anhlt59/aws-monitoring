@@ -1,0 +1,13 @@
+function:
+  name: ${self:service}-${self:provider.stage}-ListUsers
+  description: List users (admin only), triggered by API Gateway
+  handler: src.entrypoints.apigw.users.main.handler
+  events:
+    - http:
+        method: GET
+        path: /users
+        cors: true
+  environment:
+    POWERTOOLS_SERVICE_NAME: users
+    JWT_SECRET_KEY: ${env:JWT_SECRET_KEY, "dev-secret-key-change-in-production"}
+    JWT_ALGORITHM: ${env:JWT_ALGORITHM, "HS256"}
