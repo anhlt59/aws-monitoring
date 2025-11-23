@@ -116,27 +116,27 @@ When a task is linked to an event, the `event_details` field contains a snapshot
 
 ## DynamoDB Schema
 
-| Field           | Type      | Description                                                    |
-|-----------------|-----------|----------------------------------------------------------------|
-| `pk`            | String    | Partition key: `TASK`                                          |
-| `sk`            | String    | Sort key: `TASK#{task_id}`                                     |
-| `title`         | String    | Task title                                                     |
-| `description`   | String    | Task description                                               |
-| `status`        | String    | Task status                                                    |
-| `priority`      | String    | Task priority                                                  |
-| `assigned_user` | String    | JSON string of AssignedUser object `{id, name}`                |
-| `event_id`      | String    | Source event ID (optional)                                     |
-| `event_details` | String    | JSON string of event snapshot (optional)                       |
-| `due_date`      | Number    | Unix timestamp (optional)                                      |
-| `created_at`    | Number    | Unix timestamp                                                 |
-| `updated_at`    | Number    | Unix timestamp                                                 |
-| `created_by`    | String    | Creator user ID                                                |
-| `closed_at`     | Number    | Unix timestamp (optional)                                      |
-| `comments`      | String    | JSON array string of TaskComment objects                       |
-| `gsi1pk`        | String    | GSI1 partition key: `ASSIGNED#{user_id}`                       |
-| `gsi1sk`        | String    | GSI1 sort key: `STATUS#{status}#PRIORITY#{priority}#TASK#{id}` |
-| `gsi2pk`        | String    | GSI2 partition key: `STATUS#{status}`                          |
-| `gsi2sk`        | String    | GSI2 sort key: `CREATED#{created_at}#TASK#{id}`                |
+| Field           | Type   | Description                                                    |
+|-----------------|--------|----------------------------------------------------------------|
+| `pk`            | String | Partition key: `TASK`                                          |
+| `sk`            | String | Sort key: `TASK#{task_id}`                                     |
+| `title`         | String | Task title                                                     |
+| `description`   | String | Task description                                               |
+| `status`        | String | Task status                                                    |
+| `priority`      | String | Task priority                                                  |
+| `assigned_user` | Map    | AssignedUser object `{id, name}`                               |
+| `event_id`      | String | Source event ID (optional)                                     |
+| `event_details` | String | JSON string of event snapshot (optional)                       |
+| `due_date`      | Number | Unix timestamp (optional)                                      |
+| `created_at`    | Number | Unix timestamp                                                 |
+| `updated_at`    | Number | Unix timestamp                                                 |
+| `created_by`    | String | Creator user ID                                                |
+| `closed_at`     | Number | Unix timestamp (optional)                                      |
+| `comments`      | List   | List of TaskComment objects                                    |
+| `gsi1pk`        | String | GSI1 partition key: `ASSIGNED#{user_id}`                       |
+| `gsi1sk`        | String | GSI1 sort key: `STATUS#{status}#PRIORITY#{priority}#TASK#{id}` |
+| `gsi2pk`        | String | GSI2 partition key: `STATUS#{status}`                          |
+| `gsi2sk`        | String | GSI2 sort key: `CREATED#{created_at}#TASK#{id}`                |
 
 ## Example DynamoDB Record
 
