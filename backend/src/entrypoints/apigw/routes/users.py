@@ -8,6 +8,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
 from src.domain.models.user import UserRole
+from src.domain.use_cases.auth import GetCurrentUser
 from src.domain.use_cases.users import (
     ChangePassword,
     ChangePasswordDTO,
@@ -37,6 +38,7 @@ list_users_uc = ListUsers()
 update_user_uc = UpdateUser()
 change_password_uc = ChangePassword()
 delete_user_uc = DeleteUser()
+get_current_user_uc = GetCurrentUser()
 
 
 # Request/Response models
@@ -106,6 +108,22 @@ def list_users(
     }, HTTPStatus.OK
 
 
+@app.get("/auth/me")
+def get_me():
+    """
+    Get current user profile endpoint.
+
+    Returns authenticated user's profile information.
+    """
+    # Get auth context
+    auth = get_auth_context(app)
+
+    # Get user profile
+    user_profile = get_current_user_uc.execute(auth.user_id)
+
+    return user_profile.model_dump(), HTTPStatus.OK
+
+
 @app.get("/users/<user_id>")
 def get_user(user_id: str):
     """
@@ -114,7 +132,7 @@ def get_user(user_id: str):
     Users can view their own profile, admins can view any profile.
     """
     # Get auth context
-    auth = get_auth_context(app)
+    # auth = get_auth_context(app)
 
     # Verify permission (self or admin)
     verify_user_or_admin(app, user_id)
@@ -166,8 +184,6 @@ def update_user(user_id: str, request: UpdateUserRequest):
 
     Users can update their own profile, admins can update any profile.
     """
-    # Get auth context
-    auth = get_auth_context(app)
 
     # Verify permission (self or admin)
     verify_user_or_admin(app, user_id)

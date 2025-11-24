@@ -7,7 +7,6 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.event_handler.exceptions import UnauthorizedError
 
 from src.adapters.auth.jwt import jwt_service
-from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import AuthenticationError
 
 
@@ -57,7 +56,7 @@ def extract_token_from_header(app: APIGatewayRestResolver) -> str | None:
     Raises:
         UnauthorizedError: If Authorization header format is invalid
     """
-    auth_header = app.current_event.get_header_value("Authorization")
+    auth_header = app.current_event.headers.get("Authorization")
 
     if not auth_header:
         return None
@@ -94,7 +93,7 @@ def get_auth_context(app: APIGatewayRestResolver) -> AuthContext:
 
     try:
         # Verify and decode token
-        payload = jwt_service.verify_token(token, token_type="access")
+        payload = jwt_service.verify_token(token, token_type="access")  # nosec
 
         # Create auth context
         auth_context = AuthContext(

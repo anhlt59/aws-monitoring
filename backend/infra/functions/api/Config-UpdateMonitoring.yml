@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-ConfigUpdateMonitoring
   description: Update monitoring configuration (admin only), triggered by API Gateway
-  handler: src.entrypoints.apigw.config.main.handler
+  handler: src.entrypoints.apigw.routes.config.handler
   events:
     - http:
         method: PUT

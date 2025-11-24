@@ -10,7 +10,6 @@ from src.domain.use_cases.auth import (
     AuthenticateUser,
     AuthenticateUserDTO,
     GenerateAuthTokens,
-    GetCurrentUser,
     LogoutUser,
     LogoutUserDTO,
     RefreshAuthToken,
@@ -18,7 +17,6 @@ from src.domain.use_cases.auth import (
 )
 from src.entrypoints.apigw.base import create_app
 from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
-from src.entrypoints.apigw.middleware.auth import get_auth_context
 
 # Create app
 app = create_app(
@@ -31,7 +29,6 @@ authenticate_user_uc = AuthenticateUser()
 generate_tokens_uc = GenerateAuthTokens()
 refresh_token_uc = RefreshAuthToken()
 logout_user_uc = LogoutUser()
-get_current_user_uc = GetCurrentUser()
 
 
 # Request/Response models
@@ -129,10 +126,10 @@ def logout():
     Invalidate current access token (client-side).
     """
     # Get auth context (validates token)
-    auth = get_auth_context(app)
+    # auth = get_auth_context(app)
 
     # Extract token from header (for potential blacklisting)
-    auth_header = app.current_event.get_header_value("Authorization")
+    auth_header = app.current_event.headers.get("Authorization")
     token = auth_header.split()[1] if auth_header else ""
 
     # Logout (currently a no-op, handled client-side)
@@ -141,22 +138,6 @@ def logout():
 
     # Return 204 No Content
     return None, HTTPStatus.NO_CONTENT
-
-
-@app.get("/auth/me")
-def get_me():
-    """
-    Get current user profile endpoint.
-
-    Returns authenticated user's profile information.
-    """
-    # Get auth context
-    auth = get_auth_context(app)
-
-    # Get user profile
-    user_profile = get_current_user_uc.execute(auth.user_id)
-
-    return user_profile.model_dump(), HTTPStatus.OK
 
 
 # Lambda handler

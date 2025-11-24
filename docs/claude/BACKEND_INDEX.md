@@ -912,7 +912,6 @@ def handler(event: dict, context: LambdaContext) -> dict:
 - `POST /auth/login` → Authenticate user, return tokens
 - `POST /auth/refresh` → Refresh access token
 - `POST /auth/logout` → Invalidate refresh token
-- `GET /auth/me` → Get current user profile
 
 **Events Module** (`events/main.py`):
 - `GET /events` → List events with pagination
@@ -931,6 +930,7 @@ def handler(event: dict, context: LambdaContext) -> dict:
 **Users Module** (`users/main.py`):
 - `GET /users` → List all users (admin only)
 - `GET /users/{id}` → Get user by ID
+- `GET /users/me` → Get current user profile
 - `POST /users` → Create new user (admin only)
 - `PUT /users/{id}` → Update user
 - `DELETE /users/{id}` → Delete user (admin only)

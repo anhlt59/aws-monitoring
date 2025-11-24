@@ -1,4 +1,4 @@
-from pynamodb.attributes import BooleanAttribute, NumberAttribute, UnicodeAttribute
+from pynamodb.attributes import NumberAttribute, UnicodeAttribute
 
 from .base import DynamoModel, KeyAttribute
 
@@ -16,6 +16,5 @@ class AwsConfigPersistence(DynamoModel, discriminator="CONFIG"):
     status = UnicodeAttribute(null=False)  # pending, deploying, active, failed, disabled
     deployed_at = NumberAttribute(null=True)
     last_sync = NumberAttribute(null=True)
-    is_active = BooleanAttribute(null=False, default=True)
     created_at = NumberAttribute(null=False)
     updated_at = NumberAttribute(null=False)

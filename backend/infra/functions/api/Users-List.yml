@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-ListUsers
   description: List users (admin only), triggered by API Gateway
-  handler: src.entrypoints.apigw.users.main.handler
+  handler: src.entrypoints.apigw.routes.users.handler
   events:
     - http:
         method: GET

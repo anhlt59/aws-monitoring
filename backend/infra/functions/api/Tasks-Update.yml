@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-UpdateTask
   description: Update task, triggered by API Gateway
-  handler: src.entrypoints.apigw.tasks.main.handler
+  handler: src.entrypoints.apigw.routes.tasks.handler
   events:
     - http:
         method: PUT

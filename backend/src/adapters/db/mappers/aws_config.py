@@ -18,7 +18,6 @@ class AwsConfigMapper:
             status=model.status.value,
             deployed_at=model.deployed_at,
             last_sync=model.last_sync,
-            is_active=model.is_active,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )
@@ -34,7 +33,6 @@ class AwsConfigMapper:
             status=persistence.status,
             deployed_at=persistence.deployed_at,
             last_sync=persistence.last_sync,
-            is_active=persistence.is_active,
             created_at=persistence.created_at,
             updated_at=persistence.updated_at,
         )
