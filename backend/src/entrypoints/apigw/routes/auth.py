@@ -3,6 +3,7 @@
 from http import HTTPStatus
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from dependency_injector import containers, providers
 from pydantic import BaseModel, Field
 
 from src.domain.models.user import UserProfile
@@ -18,17 +19,22 @@ from src.domain.use_cases.auth import (
 from src.entrypoints.apigw.base import create_app
 from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 
-# Create app
-app = create_app(
-    cors_allow_origin=CORS_ALLOW_ORIGIN,
-    cors_max_age=CORS_MAX_AGE,
-)
 
-# Initialize use cases
-authenticate_user_uc = AuthenticateUser()
-generate_tokens_uc = GenerateAuthTokens()
-refresh_token_uc = RefreshAuthToken()
-logout_user_uc = LogoutUser()
+class Container(containers.DeclarativeContainer):
+    from src.adapters.db.repositories import UserRepository
+
+    # Repositories
+    user_repository = providers.Singleton(UserRepository)
+    # Use Cases
+    authenticate_user_uc = providers.Factory(AuthenticateUser, user_repository=user_repository)
+    generate_tokens_uc = providers.Factory(GenerateAuthTokens)
+    refresh_token_uc = providers.Factory(RefreshAuthToken, user_repository=user_repository)
+    logout_user_uc = providers.Factory(LogoutUser)
+
+
+# Create app
+container = Container()
+app = create_app(cors_allow_origin=CORS_ALLOW_ORIGIN, cors_max_age=CORS_MAX_AGE)
 
 
 # Request/Response models
@@ -72,6 +78,9 @@ def login(login_request: LoginRequest):
 
     Authenticate user with email and password, return JWT tokens.
     """
+    authenticate_user_uc = container.authenticate_user_uc()
+    generate_tokens_uc = container.generate_tokens_uc()
+
     # Authenticate user
     auth_dto = AuthenticateUserDTO(
         email=login_request.email,
