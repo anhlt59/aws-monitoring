@@ -5,6 +5,7 @@ from http import HTTPStatus
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
+from entrypoints.apigw.core.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.domain.use_cases.config import (
     GetAwsConfig,
     GetMonitoringConfig,
@@ -15,7 +16,6 @@ from src.domain.use_cases.config import (
     UpdateMonitoringConfigDTO,
 )
 from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.entrypoints.apigw.middleware.auth import get_auth_context
 
 # Create app

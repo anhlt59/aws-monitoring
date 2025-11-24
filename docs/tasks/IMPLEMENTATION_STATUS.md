@@ -320,7 +320,7 @@ from pydantic import BaseModel, Field
 
 from src.domain.use_cases.xxx import UseCase, InputDTO
 from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
+from entrypoints.apigw.core.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.entrypoints.apigw.middleware.auth import get_auth_context, require_auth, require_role
 
 app = create_app(cors_allow_origin=CORS_ALLOW_ORIGIN, cors_max_age=CORS_MAX_AGE)
@@ -328,31 +328,31 @@ use_case = UseCase()
 
 
 class RequestModel(BaseModel):
-    """Request model."""
-    field: str = Field(..., description="Description")
+  """Request model."""
+  field: str = Field(..., description="Description")
 
 
 @app.post("/resource")
 # @require_auth  # Add if authentication required
 # @require_role("admin")  # Add if admin-only
 def create_resource(request: RequestModel):
-    """Create resource endpoint."""
-    # Get auth context if needed
-    auth = get_auth_context(app)
+  """Create resource endpoint."""
+  # Get auth context if needed
+  auth = get_auth_context(app)
 
-    # Create DTO
-    dto = InputDTO(field=request.field)
+  # Create DTO
+  dto = InputDTO(field=request.field)
 
-    # Execute use case
-    result = use_case.execute(dto)
+  # Execute use case
+  result = use_case.execute(dto)
 
-    # Return response
-    return result.model_dump(), HTTPStatus.CREATED
+  # Return response
+  return result.model_dump(), HTTPStatus.CREATED
 
 
 def handler(event: dict, context: LambdaContext) -> dict:
-    """Lambda handler."""
-    return app.resolve(event, context)
+  """Lambda handler."""
+  return app.resolve(event, context)
 ```
 
 ### Serverless Config Pattern

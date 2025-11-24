@@ -39,7 +39,7 @@ def query_error_logs_use_case(query: QueryParam, log_service: ILogService, publi
     2. Query logs from CloudWatch Logs using the provided parameters.
     3. Publish the results to the message broker.
     """
-    # 1. list out all monitoring log groups
+    # 1. all out all monitoring log groups
     log_groups = log_service.list_monitoring_log_groups_by_tag(query.filter_tag["key"], query.filter_tag["value"])
 
     for chunk in chunks(log_groups, query.chunk_size):

@@ -32,12 +32,6 @@ class AWSClientException(InternalServerError):
     pass
 
 
-class AuthenticationError(Exception):
-    """Authentication error for JWT and password verification."""
-
-    pass
-
-
 __all__ = [
     "BadRequestError",
     "ForbiddenError",
@@ -52,5 +46,4 @@ __all__ = [
     "ConflictError",
     "ValidationError",
     "AWSClientException",
-    "AuthenticationError",
 ]

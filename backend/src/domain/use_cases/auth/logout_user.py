@@ -1,8 +1,6 @@
 """Logout user use case."""
 
-from pydantic import Field
-
-from src.common.models import BaseModel
+from pydantic import BaseModel, Field
 
 
 class LogoutUserDTO(BaseModel):

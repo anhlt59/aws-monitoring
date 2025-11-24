@@ -1,9 +1,11 @@
 """Create user use case."""
 
-from uuid_utils import uuid7
-from pydantic import Field, field_validator
+import secrets
 
-from src.adapters.auth.password import password_service
+from pydantic import Field, field_validator
+from uuid_utils import uuid7
+from werkzeug.security import generate_password_hash
+
 from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import ConflictError
 from src.common.models import BaseModel
@@ -71,12 +73,10 @@ class CreateUser:
                 raise
 
         # Generate password if not provided
-        import secrets
-
         password = dto.password or secrets.token_urlsafe(16)
 
         # Hash password
-        password_hash = password_service.hash_password(password)
+        password_hash = generate_password_hash(password)
 
         # Create user entity
         user = User(
@@ -85,7 +85,6 @@ class CreateUser:
             full_name=dto.full_name,
             password_hash=password_hash,
             role=dto.role,
-            is_active=True,
         )
 
         # Save user

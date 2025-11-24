@@ -3,7 +3,7 @@
 import re
 from enum import Enum
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, field_validator
 
 from src.common.models import BaseModel
 from src.common.utils.datetime_utils import current_utc_timestamp
@@ -262,7 +262,7 @@ class MonitoringConfig(BaseModel):
         self.updated_by = updated_by
 
     def get_enabled_services(self) -> list[ServiceConfig]:
-        """Get list of enabled services."""
+        """Get all of enabled services."""
         return [s for s in self.services if s.enabled]
 
     def disable_service(self, service_name: str, updated_by: str) -> None:

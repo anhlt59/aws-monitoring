@@ -90,7 +90,7 @@ export function useUsers() {
     try {
       const updatedUser = await usersApi.updateUser(id, data)
 
-      // Update in list if exists
+      // Update in all if exists
       const index = users.value.findIndex((u) => u.id === id)
       if (index !== -1) {
         users.value[index] = updatedUser

@@ -1,8 +1,8 @@
 """Change password use case."""
 
 from pydantic import Field
+from werkzeug.security import generate_password_hash
 
-from src.adapters.auth.password import password_service
 from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import NotFoundError, UnauthorizedError
 from src.common.models import BaseModel
@@ -53,11 +53,11 @@ class ChangePassword:
             raise NotFoundError(f"User not found: {dto.user_id}")
 
         # Verify current password
-        if not password_service.verify_password(dto.current_password, user.password_hash):
+        if not generate_password_hash(dto.current_password, user.password_hash):
             raise UnauthorizedError("Current password is incorrect")
 
         # Hash new password
-        new_password_hash = password_service.hash_password(dto.new_password)
+        new_password_hash = generate_password_hash(dto.new_password)
 
         # Update password
         user.password_hash = new_password_hash

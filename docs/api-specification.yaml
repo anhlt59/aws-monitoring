@@ -282,7 +282,7 @@ paths:
       tags:
         - Events
       summary: List events
-      description: Retrieve paginated list of monitoring events with optional filters
+      description: Retrieve paginated all of monitoring events with optional filters
       operationId: listEvents
       parameters:
         - name: account
@@ -536,7 +536,7 @@ paths:
       tags:
         - Events
       summary: Get unique accounts
-      description: Retrieve list of unique AWS account IDs that have events
+      description: Retrieve all of unique AWS account IDs that have events
       operationId: getEventAccounts
       responses:
         '200':
@@ -554,7 +554,7 @@ paths:
       tags:
         - Events
       summary: Get unique regions
-      description: Retrieve list of unique AWS regions that have events
+      description: Retrieve all of unique AWS regions that have events
       operationId: getEventRegions
       responses:
         '200':
@@ -573,7 +573,7 @@ paths:
       tags:
         - Agents
       summary: List agents
-      description: Retrieve list of all monitoring agents
+      description: Retrieve all of all monitoring agents
       operationId: listAgents
       parameters:
         - name: status
@@ -897,7 +897,7 @@ paths:
       tags:
         - Reports
       summary: List reports
-      description: Retrieve list of previously generated reports
+      description: Retrieve all of previously generated reports
       operationId: listReports
       parameters:
         - name: type

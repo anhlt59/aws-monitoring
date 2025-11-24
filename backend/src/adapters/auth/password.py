@@ -2,8 +2,6 @@
 
 import os
 
-from passlib.context import CryptContext
-
 
 class PasswordService:
     """Service for password hashing and verification using bcrypt."""
@@ -57,7 +55,3 @@ class PasswordService:
             True if hash needs update, False otherwise
         """
         return self.pwd_context.needs_update(hashed_password)
-
-
-# Singleton instance
-password_service = PasswordService()

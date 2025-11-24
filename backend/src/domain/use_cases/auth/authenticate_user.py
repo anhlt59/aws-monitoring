@@ -1,11 +1,10 @@
 """Authenticate user use case."""
 
-from pydantic import Field
+from pydantic import BaseModel, Field
+from werkzeug.security import check_password_hash
 
-from src.adapters.auth.password import password_service
 from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import UnauthorizedError
-from src.common.models import BaseModel
 from src.domain.models.user import User
 
 
@@ -17,34 +16,20 @@ class AuthenticateUserDTO(BaseModel):
 
 
 class AuthenticateUser:
-    """
-    Use case for authenticating a user with email and password.
-
-    Returns the authenticated User entity if credentials are valid.
-    """
-
-    def __init__(self, user_repository: UserRepository | None = None):
-        """
-        Initialize use case.
-
-        Args:
-            user_repository: User repository instance (defaults to new instance)
-        """
-        self.user_repository = user_repository or UserRepository()
+    def __init__(self, user_repository: UserRepository):
+        self.user_repository = user_repository
 
     def execute(self, dto: AuthenticateUserDTO) -> User:
         """
         Authenticate user with email and password.
-
         Args:
             dto: Authentication data (email and password)
-
         Returns:
             Authenticated User entity
-
         Raises:
             UnauthorizedError: If credentials are invalid or user not found
         """
+
         # Normalize email
         email = dto.email.lower().strip()
 
@@ -56,15 +41,11 @@ class AuthenticateUser:
             raise UnauthorizedError("Invalid email or password")
 
         # Verify password
-        if not password_service.verify_password(dto.password, user.password_hash):
+        if not check_password_hash(dto.password, user.password_hash):
             raise UnauthorizedError("Invalid email or password")
 
         # Check if user is active
         if not user.is_active:
             raise UnauthorizedError("User account is inactive")
-
-        # Update last login
-        user.update_last_login()
-        self.user_repository.update(user)
 
         return user

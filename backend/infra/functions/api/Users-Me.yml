@@ -1,11 +1,11 @@
 function:
   name: ${self:service}-${self:provider.stage}-AuthMe
   description: Get current user profile endpoint, triggered by API Gateway
-  handler: src.entrypoints.apigw.auth.main.handler
+  handler: src.entrypoints.apigw.routes.auth.handler
   events:
     - http:
         method: GET
-        path: /auth/me
+        path: /users/me
         cors: true
   environment:
     POWERTOOLS_SERVICE_NAME: auth

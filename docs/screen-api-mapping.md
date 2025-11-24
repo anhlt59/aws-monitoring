@@ -129,8 +129,8 @@ export function useDashboard() {
 | Endpoint | Method | Purpose | Trigger | Notes |
 |----------|--------|---------|---------|-------|
 | `/events` | GET | Get filtered events | Page mount, filter change | With query params |
-| `/events/accounts` | GET | Get account list | Page mount | For filter dropdown |
-| `/events/regions` | GET | Get region list | Page mount | For filter dropdown |
+| `/events/accounts` | GET | Get account all | Page mount | For filter dropdown |
+| `/events/regions` | GET | Get region all | Page mount | For filter dropdown |
 | `/events/export` | GET | Export events | User clicks "Export" | Download file |
 
 ### Query Parameters
@@ -323,7 +323,7 @@ POST /agents
     ↓
 GET /agents
     ↓
-[Update agents list]
+[Update agents all]
 ```
 
 ### Implementation Example
@@ -348,7 +348,7 @@ export function useAgents() {
           updated.status === 'CREATE_FAILED') {
         deployingAgents.value.delete(agent.account);
         clearInterval(pollInterval);
-        await fetchAgents(); // Refresh list
+        await fetchAgents(); // Refresh all
       }
     }, 5000); // Poll every 5 seconds
   };

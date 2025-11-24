@@ -2,15 +2,12 @@
 
 from enum import Enum
 
-from pydantic import Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from src.common.models import BaseModel
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 
 class UserRole(str, Enum):
-    """User role enumeration with permission hierarchy."""
-
     ADMIN = "admin"
     USER = "user"
 
@@ -23,25 +20,13 @@ class User(BaseModel):
     and authorization capabilities.
     """
 
-    # Identity
     id: str  # User UUID
     email: str
     full_name: str
     password_hash: str  # Bcrypt hashed password (never exposed in API)
-
-    # Authorization
     role: UserRole = UserRole.USER
-    is_active: bool = True
-
-    # Timestamps
     created_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
-    last_login: int | None = None  # Unix timestamp of last login
-
-    @property
-    def persistence_id(self) -> str:
-        """DynamoDB sort key for user."""
-        return self.id
 
     @field_validator("email")
     @classmethod
@@ -63,32 +48,13 @@ class User(BaseModel):
             raise ValueError("Full name cannot exceed 100 characters")
         return value
 
-    def has_permission(self, required_role: UserRole) -> bool:
-        """
-        Check if user has required permission level.
-
-        Permission hierarchy: admin > user
-        """
-        role_hierarchy = {
-            UserRole.ADMIN: 2,
-            UserRole.USER: 1,
-        }
-        return role_hierarchy[self.role] >= role_hierarchy[required_role]
-
     def is_admin(self) -> bool:
-        """Check if user is an admin."""
         return self.role == UserRole.ADMIN
-
-    def update_last_login(self) -> None:
-        """Update last login timestamp to current time."""
-        self.last_login = current_utc_timestamp()
-        self.updated_at = current_utc_timestamp()
 
 
 class UserProfile(BaseModel):
     """
     User profile model for API responses.
-
     Excludes sensitive information like password_hash.
     """
 
@@ -96,51 +62,6 @@ class UserProfile(BaseModel):
     email: str
     full_name: str
     role: UserRole
-    is_active: bool
     created_at: int
-    last_login: int | None = None
-    permissions: list[str] = []  # Computed based on role
 
-    @classmethod
-    def from_user(cls, user: User) -> "UserProfile":
-        """Create profile from User entity."""
-        permissions = cls._get_permissions_for_role(user.role)
-        return cls(
-            id=user.id,
-            email=user.email,
-            full_name=user.full_name,
-            role=user.role,
-            is_active=user.is_active,
-            created_at=user.created_at,
-            last_login=user.last_login,
-            permissions=permissions,
-        )
-
-    @staticmethod
-    def _get_permissions_for_role(role: UserRole) -> list[str]:
-        """Get permissions based on role."""
-        base_permissions = [
-            "read:events",
-            "read:own_tasks",
-            "update:own_tasks",
-            "read:own_profile",
-            "update:own_profile",
-        ]
-
-        admin_permissions = [
-            "read:all_tasks",
-            "create:tasks",
-            "update:tasks",
-            "delete:tasks",
-            "create:users",
-            "update:users",
-            "delete:users",
-            "read:users",
-            "read:config",
-            "update:config",
-        ]
-
-        if role == UserRole.ADMIN:
-            return base_permissions + admin_permissions
-        else:
-            return base_permissions
+    model_config = ConfigDict(from_attributes=True)

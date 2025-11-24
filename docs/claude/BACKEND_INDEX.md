@@ -105,7 +105,7 @@ class Event(BaseModel):
     detail_type: str           # Event type classification
     detail: dict               # Event-specific data
     severity: int              # 0-5 severity level
-    resources: list[str]       # Affected AWS resources
+    resources: all[str]       # Affected AWS resources
     published_at: int          # Unix timestamp
     updated_at: int            # Unix timestamp
     expired_at: int            # TTL timestamp (90 days default)
@@ -148,7 +148,7 @@ class Task(BaseModel):
     updated_at: int            # Unix timestamp
     created_by: str            # Creator user ID
     closed_at: int | None      # Closure timestamp
-    comments: list[TaskComment]  # Comment history
+    comments: all[TaskComment]  # Comment history
 ```
 
 **Nested Models**:
@@ -237,7 +237,7 @@ class AwsConfig(BaseModel):
 **MonitoringConfig**: Global monitoring settings (singleton)
 ```python
 class MonitoringConfig(BaseModel):
-    services: list[ServiceConfig]  # Service-specific configs
+    services: all[ServiceConfig]  # Service-specific configs
     global_settings: dict         # System-wide settings
     updated_at: int               # Last update timestamp
     updated_by: str | None        # Last updater user ID
@@ -251,7 +251,7 @@ class ServiceConfig(BaseModel):
     polling_interval: int      # Seconds (30-3600)
     thresholds: dict           # Service-specific alert thresholds
     resource_filters: dict     # Resource filtering rules
-    severity_rules: list[dict] # Severity determination logic
+    severity_rules: all[dict] # Severity determination logic
 ```
 
 ---
@@ -264,7 +264,7 @@ class ServiceConfig(BaseModel):
 # repositories.py
 class IEventRepository(Protocol):
     def get(self, id: str) -> Event: ...
-    def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult: ...
+    def all(self, dto: ListEventsDTO | None = None) -> EventQueryResult: ...
     def create(self, entity: Event) -> None: ...
     def delete(self, id: str) -> None: ...
 
@@ -273,7 +273,7 @@ class ITaskRepository(Protocol):
     def create(self, entity: Task) -> None: ...
     def update(self, entity: Task) -> None: ...
     def delete(self, task_id: str) -> None: ...
-    def list(self, dto: ListTasksDTO) -> TaskListResult: ...
+    def all(self, dto: ListTasksDTO) -> TaskListResult: ...
 
 class IUserRepository(Protocol):
     def get(self, user_id: str) -> User: ...
@@ -293,11 +293,11 @@ class IReportNotifier(Protocol):
 class ILogService(Protocol):
     def query_logs(
         self,
-        log_group_names: list[str],
+        log_group_names: all[str],
         query_string: str,
         start_time: int,
         end_time: int,
-    ) -> list[ResultFieldTypeDef]: ...
+    ) -> all[ResultFieldTypeDef]: ...
 
 # publisher.py
 class IPublisher(Protocol):
@@ -544,7 +544,7 @@ class EventRepository(DynamoRepository):
         model = self._get(hash_key="EVENT", range_key=f"EVENT#{id}")
         return self.mapper.to_entity(model)
 
-    def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
+    def all(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
         """List events with pagination and filtering."""
         dto = dto or ListEventsDTO()
 
@@ -577,7 +577,7 @@ class EventRepository(DynamoRepository):
             cursor=result.last_evaluated_key,
         )
 
-    def list_by_source(self, source: str, ...) -> list[Event]:
+    def list_by_source(self, source: str, ...) -> all[Event]:
         """Query events by source using GSI1."""
         result = self._query(
             hash_key=f"SOURCE#{source}",
@@ -614,12 +614,12 @@ class CloudwatchLogService(metaclass=SingletonMeta):
 
     def query_logs(
         self,
-        log_group_names: list[str],
+        log_group_names: all[str],
         query_string: str,
         start_time: int,
         end_time: int,
         timeout: int = 15,
-    ) -> list[ResultFieldTypeDef]:
+    ) -> all[ResultFieldTypeDef]:
         """Execute CloudWatch Logs Insights query."""
         # Start async query
         response = self.client.start_query(
@@ -912,7 +912,6 @@ def handler(event: dict, context: LambdaContext) -> dict:
 - `POST /auth/login` → Authenticate user, return tokens
 - `POST /auth/refresh` → Refresh access token
 - `POST /auth/logout` → Invalidate refresh token
-- `GET /auth/me` → Get current user profile
 
 **Events Module** (`events/main.py`):
 - `GET /events` → List events with pagination
@@ -931,6 +930,7 @@ def handler(event: dict, context: LambdaContext) -> dict:
 **Users Module** (`users/main.py`):
 - `GET /users` → List all users (admin only)
 - `GET /users/{id}` → Get user by ID
+- `GET /users/me` → Get current user profile
 - `POST /users` → Create new user (admin only)
 - `PUT /users/{id}` → Update user
 - `DELETE /users/{id}` → Delete user (admin only)
@@ -1530,59 +1530,62 @@ def sample_task():
 ### Testing Patterns
 
 **Repository Tests** (`tests/adapters/repositories/test_event.py`):
+
 ```python
 def test_create_event(dynamodb_table, sample_event):
-    """Test event creation in DynamoDB."""
-    repo = EventRepository()
+  """Test event creation in DynamoDB."""
+  repo = EventRepository()
 
-    # Create event
-    repo.create(sample_event)
+  # Create event
+  repo.create(sample_event)
 
-    # Verify persistence
-    retrieved = repo.get(sample_event.id)
-    assert retrieved.id == sample_event.id
-    assert retrieved.severity == sample_event.severity
+  # Verify persistence
+  retrieved = repo.get(sample_event.id)
+  assert retrieved.id == sample_event.id
+  assert retrieved.severity == sample_event.severity
+
 
 def test_list_events_with_date_filter(dynamodb_table):
-    """Test event listing with date range."""
-    repo = EventRepository()
+  """Test event listing with date range."""
+  repo = EventRepository()
 
-    # Create events with different timestamps
-    events = [create_event(published_at=ts) for ts in [100, 200, 300]]
-    for event in events:
-        repo.create(event)
+  # Create events with different timestamps
+  events = [create_event(published_at=ts) for ts in [100, 200, 300]]
+  for event in events:
+    repo.create(event)
 
-    # Query with date filter
-    dto = ListEventsDTO(start_date=150, end_date=250)
-    result = repo.list(dto)
+  # Query with date filter
+  dto = ListEventsDTO(start_date=150, end_date=250)
+  result = repo.all(dto)
 
-    # Verify filtering
-    assert len(result.items) == 1
-    assert result.items[0].published_at == 200
+  # Verify filtering
+  assert len(result.items) == 1
+  assert result.items[0].published_at == 200
 ```
 
 **Integration Tests** (`tests/integrations/functions/test_handle_monitoring_events.py`):
+
 ```python
 @mock_aws
 def test_handle_cloudwatch_alarm(alarm_event_json):
-    """Test handling CloudWatch alarm event."""
-    # Mock dependencies
-    event_repo = EventRepository()
-    notifier = MockNotifier()
+  """Test handling CloudWatch alarm event."""
+  # Mock dependencies
+  event_repo = EventRepository()
+  notifier = MockNotifier()
 
-    # Load test event
-    event = EventBridgeEvent(alarm_event_json)
+  # Load test event
+  event = EventBridgeEvent(alarm_event_json)
 
-    # Execute handler
-    insert_monitoring_event_use_case(event, event_repo, notifier)
+  # Execute handler
+  insert_monitoring_event_use_case(event, event_repo, notifier)
 
-    # Verify event stored
-    events = event_repo.list()
-    assert len(events.items) == 1
-    assert events.items[0].source == "aws.cloudwatch"
+  # Verify event stored
+  events = event_repo.all()
+  assert len(events.items) == 1
+  assert events.items[0].source == "aws.cloudwatch"
 
-    # Verify notification sent
-    assert notifier.call_count == 1
+  # Verify notification sent
+  assert notifier.call_count == 1
 ```
 
 **API Tests** (`tests/integrations/api/test_events.py`):
@@ -1676,7 +1679,7 @@ functions:
   # API functions (33 endpoints)
   AuthLogin: ${file(infra/functions/api/Auth-Login.yml)}
   ListTasks: ${file(infra/functions/api/Tasks-List.yml)}
-  # ... (see infra/functions/api/ for complete list)
+  # ... (see infra/functions/api/ for complete all)
 
 # Resources (imported from separate files)
 resources:
@@ -1922,7 +1925,7 @@ class Notification(BaseModel):
 ```python
 class INotificationRepository(Protocol):
     def create(self, entity: Notification) -> None: ...
-    def get_by_user(self, user_id: str) -> list[Notification]: ...
+    def get_by_user(self, user_id: str) -> all[Notification]: ...
     def mark_as_read(self, notification_id: str) -> None: ...
 ```
 
@@ -1936,7 +1939,7 @@ class NotificationRepository(DynamoRepository):
         model = self.mapper.to_persistence(entity)
         self._create(model)
 
-    def get_by_user(self, user_id: str) -> list[Notification]:
+    def get_by_user(self, user_id: str) -> all[Notification]:
         result = self._query(
             hash_key=f"USER#{user_id}",
             index=self.model_cls.gsi1,
@@ -2118,6 +2121,7 @@ print(f"Event: {event.source} - {event.detail_type}")
 ```
 
 **By Date Range**:
+
 ```python
 from src.domain.models.event import ListEventsDTO
 from datetime import datetime, timedelta
@@ -2127,16 +2131,16 @@ end_time = int(datetime.now().timestamp())
 start_time = int((datetime.now() - timedelta(days=1)).timestamp())
 
 dto = ListEventsDTO(
-    start_date=start_time,
-    end_date=end_time,
-    limit=50,
-    direction="desc",
+  start_date=start_time,
+  end_date=end_time,
+  limit=50,
+  direction="desc",
 )
 
-result = repo.list(dto)
+result = repo.all(dto)
 print(f"Found {len(result.items)} events")
 for event in result.items:
-    print(f"- {event.get_severity_label()}: {event.detail_type}")
+  print(f"- {event.get_severity_label()}: {event.detail_type}")
 ```
 
 **By Source**:

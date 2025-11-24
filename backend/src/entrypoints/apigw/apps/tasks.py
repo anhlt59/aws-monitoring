@@ -7,6 +7,7 @@ from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
+from entrypoints.apigw.core.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.domain.models.task import TaskPriority, TaskStatus
 from src.domain.use_cases.tasks import (
     AddCommentDTO,
@@ -23,7 +24,6 @@ from src.domain.use_cases.tasks import (
     UpdateTaskStatusDTO,
 )
 from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.entrypoints.apigw.middleware.auth import get_auth_context
 
 # Create app

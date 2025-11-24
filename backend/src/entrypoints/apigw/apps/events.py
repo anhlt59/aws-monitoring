@@ -5,13 +5,13 @@ from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
+from entrypoints.apigw.core.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.adapters.db.repositories import EventRepository
 from src.common.utils.encoding import json_to_base64
 from src.domain.models.event import ListEventsDTO
 from src.domain.models.task import TaskPriority
 from src.domain.use_cases.tasks import CreateTaskFromEvent, CreateTaskFromEventDTO
 from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.entrypoints.apigw.middleware.auth import get_auth_context
 
 app = create_app(
@@ -55,7 +55,7 @@ def list_events(
         direction=direction,
         cursor=cursor,
     )
-    result = event_repo.list(dto)
+    result = event_repo.all(dto)
     return {
         "items": result.items,
         "limit": limit,

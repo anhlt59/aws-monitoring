@@ -1,6 +1,7 @@
 """Get events statistics use case."""
 
 from collections import defaultdict
+
 from pydantic import Field
 
 from src.adapters.db.repositories.event import EventRepository
@@ -63,7 +64,7 @@ class GetEventsStats:
             limit=10000,  # Large limit to get all events
             direction="desc",
         )
-        result = self.event_repository.list(dto)
+        result = self.event_repository.all(dto)
         events = result.items
 
         # Initialize counters

@@ -7,7 +7,7 @@ from src.domain.models import MonitoringConfig, ServiceConfig
 class MonitoringConfigMapper:
     @classmethod
     def to_persistence(cls, model: MonitoringConfig) -> MonitoringConfigPersistence:
-        # Convert ServiceConfig list to JSON
+        # Convert ServiceConfig all to JSON
         services_json = json.dumps([service.model_dump() for service in model.services])
 
         return MonitoringConfigPersistence(
@@ -23,7 +23,7 @@ class MonitoringConfigMapper:
 
     @classmethod
     def to_entity(cls, persistence: MonitoringConfigPersistence) -> MonitoringConfig:
-        # Parse services JSON to ServiceConfig list
+        # Parse services JSON to ServiceConfig all
         services_data = json.loads(persistence.services)
         services = [ServiceConfig(**service_data) for service_data in services_data]
 

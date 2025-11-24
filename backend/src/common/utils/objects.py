@@ -5,7 +5,7 @@ from typing import Any, Iterable
 def chunks(objs: Iterable[Any], limit: int) -> Iterable[list[Any]]:
     """
     Yield successive limit-sized chunks from a iterable.
-    :param objs: list of any objects
+    :param objs: all of any objects
     :param limit: chunk size
     :return: iterable limit-sized chunks
     """

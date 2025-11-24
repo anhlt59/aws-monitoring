@@ -1,9 +1,8 @@
 """Generate authentication tokens use case."""
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
-from src.adapters.auth.jwt import jwt_service
-from src.common.models import BaseModel
+from src.adapters.auth.jwt import JWTService
 from src.domain.models.user import User
 
 
@@ -17,11 +16,8 @@ class AuthTokensDTO(BaseModel):
 
 
 class GenerateAuthTokens:
-    """
-    Use case for generating JWT authentication tokens.
-
-    Generates both access and refresh tokens for an authenticated user.
-    """
+    def __init__(self, jwt_service: JWTService):
+        self.jwt_service = jwt_service
 
     def execute(self, user: User, remember_me: bool = False) -> AuthTokensDTO:
         """
@@ -35,7 +31,7 @@ class GenerateAuthTokens:
             AuthTokensDTO with access and refresh tokens
         """
         # Generate access token
-        access_token = jwt_service.generate_access_token(
+        access_token = self.jwt_service.generate_access_token(
             user_id=user.id,
             email=user.email,
             role=user.role.value,
@@ -43,14 +39,14 @@ class GenerateAuthTokens:
         )
 
         # Generate refresh token
-        refresh_token = jwt_service.generate_refresh_token(user_id=user.id)
+        refresh_token = self.jwt_service.generate_refresh_token(user_id=user.id)
 
         # Get expiration time
-        expires_in = jwt_service.get_token_expiration(remember_me=remember_me)
+        expires_in = self.jwt_service.get_token_expiration(remember_me=remember_me)
 
         return AuthTokensDTO(
             access_token=access_token,
             refresh_token=refresh_token,
-            token_type="Bearer",
+            token_type="Bearer",  # nosec
             expires_in=expires_in,
         )

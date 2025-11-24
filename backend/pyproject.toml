@@ -18,9 +18,8 @@ dependencies = [
   "dependency-injector~=4.48.0",
   "jinja2~=3.1.0",
   "pyjwt~=2.8.0",
-  "bcrypt~=4.1.0",
-  "passlib[bcrypt]~=1.7.0",
   "python-multipart~=0.0.20",
+  "werkzeug~=3.1.4",
 ]
 
 [dependency-groups]
@@ -32,10 +31,8 @@ local = [
   "boto3~=1.40.0",
   "ruff~=0.14.0",
   "bandit~=1.8.0",
-  "rich~=14.2.0",
   "SuperClaude>=4.1.0",
-  "questionary~=2.0.0",
-  "pyyaml~=6.0.0",
+  "ipython (>=9.7.0,<10.0.0)",
 ]
 # Testing dependencies. -------------------------------------
 test = [

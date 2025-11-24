@@ -6,6 +6,7 @@ from typing import Annotated
 from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
+from entrypoints.apigw.core.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.domain.use_cases.dashboard import (
     GetDashboardOverview,
     GetEventsStats,
@@ -13,7 +14,6 @@ from src.domain.use_cases.dashboard import (
     GetUsersStats,
 )
 from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 from src.entrypoints.apigw.middleware.auth import get_auth_context
 
 # Create app

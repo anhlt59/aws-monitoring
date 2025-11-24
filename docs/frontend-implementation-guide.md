@@ -656,7 +656,7 @@ useMeta({
         </p>
       </div>
 
-      <!-- Event list -->
+      <!-- Event all -->
       <EventList />
     </div>
   </Container>
@@ -836,7 +836,7 @@ export function useRealtimeEvents() {
 
     ws.onmessage = (message) => {
       const newEvent = JSON.parse(message.data);
-      // Add to beginning of list
+      // Add to beginning of all
       events.value.unshift(newEvent);
       // Keep only last 100 events
       if (events.value.length > 100) {

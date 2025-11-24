@@ -3,76 +3,30 @@
 from http import HTTPStatus
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from pydantic import BaseModel, Field
+from dependency_injector.wiring import Provide, inject
 
+from domain.use_cases.auth import AuthenticateUserDTO, LogoutUserDTO, RefreshTokenDTO
 from src.domain.models.user import UserProfile
-from src.domain.use_cases.auth import (
-    AuthenticateUser,
-    AuthenticateUserDTO,
-    GenerateAuthTokens,
-    GetCurrentUser,
-    LogoutUser,
-    LogoutUserDTO,
-    RefreshAuthToken,
-    RefreshTokenDTO,
-)
 from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
-from src.entrypoints.apigw.middleware.auth import get_auth_context
+
+from .container import Container
+from .models import LoginRequest, LoginResponse, RefreshRequest, RefreshResponse
 
 # Create app
-app = create_app(
-    cors_allow_origin=CORS_ALLOW_ORIGIN,
-    cors_max_age=CORS_MAX_AGE,
-)
-
-# Initialize use cases
-authenticate_user_uc = AuthenticateUser()
-generate_tokens_uc = GenerateAuthTokens()
-refresh_token_uc = RefreshAuthToken()
-logout_user_uc = LogoutUser()
-get_current_user_uc = GetCurrentUser()
-
-
-# Request/Response models
-class LoginRequest(BaseModel):
-    """Login request model."""
-
-    email: str = Field(..., description="User email")
-    password: str = Field(..., description="User password")
-    remember_me: bool = Field(default=False, description="Extend token expiration to 30 days")
-
-
-class LoginResponse(BaseModel):
-    """Login response model."""
-
-    access_token: str
-    refresh_token: str
-    token_type: str
-    expires_in: int
-    user: UserProfile
-
-
-class RefreshRequest(BaseModel):
-    """Refresh token request model."""
-
-    refresh_token: str = Field(..., description="JWT refresh token")
-
-
-class RefreshResponse(BaseModel):
-    """Refresh token response model."""
-
-    access_token: str
-    token_type: str
-    expires_in: int
+container = Container()
+app = create_app()
 
 
 # API Routes
 @app.post("/auth/login")
-def login(login_request: LoginRequest):
+@inject
+def login(
+    login_request: LoginRequest,
+    authenticate_user_uc=Provide[Container.authenticate_user_uc],
+    generate_tokens_uc=Provide[Container.generate_tokens_uc],
+):
     """
     User login endpoint.
-
     Authenticate user with email and password, return JWT tokens.
     """
     # Authenticate user
@@ -86,7 +40,7 @@ def login(login_request: LoginRequest):
     tokens = generate_tokens_uc.execute(user, remember_me=login_request.remember_me)
 
     # Convert user to profile (exclude password_hash)
-    user_profile = UserProfile.from_user(user)
+    user_profile = UserProfile.model_validate(user)
 
     # Return response
     response = LoginResponse(
@@ -101,10 +55,13 @@ def login(login_request: LoginRequest):
 
 
 @app.post("/auth/refresh")
-def refresh_token(refresh_request: RefreshRequest):
+@inject
+def refresh_token(
+    refresh_request: RefreshRequest,
+    refresh_token_uc=Provide[Container.refresh_token_uc],
+):
     """
     Refresh access token endpoint.
-
     Use refresh token to obtain a new access token.
     """
     # Refresh token
@@ -122,17 +79,18 @@ def refresh_token(refresh_request: RefreshRequest):
 
 
 @app.post("/auth/logout")
-def logout():
+@inject
+def logout(logout_user_uc: Provide[Container.logout_user_uc]):
     """
     User logout endpoint.
 
     Invalidate current access token (client-side).
     """
     # Get auth context (validates token)
-    auth = get_auth_context(app)
+    # auth = get_auth_context(app)
 
     # Extract token from header (for potential blacklisting)
-    auth_header = app.current_event.get_header_value("Authorization")
+    auth_header = app.current_event.headers.get("Authorization")
     token = auth_header.split()[1] if auth_header else ""
 
     # Logout (currently a no-op, handled client-side)
@@ -141,22 +99,6 @@ def logout():
 
     # Return 204 No Content
     return None, HTTPStatus.NO_CONTENT
-
-
-@app.get("/auth/me")
-def get_me():
-    """
-    Get current user profile endpoint.
-
-    Returns authenticated user's profile information.
-    """
-    # Get auth context
-    auth = get_auth_context(app)
-
-    # Get user profile
-    user_profile = get_current_user_uc.execute(auth.user_id)
-
-    return user_profile.model_dump(), HTTPStatus.OK
 
 
 # Lambda handler

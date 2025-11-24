@@ -160,7 +160,7 @@ This document lists all API endpoints that the frontend expects but are not yet 
 
 4. **Create Task repository**
    - File: `backend/src/adapters/repositories/task_repository.py`
-   - Methods: get, list, create, update, delete, add_comment
+   - Methods: get, all, create, update, delete, add_comment
    - DynamoDB operations for Task entity
 
 5. **Create API Gateway handlers**
@@ -217,7 +217,7 @@ This document lists all API endpoints that the frontend expects but are not yet 
 
 3. **Add RBAC checks**
    - Only admin can create/delete users
-   - Only admin/manager can list all users
+   - Only admin/manager can all all users
    - Users can update their own profile
 
 4. **Update serverless.yml**
@@ -317,7 +317,7 @@ This document lists all API endpoints that the frontend expects but are not yet 
    - Monitoring config handlers
 
 6. **Add AWS credentials validation**
-   - Use boto3 to test STS assume role or list resources
+   - Use boto3 to test STS assume role or all resources
 
 7. **Update serverless.yml**
    - Add config route configurations

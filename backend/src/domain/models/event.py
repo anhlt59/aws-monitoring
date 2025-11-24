@@ -1,3 +1,5 @@
+import re
+
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from src.common.utils.datetime_utils import current_utc_timestamp
@@ -35,7 +37,6 @@ class Event(BaseModel):
     @classmethod
     def validate_region(cls, value: str) -> str:
         """Validate AWS region format."""
-        import re
 
         if not re.match(r"^[a-z]{2}-[a-z]+-\d{1}$", value):
             raise ValueError("Invalid AWS region format")
@@ -60,7 +61,7 @@ class Event(BaseModel):
     @model_validator(mode="after")
     def set_expired_at(self):
         """Ensure expired_at is set based on published_at if not provided."""
-        if self.expired_at == 0 or self.expired_at < self.published_at:
+        if not self.expired_at or self.expired_at < self.published_at:
             self.expired_at = self.published_at + (DEFAULT_TTL_DAYS * SECONDS_PER_DAY)
         return self
 

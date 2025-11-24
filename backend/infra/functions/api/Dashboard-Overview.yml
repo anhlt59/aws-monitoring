@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-DashboardOverview
   description: Get dashboard overview with all statistics, triggered by API Gateway
-  handler: src.entrypoints.apigw.dashboard.main.handler
+  handler: src.entrypoints.apigw.routes.dashboard.handler
   events:
     - http:
         method: GET

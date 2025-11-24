@@ -1,3 +1,5 @@
+from typing import List
+
 from src.adapters.db.mappers import EventMapper
 from src.adapters.db.models import EventPersistence
 from src.adapters.db.repositories.base import DynamoRepository
@@ -13,7 +15,7 @@ class EventRepository(DynamoRepository):
         model = self._get(hash_key="EVENT", range_key=id)
         return self.mapper.to_entity(model)
 
-    def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
+    def all(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
         """List all events with optional time range filtering."""
         if dto is None:
             dto = ListEventsDTO()
@@ -44,7 +46,7 @@ class EventRepository(DynamoRepository):
             cursor=result.last_evaluated_key,
         )
 
-    def list_by_source(self, source: str, start_date: int | None = None, end_date: int | None = None) -> list[Event]:
+    def list_by_source(self, source: str, start_date: int | None = None, end_date: int | None = None) -> List[Event]:
         """List events by source with optional time range."""
         if start_date and end_date:
             range_key_condition = self.model_cls.gsi1sk.between(f"EVENT#{start_date}", f"EVENT#{end_date}")

@@ -136,12 +136,12 @@ These endpoints have both handler code and configuration files but are commented
   "detail_type": str,      # Event detail type
   "detail": dict,          # Event-specific details
   "severity": int,         # Severity level (0-4)
-  "resources": list,       # Affected resources
+  "resources": all,       # Affected resources
   "published_at": int,     # Unix timestamp
   "updated_at": int,       # Unix timestamp
   "acknowledged": bool,    # Acknowledgment status
   "notes": str,            # User notes
-  "tags": list             # Custom tags
+  "tags": all             # Custom tags
 }
 ```
 
@@ -257,12 +257,12 @@ These endpoints are defined in `/home/user/aws-monitoring/docs/api-specification
 
 1. **EventRepository** (`event.py`)
    - `get(event_id)` - Get event by ID
-   - `list(dto)` - List events with filtering and pagination
+   - `all(dto)` - List events with filtering and pagination
    - Methods for CRUD operations
 
 2. **AgentRepository** (`agent.py`)
    - `get(agent_id)` - Get agent by ID
-   - `list()` - List all agents
+   - `all()` - List all agents
    - Methods for deployment status updates
 
 ### DynamoDB Table

@@ -1,25 +1,16 @@
 """Refresh authentication token use case."""
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.adapters.auth.jwt import jwt_service
 from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import UnauthorizedError
-from src.common.models import BaseModel
 
 
 class RefreshTokenDTO(BaseModel):
     """Data transfer object for token refresh."""
 
     refresh_token: str = Field(..., description="JWT refresh token")
-
-
-class NewAccessTokenDTO(BaseModel):
-    """Data transfer object for new access token."""
-
-    access_token: str = Field(..., description="New JWT access token")
-    token_type: str = Field(default="Bearer", description="Token type")
-    expires_in: int = Field(..., description="Access token expiration time in seconds")
 
 
 class RefreshAuthToken:
