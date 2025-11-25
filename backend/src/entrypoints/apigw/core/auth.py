@@ -30,18 +30,6 @@ class AuthContext:
         """Check if user has admin role."""
         return self.role == "admin"
 
-    def has_role(self, required_role: str) -> bool:
-        """
-        Check if user has the required role.
-
-        Args:
-            required_role: Required role
-
-        Returns:
-            True if user has the role
-        """
-        return self.role == required_role
-
 
 def extract_token_from_header(app: APIGatewayRestResolver) -> str | None:
     """
@@ -172,11 +160,6 @@ def require_role(*allowed_roles: str) -> Callable:
         @require_role("admin")
         def admin_endpoint():
             return {"message": "Admin only"}
-
-        @app.get("/moderator")
-        @require_role("admin", "moderator")
-        def moderator_endpoint():
-            return {"message": "Admin or moderator"}
 
     Args:
         *allowed_roles: Allowed role names

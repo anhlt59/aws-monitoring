@@ -3,71 +3,22 @@
 from http import HTTPStatus
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from dependency_injector import containers, providers
-from pydantic import BaseModel, Field
 
-from src.domain.models.user import UserProfile
-from src.domain.use_cases.auth import (
-    AuthenticateUser,
+from src.domain.models.user import (
     AuthenticateUserDTO,
-    GenerateAuthTokens,
-    LogoutUser,
     LogoutUserDTO,
-    RefreshAuthToken,
     RefreshTokenDTO,
+    UserProfile,
 )
 from src.entrypoints.apigw.base import create_app
 from src.entrypoints.apigw.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
 
-
-class Container(containers.DeclarativeContainer):
-    from src.adapters.db.repositories import UserRepository
-
-    # Repositories
-    user_repository = providers.Singleton(UserRepository)
-    # Use Cases
-    authenticate_user_uc = providers.Factory(AuthenticateUser, user_repository=user_repository)
-    generate_tokens_uc = providers.Factory(GenerateAuthTokens)
-    refresh_token_uc = providers.Factory(RefreshAuthToken, user_repository=user_repository)
-    logout_user_uc = providers.Factory(LogoutUser)
-
+from .container import Container
+from .models import LoginRequest, LoginResponse, RefreshRequest, RefreshResponse
 
 # Create app
 container = Container()
 app = create_app(cors_allow_origin=CORS_ALLOW_ORIGIN, cors_max_age=CORS_MAX_AGE)
-
-
-# Request/Response models
-class LoginRequest(BaseModel):
-    """Login request model."""
-
-    email: str = Field(..., description="User email")
-    password: str = Field(..., description="User password")
-    remember_me: bool = Field(default=False, description="Extend token expiration to 30 days")
-
-
-class LoginResponse(BaseModel):
-    """Login response model."""
-
-    access_token: str
-    refresh_token: str
-    token_type: str
-    expires_in: int
-    user: UserProfile
-
-
-class RefreshRequest(BaseModel):
-    """Refresh token request model."""
-
-    refresh_token: str = Field(..., description="JWT refresh token")
-
-
-class RefreshResponse(BaseModel):
-    """Refresh token response model."""
-
-    access_token: str
-    token_type: str
-    expires_in: int
 
 
 # API Routes
@@ -92,7 +43,7 @@ def login(login_request: LoginRequest):
     tokens = generate_tokens_uc.execute(user, remember_me=login_request.remember_me)
 
     # Convert user to profile (exclude password_hash)
-    user_profile = UserProfile.from_user(user)
+    user_profile = UserProfile.model_validate(user)
 
     # Return response
     response = LoginResponse(

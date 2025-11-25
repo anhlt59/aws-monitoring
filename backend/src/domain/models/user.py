@@ -2,9 +2,8 @@
 
 from enum import Enum
 
-from pydantic import Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from src.common.models import BaseModel
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 
@@ -21,23 +20,13 @@ class User(BaseModel):
     and authorization capabilities.
     """
 
-    # Identity
     id: str  # User UUID
     email: str
     full_name: str
     password_hash: str  # Bcrypt hashed password (never exposed in API)
-
-    # Authorization
     role: UserRole = UserRole.USER
-
-    # Timestamps
     created_at: int = Field(default_factory=current_utc_timestamp)
     updated_at: int = Field(default_factory=current_utc_timestamp)
-
-    @property
-    def persistence_id(self) -> str:
-        """DynamoDB sort key for user."""
-        return self.id
 
     @field_validator("email")
     @classmethod
@@ -60,7 +49,6 @@ class User(BaseModel):
         return value
 
     def is_admin(self) -> bool:
-        """Check if user is an admin."""
         return self.role == UserRole.ADMIN
 
 
@@ -76,13 +64,4 @@ class UserProfile(BaseModel):
     role: UserRole
     created_at: int
 
-    @classmethod
-    def from_user(cls, user: User) -> "UserProfile":
-        """Create profile from User entity."""
-        return cls(
-            id=user.id,
-            email=user.email,
-            full_name=user.full_name,
-            role=user.role,
-            created_at=user.created_at,
-        )
+    model_config = ConfigDict(from_attributes=True)

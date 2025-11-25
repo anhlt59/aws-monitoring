@@ -1,9 +1,8 @@
 """Generate authentication tokens use case."""
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.adapters.auth.jwt import jwt_service
-from src.common.models import BaseModel
 from src.domain.models.user import User
 
 
@@ -17,12 +16,6 @@ class AuthTokensDTO(BaseModel):
 
 
 class GenerateAuthTokens:
-    """
-    Use case for generating JWT authentication tokens.
-
-    Generates both access and refresh tokens for an authenticated user.
-    """
-
     def execute(self, user: User, remember_me: bool = False) -> AuthTokensDTO:
         """
         Generate authentication tokens for user.

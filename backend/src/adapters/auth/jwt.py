@@ -1,24 +1,31 @@
 """JWT token management service."""
 
-import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
+from src.common.constants import (
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
+    JWT_ALGORITHM,
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS,
+    JWT_SECRET_KEY,
+)
 from src.common.exceptions import AuthenticationError
 
 
 class JWTService:
     """Service for managing JWT tokens."""
 
-    def __init__(self):
+    def __init__(
+        self, secret_key: str, algorithm: str, access_token_expire_minutes: int, refresh_token_expire_days: int
+    ):
         """Initialize JWT service with configuration from environment."""
-        self.secret_key = os.getenv("JWT_SECRET_KEY", "dev-secret-key-change-in-production")
-        self.algorithm = os.getenv("JWT_ALGORITHM", "HS256")
-        self.access_token_expire_minutes = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
-        self.refresh_token_expire_days = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRE_DAYS", "30"))
+        self.secret_key = secret_key
+        self.algorithm = algorithm
+        self.access_token_expire_minutes = access_token_expire_minutes
+        self.refresh_token_expire_days = refresh_token_expire_days
 
     def generate_access_token(self, user_id: str, email: str, role: str, remember_me: bool = False) -> str:
         """
@@ -147,5 +154,9 @@ class JWTService:
         return self.access_token_expire_minutes * 60
 
 
-# Singleton instance
-jwt_service = JWTService()
+jwt_service = JWTService(
+    secret_key=JWT_SECRET_KEY,
+    algorithm=JWT_ALGORITHM,
+    access_token_expire_minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES,
+    refresh_token_expire_days=JWT_REFRESH_TOKEN_EXPIRE_DAYS,
+)
