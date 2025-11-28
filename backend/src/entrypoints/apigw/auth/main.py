@@ -94,7 +94,7 @@ def logout():
 
     # Logout (currently a no-op, handled client-side)
     logout_dto = LogoutUserDTO(access_token=token)
-    logout_user_uc.execute(logout_dto)
+    # logout_user_uc.execute(logout_dto)
 
     # Return 204 No Content
     return None, HTTPStatus.NO_CONTENT

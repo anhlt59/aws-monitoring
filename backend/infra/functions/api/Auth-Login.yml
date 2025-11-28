@@ -1,7 +1,7 @@
 function:
   name: ${self:service}-${self:provider.stage}-AuthLogin
   description: User login endpoint, triggered by API Gateway
-  handler: src.entrypoints.apigw.routes.auth.handler
+  handler: src.entrypoints.apigw.auth.main.handler
   events:
     - http:
         method: POST
