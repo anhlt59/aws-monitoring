@@ -1,15 +1,14 @@
 from dependency_injector import containers, providers
 
-from src.domain.use_cases.auth import (
-    AuthenticateUser,
-    GenerateAuthTokens,
-    LogoutUser,
-    RefreshAuthToken,
-)
-
 
 class Container(containers.DeclarativeContainer):
     from src.adapters.db.repositories import UserRepository
+    from src.domain.use_cases.auth import (
+        AuthenticateUser,
+        GenerateAuthTokens,
+        LogoutUser,
+        RefreshAuthToken,
+    )
 
     # Repositories
     user_repository = providers.Singleton(UserRepository)

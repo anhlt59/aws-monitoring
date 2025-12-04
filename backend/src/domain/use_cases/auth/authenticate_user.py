@@ -19,17 +19,7 @@ class AuthenticateUser:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    def execute(self, dto: AuthenticateUserDTO) -> User:
-        """
-        Authenticate user with email and password.
-        Args:
-            dto: Authentication data (email and password)
-        Returns:
-            Authenticated User entity
-        Raises:
-            UnauthorizedError: If credentials are invalid or user not found
-        """
-
+    def execute(self, email: str, password: str) -> User:
         # Normalize email
         email = dto.email.lower().strip()
 

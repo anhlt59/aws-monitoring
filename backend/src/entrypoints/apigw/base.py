@@ -30,33 +30,6 @@ jwt_service = JWTService(
 )
 
 
-# class SessionContext(BaseModel):
-#     user_id: str
-#     email: str
-#     role: str
-
-
-# class APIGatewayResolver(APIGatewayRestResolver):
-#     """Custom APIGatewayRestResolver."""
-#     container: DeclarativeContainer
-#     session: SessionContext
-#
-#     def __init__(self, container: DeclarativeContainer, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.append_context(container=container)
-#
-#     @property
-#     def container(self) -> DeclarativeContainer:
-#         return self.context.get("container")
-#
-#     @property
-#     def session(self) -> SessionContext:
-#         return self.context.get("session")
-#
-#     def inject_session(self, session: SessionContext) -> None:
-#         self.append_context(session=session)
-
-
 def _inspect_app(*args, **kwargs) -> APIGatewayRestResolver:
     # Get app instance from args (first positional argument is typically 'self' or app)
     for arg in args:
