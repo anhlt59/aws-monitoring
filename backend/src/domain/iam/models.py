@@ -1,5 +1,3 @@
-"""User domain model and related enums."""
-
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -24,7 +22,6 @@ class User(BaseModel):
     @field_validator("email")
     @classmethod
     def validate_email(cls, value: str) -> str:
-        """Validate email format."""
         value = value.lower().strip()
         if "@" not in value or "." not in value.split("@")[1]:
             raise ValueError("Invalid email format")
@@ -33,7 +30,6 @@ class User(BaseModel):
     @field_validator("full_name")
     @classmethod
     def validate_full_name(cls, value: str) -> str:
-        """Validate full name is not empty."""
         value = value.strip()
         if not value or len(value) < 2:
             raise ValueError("Full name must be at least 2 characters")

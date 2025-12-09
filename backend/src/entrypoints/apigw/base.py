@@ -20,7 +20,7 @@ from src.common.constants import (
 )
 from src.common.exceptions import UnauthorizedError
 
-__all__ = ["login_required", "admin_required", "create_app"]
+__all__ = ["login_required", "admin_required", "create_app", "jwt_service"]
 
 jwt_service = JWTService(
     secret_key=JWT_SECRET_KEY,

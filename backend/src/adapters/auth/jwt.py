@@ -11,15 +11,15 @@ from src.common.exceptions import UnauthorizedError
 
 class JWTService:
     def __init__(
-        self, secret_key: str, algorithm: str, access_token_expire_minutes: int, refresh_token_expire_days: int
+            self, secret_key: str, algorithm: str, access_token_expire_minutes: int, refresh_token_expire_days: int
     ):
         self.secret_key = secret_key
         self.algorithm = algorithm
         self.access_token_expire_minutes = access_token_expire_minutes
         self.refresh_token_expire_days = refresh_token_expire_days
 
-    def generate_access_token(self, user_id: str, email: str, role: str, remember_me: bool = False) -> str:
-        expire_minutes = self.refresh_token_expire_days * 24 * 60 if remember_me else self.access_token_expire_minutes
+    def generate_access_token(self, user_id: str, email: str, role: str) -> str:
+        expire_minutes = self.refresh_token_expire_days * 24 * 60
         expire = datetime.now(timezone.utc) + timedelta(minutes=expire_minutes)
 
         payload = {
@@ -63,7 +63,6 @@ class JWTService:
 
         return payload
 
-    def get_token_expiration(self, remember_me: bool = False) -> int:
-        if remember_me:
-            return self.refresh_token_expire_days * 24 * 60 * 60
+    def get_token_expiration(self) -> int:
         return self.access_token_expire_minutes * 60
+
