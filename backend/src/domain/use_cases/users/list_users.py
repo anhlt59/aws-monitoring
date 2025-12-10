@@ -57,7 +57,7 @@ class ListUsers:
         if dto.role:
             users = self.user_repository.list_by_role(dto.role)
         else:
-            users = self.user_repository.list_all()
+            users = self.user_repository.all()
 
         # Apply search filter
         if dto.search:

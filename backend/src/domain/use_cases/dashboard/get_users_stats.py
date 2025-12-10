@@ -42,7 +42,7 @@ class GetUsersStats:
             UsersStatsDTO with aggregated statistics
         """
         # Get all users
-        users = self.user_repository.list_all()
+        users = self.user_repository.all()
 
         # Initialize counters
         by_role = defaultdict(int)

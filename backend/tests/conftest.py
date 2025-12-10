@@ -45,5 +45,5 @@ def user_repo():
     repo = UserRepository()
     yield repo
     # Cleanup
-    for item in repo.list().items:
+    for item in repo.all():
         repo.delete(item.id)

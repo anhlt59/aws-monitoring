@@ -1,4 +1,4 @@
-from typing import Any, List, Type, TypeVar
+from typing import Any, List, Type, TypeVar, Generic
 
 from pydantic import BaseModel
 from pynamodb.attributes import Attribute
@@ -10,6 +10,12 @@ from src.adapters.db.models import DynamoModel
 from src.common.exceptions import ConflictError, InternalServerError, NotFoundError, UnprocessedError
 
 M = TypeVar("M", bound=BaseModel)
+
+
+class QueryResult(BaseModel, Generic[M]):
+    items: list[M]
+    limit: int = 50
+    cursor: dict | None = None
 
 
 class DynamoRepository[M: DynamoModel]:

@@ -1,7 +1,11 @@
+from common.utils.encoding import base64_to_json
 from src.adapters.db.mappers import UserMapper
 from src.adapters.db.models import UserPersistence
-from src.adapters.db.repositories.base import DynamoRepository
 from src.domain.models import User, UserRole
+
+from .base import DynamoRepository, QueryResult
+
+UserQueryResult = QueryResult[User]
 
 
 class UserRepository(DynamoRepository):
@@ -28,18 +32,48 @@ class UserRepository(DynamoRepository):
             raise NotFoundError(f"User with email {email} not found")
         return self.mapper.to_entity(items[0])
 
-    def list_all(self) -> list[User]:
+    def all(
+        self,
+        direction: str = "desc",
+        limit: int = 50,
+        cursor: str | None = None
+    ) -> UserQueryResult:
         """List all users, ordered by created_at."""
-        result = self._query(hash_key="USER")
-        return [self.mapper.to_entity(item) for item in result]
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
 
-    def list_by_role(self, role: UserRole) -> list[User]:
+        result = self._query(
+            hash_key="USER",
+            scan_index_forward=scan_index_forward,
+            last_evaluated_key=last_evaluated_key,
+            limit=limit,
+        )
+
+        return UserQueryResult(
+            items=[self.mapper.to_entity(item) for item in result],
+            limit=limit,
+            cursor=result.last_evaluated_key,
+        )
+
+    def list_by_role(self, role: UserRole, direction: str = "desc",
+                     limit: int = 50,
+                     cursor: str | None = None) -> UserQueryResult:
         """List users by role, ordered by created_at."""
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
+
         result = self._query(
             hash_key=f"ROLE#{role.value}",
             index=self.model_cls.gsi2,
+            scan_index_forward=scan_index_forward,
+            last_evaluated_key=last_evaluated_key,
+            limit=limit,
         )
-        return [self.mapper.to_entity(item) for item in result]
+        return UserQueryResult(
+            items=[self.mapper.to_entity(item) for item in result],
+            limit=limit,
+            cursor=result.last_evaluated_key,
+        )
 
     def create(self, entity: User):
         """Create a new user."""
