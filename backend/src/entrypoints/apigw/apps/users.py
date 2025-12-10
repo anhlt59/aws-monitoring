@@ -6,45 +6,29 @@ from typing import Annotated
 from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
+from src.adapters.db.repositories import UserRepository
 
-from entrypoints.apigw.core.configs import CORS_ALLOW_ORIGIN, CORS_MAX_AGE
+from src.entrypoints.apigw.base import create_app, login_required, jwt_service
 from src.domain.models.user import UserRole
-from src.domain.use_cases.auth import GetCurrentUser
-from src.domain.use_cases.users import (
-    ChangePassword,
-    ChangePasswordDTO,
-    CreateUser,
-    CreateUserDTO,
-    DeleteUser,
-    GetUser,
-    ListUsers,
-    ListUsersDTO,
-    UpdateUser,
-    UpdateUserDTO,
-)
+from src.domain.iam.use_cases.user import UserUseCases, ChangePasswordDTO, CreateUserDTO, ListUsersDTO
+from src.domain.iam.models import UserProfile
+
 from src.entrypoints.apigw.base import create_app
 from src.entrypoints.apigw.middleware.auth import get_auth_context, verify_user_or_admin
 
-# Create app
-app = create_app(
-    cors_allow_origin=CORS_ALLOW_ORIGIN,
-    cors_max_age=CORS_MAX_AGE,
+# ------------------------------
+# Initialization
+# ------------------------------
+use_cases = UserUseCases(
+    user_repository=UserRepository(),
 )
-
-# Initialize use cases
-create_user_uc = CreateUser()
-get_user_uc = GetUser()
-list_users_uc = ListUsers()
-update_user_uc = UpdateUser()
-change_password_uc = ChangePassword()
-delete_user_uc = DeleteUser()
-get_current_user_uc = GetCurrentUser()
+app = create_app()
 
 
+# ------------------------------
 # Request/Response models
+# ------------------------------
 class CreateUserRequest(BaseModel):
-    """Create user request model."""
-
     email: str = Field(..., description="User email address")
     full_name: str = Field(..., min_length=2, max_length=100, description="User full name")
     password: str | None = Field(None, min_length=8, description="User password (auto-generated if not provided)")
@@ -52,34 +36,25 @@ class CreateUserRequest(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
-    """Update user request model."""
-
     email: str | None = Field(None, description="User email address")
     full_name: str | None = Field(None, min_length=2, max_length=100, description="User full name")
     role: UserRole | None = Field(None, description="User role")
 
 
 class ChangePasswordRequest(BaseModel):
-    """Change password request model."""
-
     current_password: str = Field(..., description="Current password")
     new_password: str = Field(..., min_length=8, description="New password")
 
 
 # API Routes
 @app.get("/users")
+@login_required
 def list_users(
-    role: Annotated[UserRole | None, Query] = None,
-    search: Annotated[str | None, Query] = None,
-    page: Annotated[int, Query] = 1,
-    page_size: Annotated[int, Query] = 20,
+        role: Annotated[UserRole | None, Query] = None,
+        search: Annotated[str | None, Query] = None,
+        page: Annotated[int, Query] = 1,
+        page_size: Annotated[int, Query] = 20,
 ):
-    """
-    List users endpoint.
-
-    Requires admin role.
-    Supports filtering by role and email search.
-    """
     # Get auth context and check admin
     auth = get_auth_context(app)
     if not auth.is_admin():

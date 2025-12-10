@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 
-from src.adapters.auth.jwt import jwt_service
+from src.adapters.jwt import jwt_service
 from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import UnauthorizedError
 

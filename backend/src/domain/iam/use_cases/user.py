@@ -7,7 +7,7 @@ from src.common.exceptions import UnauthorizedError, NotFoundError, ConflictErro
 from src.common.models import PaginatedInputDTO, PaginatedOutputDTO
 from src.common.utils.datetime_utils import current_utc_timestamp
 from src.domain.models.user import User, UserProfile, UserRole
-from src.adapters.auth.jwt import JWTService
+from src.adapters.jwt import JWTService
 
 
 # DTOs -----------------------------------
@@ -129,7 +129,7 @@ class UserUseCases:
         if dto.role:
             users = self.user_repository.list_by_role(dto.role)
         else:
-            users = self.user_repository.list_all()
+            users = self.user_repository.all()
 
         # Apply search filter
         if dto.search:

@@ -4,9 +4,9 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel
 
 from src.adapters.db.repositories import UserRepository
-from src.domain.models.user import UserProfile
+from src.domain.iam.use_cases.auth import AuthUseCases, AuthenticateUserDTO, LogoutUserDTO, RefreshTokenDTO
+from src.domain.iam.models import UserProfile
 from src.entrypoints.apigw.base import create_app, login_required, jwt_service
-from src.domain.iam.use_cases import AuthUseCases, AuthenticateUserDTO, LogoutUserDTO, RefreshTokenDTO
 
 # ------------------------------
 # Initialization

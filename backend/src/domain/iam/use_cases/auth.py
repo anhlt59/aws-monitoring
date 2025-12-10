@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash
 from src.adapters.db.repositories.user import UserRepository
 from src.common.exceptions import UnauthorizedError, NotFoundError
 from src.domain.models.user import User, UserProfile
-from src.adapters.auth.jwt import JWTService
+from src.adapters.jwt import JWTService
 
 
 # DTOs -----------------------------------

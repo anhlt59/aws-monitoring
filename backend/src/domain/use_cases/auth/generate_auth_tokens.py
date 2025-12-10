@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 
-from src.adapters.auth.jwt import JWTService
+from src.adapters.jwt import JWTService
 from src.domain.models.user import User
 
 

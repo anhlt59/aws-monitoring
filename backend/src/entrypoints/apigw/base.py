@@ -9,7 +9,7 @@ from typing import Callable
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
 from pydantic import ValidationError
 
-from src.adapters.auth.jwt import JWTService
+from src.adapters.jwt import JWTService
 from src.common.constants import (
     CORS_ALLOW_ORIGIN,
     CORS_MAX_AGE,
