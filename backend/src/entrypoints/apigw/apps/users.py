@@ -6,15 +6,13 @@ from typing import Annotated
 from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
+
+from entrypoints.apigw.base import admin_required
 from src.adapters.db.repositories import UserRepository
-
-from src.entrypoints.apigw.base import create_app, login_required, jwt_service
-from src.domain.models.user import UserRole
-from src.domain.iam.use_cases.user import UserUseCases, ChangePasswordDTO, CreateUserDTO, ListUsersDTO
-from src.domain.iam.models import UserProfile
-
-from src.entrypoints.apigw.base import create_app
-from src.entrypoints.apigw.middleware.auth import get_auth_context, verify_user_or_admin
+from src.common.exceptions import UnauthorizedError
+from src.domain.iam.use_cases.user import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, UserUseCases
+from src.domain.models.user import UserProfile, UserRole
+from src.entrypoints.apigw.base import create_app, login_required
 
 # ------------------------------
 # Initialization
@@ -50,87 +48,59 @@ class ChangePasswordRequest(BaseModel):
 @app.get("/users")
 @login_required
 def list_users(
-        role: Annotated[UserRole | None, Query] = None,
-        search: Annotated[str | None, Query] = None,
-        page: Annotated[int, Query] = 1,
-        page_size: Annotated[int, Query] = 20,
+    role: Annotated[UserRole | None, Query] = None,
+    email_startswith: Annotated[str | None, Query] = None,
+    limit: Annotated[int, Query] = 50,
+    direction: Annotated[str, Query] = "desc",
+    cursor: Annotated[str, Query] = None,
 ):
     # Get auth context and check admin
-    auth = get_auth_context(app)
-    if not auth.is_admin():
-        from aws_lambda_powertools.event_handler.exceptions import UnauthorizedError
-
+    if not app.auth_context.is_admin():
         raise UnauthorizedError("Admin role required to all users")
 
     # Create DTO
     dto = ListUsersDTO(
         role=role,
-        search=search,
-        page=page,
-        page_size=page_size,
+        email_startswith=email_startswith,
+        limit=limit,
+        direction=direction,
+        cursor=cursor,
     )
 
     # Execute use case
-    result = list_users_uc.execute(dto)
+    result = use_cases.list_users(dto)
 
     # Return response
-    return {
-        "items": [profile.model_dump() for profile in result.items],
-        "total": result.total,
-        "page": result.page,
-        "page_size": result.page_size,
-        "has_more": result.has_more,
-    }, HTTPStatus.OK
+    return result.model_dump(), HTTPStatus.OK
 
 
 @app.get("/auth/me")
+@login_required
 def get_me():
-    """
-    Get current user profile endpoint.
-
-    Returns authenticated user's profile information.
-    """
     # Get auth context
-    auth = get_auth_context(app)
+    user_id = app.auth_context.user_id
 
     # Get user profile
-    user_profile = get_current_user_uc.execute(auth.user_id)
+    profile = use_cases.get_user(user_id)
 
-    return user_profile.model_dump(), HTTPStatus.OK
+    return profile.model_dump(), HTTPStatus.OK
 
 
 @app.get("/users/<user_id>")
+@admin_required
 def get_user(user_id: str):
-    """
-    Get user by ID endpoint.
-
-    Users can view their own profile, admins can view any profile.
-    """
-    # Get auth context
-    # auth = get_auth_context(app)
-
-    # Verify permission (self or admin)
-    verify_user_or_admin(app, user_id)
-
     # Execute use case
-    profile = get_user_uc.execute(user_id)
+    profile = use_cases.get_user(user_id)
 
     # Return response
     return profile.model_dump(), HTTPStatus.OK
 
 
 @app.post("/users")
+@admin_required
 def create_user(request: CreateUserRequest):
-    """
-    Create user endpoint.
-
-    Requires admin role.
-    """
     # Get auth context and check admin
-    auth = get_auth_context(app)
-    if not auth.is_admin():
-        from aws_lambda_powertools.event_handler.exceptions import UnauthorizedError
-
+    if not app.auth_context.is_admin():
         raise UnauthorizedError("Admin role required to create users")
 
     # Create DTO
@@ -142,11 +112,9 @@ def create_user(request: CreateUserRequest):
     )
 
     # Execute use case
-    user = create_user_uc.execute(dto)
+    user = use_cases.create_user(dto)
 
     # Return profile (without password_hash)
-    from src.domain.models.user import UserProfile
-
     profile = UserProfile.from_user(user)
 
     return profile.model_dump(), HTTPStatus.CREATED

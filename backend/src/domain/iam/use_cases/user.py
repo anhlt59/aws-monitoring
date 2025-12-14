@@ -1,13 +1,12 @@
 from pydantic import BaseModel, Field, field_validator
-from werkzeug.security import check_password_hash, generate_password_hash
-
 from uuid_utils import uuid7
+from werkzeug.security import generate_password_hash
+
 from src.adapters.db.repositories.user import UserRepository
-from src.common.exceptions import UnauthorizedError, NotFoundError, ConflictError, BadRequestError
+from src.common.exceptions import BadRequestError, ConflictError, NotFoundError, UnauthorizedError
 from src.common.models import PaginatedInputDTO, PaginatedOutputDTO
 from src.common.utils.datetime_utils import current_utc_timestamp
 from src.domain.models.user import User, UserProfile, UserRole
-from src.adapters.jwt import JWTService
 
 
 # DTOs -----------------------------------
@@ -77,10 +76,7 @@ class UserUseCases:
             if existing_user:
                 raise ConflictError(f"User with email {dto.email} already exists")
         except Exception as e:
-            if not isinstance(e, ConflictError):
-                # Email doesn't exist, continue
-                pass
-            else:
+            if isinstance(e, ConflictError):
                 raise
 
         # Hash password
@@ -116,13 +112,10 @@ class UserUseCases:
         return True
 
     def get_user(self, user_id: str) -> UserProfile:
-        user = self.user_repository.get(user_id)
+        if user := self.user_repository.get(user_id):
+            return UserProfile.model_validate(user)
 
-        if not user:
-            raise NotFoundError(f"User not found: {user_id}")
-
-        # Convert to profile (excludes password_hash)
-        return UserProfile.from_user(user)
+        raise NotFoundError(f"User not found: {user_id}")
 
     def list_users(self, dto: ListUsersDTO) -> PaginatedUsersDTO:
         # Use repository methods based on filters

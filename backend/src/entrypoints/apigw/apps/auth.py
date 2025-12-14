@@ -4,17 +4,14 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel
 
 from src.adapters.db.repositories import UserRepository
-from src.domain.iam.use_cases.auth import AuthUseCases, AuthenticateUserDTO, LogoutUserDTO, RefreshTokenDTO
 from src.domain.iam.models import UserProfile
-from src.entrypoints.apigw.base import create_app, login_required, jwt_service
+from src.domain.iam.use_cases.auth import AuthenticateUserDTO, AuthUseCases, LogoutUserDTO, RefreshTokenDTO
+from src.entrypoints.apigw.base import create_app, jwt_service, login_required
 
 # ------------------------------
 # Initialization
 # ------------------------------
-use_cases = AuthUseCases(
-    user_repository=UserRepository(),
-    jwt_service=jwt_service
-)
+use_cases = AuthUseCases(user_repository=UserRepository(), jwt_service=jwt_service)
 app = create_app()
 
 
@@ -65,14 +62,10 @@ def login(login_request: AuthenticateUserDTO):
 @login_required
 def refresh_token(refresh_request: RefreshTokenDTO):
     # Refresh token
-    new_token = refresh_token(dto=refresh_request)
+    new_token = use_cases.refresh_auth_token(dto=refresh_request)
 
     # Return response
-    response = RefreshResponse(
-        access_token=new_token.access_token,
-        token_type=new_token.token_type,
-        expires_in=new_token.expires_in,
-    )
+    response = RefreshResponse.model_validate(new_token)
 
     return response.model_dump(), HTTPStatus.OK
 

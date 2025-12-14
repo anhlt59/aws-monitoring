@@ -7,7 +7,7 @@ from http import HTTPStatus
 from typing import Callable
 
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, CORSConfig, Response
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from src.adapters.jwt import JWTService
 from src.common.constants import (
@@ -30,10 +30,31 @@ jwt_service = JWTService(
 )
 
 
-def _inspect_app(*args, **kwargs) -> APIGatewayRestResolver:
+class AuthContext(BaseModel):
+    user_id: str
+    email: str
+    role: str
+
+    def is_admin(self) -> bool:
+        return self.role == "admin"
+
+
+class APIGateway(APIGatewayRestResolver):
+    _auth_context: AuthContext | None
+
+    @property
+    def auth_context(self) -> AuthContext | None:
+        return self._auth_context
+
+    @auth_context.setter
+    def auth_context(self, value: AuthContext) -> None:
+        self._auth_context = value
+
+
+def _inspect_app(*args, **kwargs) -> APIGateway:
     # Get app instance from args (first positional argument is typically 'self' or app)
     for arg in args:
-        if isinstance(arg, APIGatewayRestResolver):
+        if isinstance(arg, APIGateway):
             return arg
     # Try to get from function's global context
     frame = inspect.currentframe()
@@ -56,7 +77,7 @@ def login_required(func: Callable) -> Callable:
         # Verify authentication
         if token := app.current_event.headers.get("Authorization"):
             payload = jwt_service.verify_token(token, token_type="access")  # nosec
-            app.append_context(
+            app.auth_context = AuthContext(
                 user_id=payload.get("sub"),
                 email=payload.get("email"),
                 role=payload.get("role"),
@@ -79,7 +100,7 @@ def admin_required(func: Callable) -> Callable:
             payload = jwt_service.verify_token(token, token_type="access")  # nosec
 
             if payload.get("role") == "admin":
-                app.append_context(
+                app.auth_context = AuthContext(
                     user_id=payload.get("sub"),
                     email=payload.get("email"),
                     role=payload.get("role"),
@@ -91,10 +112,10 @@ def admin_required(func: Callable) -> Callable:
     return wrapper
 
 
-def create_app(cors_allow_origin: str = CORS_ALLOW_ORIGIN, cors_max_age: int = CORS_MAX_AGE) -> APIGatewayRestResolver:
+def create_app(cors_allow_origin: str = CORS_ALLOW_ORIGIN, cors_max_age: int = CORS_MAX_AGE) -> APIGateway:
     """Create and configure the API Gateway application."""
     cors_config = CORSConfig(allow_origin=cors_allow_origin, max_age=cors_max_age)
-    app = APIGatewayRestResolver(cors=cors_config, enable_validation=True)
+    app = APIGateway(cors=cors_config, enable_validation=True)
 
     # Exception handlers
     @app.exception_handler(ValidationError)

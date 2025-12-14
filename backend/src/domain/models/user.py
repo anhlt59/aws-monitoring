@@ -13,13 +13,6 @@ class UserRole(str, Enum):
 
 
 class User(BaseModel):
-    """
-    User domain model for authentication and authorization.
-
-    Represents a user in the AWS monitoring system with authentication
-    and authorization capabilities.
-    """
-
     id: str  # User UUID
     email: str
     full_name: str
@@ -53,11 +46,6 @@ class User(BaseModel):
 
 
 class UserProfile(BaseModel):
-    """
-    User profile model for API responses.
-    Excludes sensitive information like password_hash.
-    """
-
     id: str
     email: str
     full_name: str
