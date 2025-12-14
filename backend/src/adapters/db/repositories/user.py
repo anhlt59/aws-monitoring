@@ -1,7 +1,8 @@
 from common.utils.encoding import base64_to_json
+from domain.iam.exceptions import UserNotFoundError
 from src.adapters.db.mappers import UserMapper
 from src.adapters.db.models import UserPersistence
-from src.domain.models import User, UserRole
+from src.domain.iam.models import User, UserRole
 
 from .base import DynamoRepository, QueryResult
 
@@ -27,17 +28,10 @@ class UserRepository(DynamoRepository):
         )
         items = list(result)
         if not items:
-            from src.common.exceptions import NotFoundError
-
-            raise NotFoundError(f"User with email {email} not found")
+            raise UserNotFoundError(f"User with email {email} not found")
         return self.mapper.to_entity(items[0])
 
-    def all(
-        self,
-        direction: str = "desc",
-        limit: int = 50,
-        cursor: str | None = None
-    ) -> UserQueryResult:
+    def all(self, direction: str = "desc", limit: int = 50, cursor: str | None = None) -> UserQueryResult:
         """List all users, ordered by created_at."""
         last_evaluated_key = base64_to_json(cursor) if cursor else None
         scan_index_forward = "asc" == direction
@@ -55,9 +49,9 @@ class UserRepository(DynamoRepository):
             cursor=result.last_evaluated_key,
         )
 
-    def list_by_role(self, role: UserRole, direction: str = "desc",
-                     limit: int = 50,
-                     cursor: str | None = None) -> UserQueryResult:
+    def list_by_role(
+        self, role: UserRole, direction: str = "desc", limit: int = 50, cursor: str | None = None
+    ) -> UserQueryResult:
         """List users by role, ordered by created_at."""
         last_evaluated_key = base64_to_json(cursor) if cursor else None
         scan_index_forward = "asc" == direction
