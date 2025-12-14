@@ -7,11 +7,11 @@ from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
+from domain.iam.exceptions import AdminRequiredError, CrossUserAccessError
 from entrypoints.apigw.base import admin_required
 from src.adapters.db.repositories import UserRepository
-from src.common.exceptions import UnauthorizedError
-from src.domain.iam.use_cases.user import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, UserUseCases
-from src.domain.models.user import UserProfile, UserRole
+from src.domain.iam.models import UserProfile, UserRole
+from src.domain.iam.use_cases.user import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, UpdateUserDTO, UserUseCases
 from src.entrypoints.apigw.base import create_app, login_required
 
 # ------------------------------
@@ -36,7 +36,6 @@ class CreateUserRequest(BaseModel):
 class UpdateUserRequest(BaseModel):
     email: str | None = Field(None, description="User email address")
     full_name: str | None = Field(None, min_length=2, max_length=100, description="User full name")
-    role: UserRole | None = Field(None, description="User role")
 
 
 class ChangePasswordRequest(BaseModel):
@@ -49,19 +48,13 @@ class ChangePasswordRequest(BaseModel):
 @login_required
 def list_users(
     role: Annotated[UserRole | None, Query] = None,
-    email_startswith: Annotated[str | None, Query] = None,
     limit: Annotated[int, Query] = 50,
     direction: Annotated[str, Query] = "desc",
     cursor: Annotated[str, Query] = None,
 ):
-    # Get auth context and check admin
-    if not app.auth_context.is_admin():
-        raise UnauthorizedError("Admin role required to all users")
-
     # Create DTO
     dto = ListUsersDTO(
         role=role,
-        email_startswith=email_startswith,
         limit=limit,
         direction=direction,
         cursor=cursor,
@@ -77,7 +70,7 @@ def list_users(
 @app.get("/auth/me")
 @login_required
 def get_me():
-    # Get auth context
+    # Get user ID from auth context
     user_id = app.auth_context.user_id
 
     # Get user profile
@@ -99,19 +92,13 @@ def get_user(user_id: str):
 @app.post("/users")
 @admin_required
 def create_user(request: CreateUserRequest):
-    # Get auth context and check admin
-    if not app.auth_context.is_admin():
-        raise UnauthorizedError("Admin role required to create users")
-
-    # Create DTO
+    # Execute use case
     dto = CreateUserDTO(
         email=request.email,
         full_name=request.full_name,
         password=request.password,
         role=request.role,
     )
-
-    # Execute use case
     user = use_cases.create_user(dto)
 
     # Return profile (without password_hash)
@@ -121,81 +108,47 @@ def create_user(request: CreateUserRequest):
 
 
 @app.put("/users/<user_id>")
+@login_required
 def update_user(user_id: str, request: UpdateUserRequest):
-    """
-    Update user endpoint.
-
-    Users can update their own profile, admins can update any profile.
-    """
-
     # Verify permission (self or admin)
-    verify_user_or_admin(app, user_id)
+    if not app.auth_context.is_admin() and app.auth_context.user_id != user_id:
+        raise AdminRequiredError("You can only update your own profile")
 
-    # Create DTO
+    # Execute use case
     dto = UpdateUserDTO(
         user_id=user_id,
         email=request.email,
         full_name=request.full_name,
-        role=request.role,
     )
+    use_cases.update_user(dto)
 
-    # Execute use case
-    user = update_user_uc.execute(dto)
-
-    # Return profile
-    from src.domain.models.user import UserProfile
-
-    profile = UserProfile.from_user(user)
-
-    return profile.model_dump(), HTTPStatus.OK
+    return None, HTTPStatus.NO_CONTENT
 
 
 @app.put("/users/<user_id>/change-password")
+@login_required
 def change_password(user_id: str, request: ChangePasswordRequest):
-    """
-    Change password endpoint.
-
-    Users can only change their own password.
-    """
-    # Get auth context
-    auth = get_auth_context(app)
-
     # Verify user is changing their own password
-    if auth.user_id != user_id:
-        from aws_lambda_powertools.event_handler.exceptions import UnauthorizedError
+    if app.auth_context.user_id != user_id:
+        raise CrossUserAccessError("You can only change your own password")
 
-        raise UnauthorizedError("You can only change your own password")
-
-    # Create DTO
+    # Execute use case
     dto = ChangePasswordDTO(
         user_id=user_id,
         current_password=request.current_password,
         new_password=request.new_password,
     )
-
-    # Execute use case
-    change_password_uc.execute(dto)
+    use_cases.change_password(dto)
 
     # Return 204 No Content
     return None, HTTPStatus.NO_CONTENT
 
 
 @app.delete("/users/<user_id>")
+@admin_required
 def delete_user(user_id: str):
-    """
-    Delete user endpoint.
-
-    Requires admin role. Cannot delete self.
-    """
-    # Get auth context and check admin
-    auth = get_auth_context(app)
-    if not auth.is_admin():
-        from aws_lambda_powertools.event_handler.exceptions import UnauthorizedError
-
-        raise UnauthorizedError("Admin role required to delete users")
-
     # Execute use case (includes self-delete check)
-    delete_user_uc.execute(user_id, requesting_user_id=auth.user_id)
+    use_cases.delete_user(user_id, requesting_user_id=app.auth_context.user_id)
 
     # Return 204 No Content
     return None, HTTPStatus.NO_CONTENT

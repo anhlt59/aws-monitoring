@@ -14,6 +14,7 @@ class PaginatedInputDTO(BaseModel):
 
 
 class PaginatedOutputDTO(BaseModel, Generic[M]):
+    model_config = ConfigDict(from_attributes=True, validate_assignment=True)
     # Attributes
     items: list[M]
     limit: int = 50

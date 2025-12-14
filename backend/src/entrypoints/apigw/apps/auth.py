@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.adapters.db.repositories import UserRepository
 from src.domain.iam.models import UserProfile
@@ -18,6 +18,12 @@ app = create_app()
 # ------------------------------
 # Request/Response models
 # ------------------------------
+class LoginRequest(BaseModel):
+    email: str = Field(..., description="User email")
+    password: str = Field(..., description="User password")
+    remember_me: bool = Field(default=False, description="Extend token expiration to 30 days")
+
+
 class LoginResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -26,19 +32,21 @@ class LoginResponse(BaseModel):
     user: UserProfile
 
 
-class RefreshResponse(BaseModel):
-    access_token: str
-    token_type: str
-    expires_in: int
+class RefreshRequest(BaseModel):
+    refresh_token: str = Field(..., description="JWT refresh token")
 
 
 # ------------------------------
 # API Routes
 # ------------------------------
 @app.post("/auth/login")
-def login(login_request: AuthenticateUserDTO):
+def login(login_request: LoginRequest):
     # Authenticate user
-    user = use_cases.authenticate_user(dto=login_request)
+    dto = AuthenticateUserDTO(
+        email=login_request.email,
+        password=login_request.password,
+    )
+    user = use_cases.authenticate_user(dto=dto)
 
     # Generate tokens
     tokens = use_cases.generate_auth_tokens(user)
@@ -60,14 +68,13 @@ def login(login_request: AuthenticateUserDTO):
 
 @app.post("/auth/refresh")
 @login_required
-def refresh_token(refresh_request: RefreshTokenDTO):
+def refresh_token(refresh_request: RefreshRequest):
     # Refresh token
-    new_token = use_cases.refresh_auth_token(dto=refresh_request)
+    dto = RefreshTokenDTO(refresh_token=refresh_request.refresh_token)
+    access_token = use_cases.refresh_auth_token(dto=dto)
 
     # Return response
-    response = RefreshResponse.model_validate(new_token)
-
-    return response.model_dump(), HTTPStatus.OK
+    return access_token.model_dump(), HTTPStatus.OK
 
 
 @app.post("/auth/logout")

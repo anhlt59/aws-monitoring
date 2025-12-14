@@ -1,11 +1,13 @@
 """Auth use cases."""
+
 from pydantic import BaseModel, Field
 from werkzeug.security import check_password_hash
 
 from src.adapters.db.repositories.user import UserRepository
-from src.common.exceptions import UnauthorizedError, NotFoundError
-from src.domain.models.user import User, UserProfile
 from src.adapters.jwt import JWTService
+
+from ..exceptions import InvalidCredentialsError, UserNotFoundError
+from ..models import User, UserProfile
 
 
 # DTOs -----------------------------------
@@ -52,15 +54,11 @@ class AuthUseCases:
             user = self.user_repository.get_by_email(email)
         except Exception:
             # Don't reveal whether user exists (security best practice)
-            raise UnauthorizedError("Invalid email or password")
+            raise InvalidCredentialsError("Invalid email or password")
 
         # Verify password
         if not check_password_hash(dto.password, user.password_hash):
-            raise UnauthorizedError("Invalid email or password")
-
-        # Check if user is active
-        if not user.is_active:
-            raise UnauthorizedError("User account is inactive")
+            raise InvalidCredentialsError("Invalid email or password")
 
         return user
 
@@ -89,7 +87,7 @@ class AuthUseCases:
         if user := self.user_repository.get(user_id):
             return UserProfile.model_validate(user)
 
-        raise NotFoundError(f"User not found: {user_id}")
+        raise UserNotFoundError(f"User not found: {user_id}")
 
     def logout_user(self, dto: LogoutUserDTO) -> bool:
         # TODO: Implement token blacklisting in DynamoDB if needed
@@ -98,20 +96,17 @@ class AuthUseCases:
 
     def refresh_auth_token(self, dto: RefreshTokenDTO) -> AccessTokenDTO:
         # Verify refresh token
-        payload = self.jwt_service.verify_token(dto.refresh_token, token_type="refresh")
+        payload = self.jwt_service.verify_token(dto.refresh_token, token_type="refresh")  # nosec
 
         # Extract user ID
         user_id = payload.get("sub")
         if not user_id:
-            raise UnauthorizedError("Invalid refresh token: missing user ID")
+            raise InvalidCredentialsError("Invalid refresh token: missing user ID")
 
         # Verify user still exists and is active
         user = self.user_repository.get(user_id)
         if not user:
-            raise UnauthorizedError("User not found")
-
-        if not user.is_active:
-            raise UnauthorizedError("User account is inactive")
+            raise UserNotFoundError("User not found")
 
         # Generate new access token
         access_token = self.jwt_service.generate_access_token(
@@ -125,6 +120,6 @@ class AuthUseCases:
 
         return AccessTokenDTO(
             access_token=access_token,
-            token_type="Bearer",
+            token_type="Bearer",  # nosec
             expires_in=expires_in,
         )

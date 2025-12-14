@@ -107,7 +107,7 @@ def admin_required(func: Callable) -> Callable:
                 )
                 # Call original function
                 return func(*args, **kwargs)
-        raise UnauthorizedError("Authentication required")
+        raise UnauthorizedError("Admin authentication required")
 
     return wrapper
 
