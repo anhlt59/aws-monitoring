@@ -1,5 +1,3 @@
-"""Users API Gateway handlers."""
-
 from http import HTTPStatus
 from typing import Annotated
 
@@ -7,16 +5,16 @@ from aws_lambda_powertools.event_handler.openapi.params import Query
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
-from domain.iam.exceptions import AdminRequiredError, CrossUserAccessError
-from entrypoints.apigw.base import admin_required
-from src.adapters.db.repositories import UserRepository
-from src.domain.iam.models import UserProfile, UserRole
-from src.domain.iam.use_cases.user import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, UpdateUserDTO, UserUseCases
-from src.entrypoints.apigw.base import create_app, login_required
-
 # ------------------------------
 # Initialization
 # ------------------------------
+from src.adapters.db.repositories import UserRepository  # noqa: E402
+from src.domain.iam.dtos import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, UpdateUserDTO
+from src.domain.iam.exceptions import AdminRequiredError, CrossUserAccessError
+from src.domain.iam.models import UserProfile, UserRole
+from src.domain.iam.use_cases import UserUseCases
+from src.entrypoints.apigw.base import admin_required, create_app, login_required
+
 use_cases = UserUseCases(
     user_repository=UserRepository(),
 )

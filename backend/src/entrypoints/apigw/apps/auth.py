@@ -3,14 +3,15 @@ from http import HTTPStatus
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import BaseModel, Field
 
-from src.adapters.db.repositories import UserRepository
-from src.domain.iam.models import UserProfile
-from src.domain.iam.use_cases.auth import AuthenticateUserDTO, AuthUseCases, LogoutUserDTO, RefreshTokenDTO
-from src.entrypoints.apigw.base import create_app, jwt_service, login_required
-
 # ------------------------------
 # Initialization
 # ------------------------------
+from src.adapters.db.repositories import UserRepository  # noqa: E402
+from src.domain.iam.dtos import AuthenticateUserDTO, LogoutUserDTO, RefreshTokenDTO
+from src.domain.iam.models import UserProfile
+from src.domain.iam.use_cases import AuthUseCases
+from src.entrypoints.apigw.base import create_app, jwt_service, login_required
+
 use_cases = AuthUseCases(user_repository=UserRepository(), jwt_service=jwt_service)
 app = create_app()
 

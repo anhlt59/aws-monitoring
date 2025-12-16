@@ -1,46 +1,14 @@
-"""Auth use cases."""
-
-from pydantic import BaseModel, Field
 from werkzeug.security import check_password_hash
 
-from src.adapters.db.repositories.user import UserRepository
+from src.adapters.db.repositories import UserRepository
 from src.adapters.jwt import JWTService
 
+from ..dtos import AccessTokenDTO, AuthenticateUserDTO, AuthTokensDTO, LogoutUserDTO, RefreshTokenDTO
 from ..exceptions import InvalidCredentialsError, UserNotFoundError
 from ..models import User, UserProfile
 
 
-# DTOs -----------------------------------
-class AuthenticateUserDTO(BaseModel):
-    email: str = Field(..., description="User email address")
-    password: str = Field(..., description="Plain text password")
-
-
-class AuthTokensDTO(BaseModel):
-    access_token: str = Field(..., description="JWT access token")
-    refresh_token: str = Field(..., description="JWT refresh token")
-    token_type: str = Field(default="Bearer", description="Token type")
-    expires_in: int = Field(..., description="Access token expiration time in seconds")
-
-
-class AccessTokenDTO(BaseModel):
-    access_token: str = Field(..., description="JWT access token")
-    token_type: str = Field(default="Bearer", description="Token type")
-    expires_in: int = Field(..., description="Access token expiration time in seconds")
-
-
-class LogoutUserDTO(BaseModel):
-    access_token: str = Field(..., description="JWT access token to invalidate")
-
-
-class RefreshTokenDTO(BaseModel):
-    refresh_token: str = Field(..., description="JWT refresh token")
-
-
-# Use Cases ------------------------------
 class AuthUseCases:
-    """Authentication use cases."""
-
     def __init__(self, user_repository: UserRepository, jwt_service: JWTService):
         self.user_repository = user_repository
         self.jwt_service = jwt_service

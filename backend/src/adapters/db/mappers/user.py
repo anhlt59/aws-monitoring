@@ -1,5 +1,5 @@
 from src.adapters.db.models import UserPersistence
-from src.domain.models import User
+from src.domain.iam.models import User
 
 
 class UserMapper:

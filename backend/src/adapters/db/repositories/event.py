@@ -1,9 +1,8 @@
-from typing import List
-
 from src.adapters.db.mappers import EventMapper
 from src.adapters.db.models import EventPersistence
 from src.common.utils.encoding import base64_to_json
-from src.domain.models.event import Event
+from src.domain.monitoring.models.event import Event
+
 from .base import DynamoRepository, QueryResult
 
 EventQueryResult = QueryResult[Event]
@@ -54,7 +53,8 @@ class EventRepository(DynamoRepository):
         )
 
     def list_by_source(
-        self, source: str,
+        self,
+        source: str,
         start_date: int | None = None,
         end_date: int | None = None,
         direction: str = "desc",

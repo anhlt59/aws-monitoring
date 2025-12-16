@@ -1,66 +1,16 @@
-from pydantic import BaseModel, Field, field_validator
 from uuid_utils import uuid7
 from werkzeug.security import generate_password_hash
 
-from src.adapters.db.repositories.user import UserRepository
+from src.adapters.db.repositories import UserRepository
 from src.common.exceptions import NotFoundError
-from src.common.models import PaginatedInputDTO, PaginatedOutputDTO
 from src.common.utils.datetime_utils import current_utc_timestamp
 
+from ..dtos import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, PaginatedUsersDTO, UpdateUserDTO
 from ..exceptions import EmailDuplicateError, InvalidCredentialsError, SelfDeletionError, UserNotFoundError
-from ..models import User, UserProfile, UserRole
+from ..models import User, UserProfile
 
 
-# DTOs -----------------------------------
-def _validate_email(value: str) -> str:
-    """Validate and normalize email."""
-    value = value.lower().strip()
-    if "@" not in value or "." not in value.split("@")[1]:
-        raise ValueError("Invalid email format")
-    return value
-
-
-class ChangePasswordDTO(BaseModel):
-    user_id: str = Field(..., description="User ID")
-    current_password: str = Field(..., description="Current password")
-    new_password: str = Field(..., min_length=8, description="New password")
-
-
-class CreateUserDTO(BaseModel):
-    email: str = Field(..., description="User email address")
-    full_name: str = Field(..., min_length=2, max_length=100, description="User full name")
-    password: str | None = Field(None, min_length=8, description="User password (auto-generated if not provided)")
-    role: UserRole = Field(UserRole.USER, description="User role")
-
-    @field_validator("email")
-    @classmethod
-    def validate_email(cls, value: str) -> str:
-        return _validate_email(value)
-
-
-class UpdateUserDTO(BaseModel):
-    user_id: str = Field(..., description="User ID")
-    email: str | None = Field(None, description="User email address")
-    full_name: str | None = Field(None, min_length=2, max_length=100, description="User full name")
-
-    @field_validator("email")
-    @classmethod
-    def validate_email(cls, value: str | None) -> str | None:
-        return _validate_email(value)
-
-
-class ListUsersDTO(PaginatedInputDTO):
-    role: UserRole | None = Field(None, description="Filter by role")
-
-
-class PaginatedUsersDTO(PaginatedOutputDTO):
-    items: list[UserProfile]
-
-
-# Use Cases ------------------------------
 class UserUseCases:
-    """User use cases."""
-
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 

@@ -1,7 +1,7 @@
-from common.utils.encoding import base64_to_json
-from domain.iam.exceptions import UserNotFoundError
 from src.adapters.db.mappers import UserMapper
 from src.adapters.db.models import UserPersistence
+from src.common.exceptions import NotFoundError
+from src.common.utils.encoding import base64_to_json
 from src.domain.iam.models import User, UserRole
 
 from .base import DynamoRepository, QueryResult
@@ -28,7 +28,7 @@ class UserRepository(DynamoRepository):
         )
         items = list(result)
         if not items:
-            raise UserNotFoundError(f"User with email {email} not found")
+            raise NotFoundError(f"User with email {email} not found")
         return self.mapper.to_entity(items[0])
 
     def all(self, direction: str = "desc", limit: int = 50, cursor: str | None = None) -> UserQueryResult:
