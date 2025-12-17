@@ -24,8 +24,6 @@ class EventRepository(DynamoRepository):
         limit: int = 50,
         cursor: str | None = None,
     ) -> EventQueryResult:
-        """List all events with optional time range filtering."""
-
         if start_date and end_date:
             range_key_condition = self.model_cls.sk.between(f"EVENT#{start_date}", f"EVENT#{end_date}")
         elif start_date:
@@ -61,7 +59,6 @@ class EventRepository(DynamoRepository):
         limit: int = 50,
         cursor: str | None = None,
     ) -> EventQueryResult:
-        """List events by source with optional time range."""
         if start_date and end_date:
             range_key_condition = self.model_cls.gsi1sk.between(f"EVENT#{start_date}", f"EVENT#{end_date}")
         elif start_date:

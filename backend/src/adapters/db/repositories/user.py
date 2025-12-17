@@ -19,7 +19,6 @@ class UserRepository(DynamoRepository):
         return self.mapper.to_entity(model)
 
     def get_by_email(self, email: str) -> User:
-        """Get user by email (for authentication)."""
         result = self._query(
             hash_key="EMAIL",
             range_key_condition=self.model_cls.gsi1sk == email,
@@ -70,15 +69,12 @@ class UserRepository(DynamoRepository):
         )
 
     def create(self, entity: User):
-        """Create a new user."""
         model = self.mapper.to_persistence(entity)
         self._create(model)
 
     def update(self, entity: User):
-        """Update an existing user."""
         model = self.mapper.to_persistence(entity)
         model.save()
 
     def delete(self, user_id: str):
-        """Delete a user by ID."""
         self._delete(hash_key="USER", range_key=f"USER#{user_id}")

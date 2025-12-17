@@ -32,7 +32,7 @@ local = [
   "ruff~=0.14.0",
   "bandit~=1.8.0",
   "SuperClaude>=4.1.0",
-  "ipython (>=9.7.0,<10.0.0)",
+  "ipython~=9.8.0",
 ]
 # Testing dependencies. -------------------------------------
 test = [

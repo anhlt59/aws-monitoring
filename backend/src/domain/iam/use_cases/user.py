@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash
 
 from src.adapters.db.repositories import UserRepository
 from src.common.exceptions import NotFoundError
+from src.common.logger import logger
 from src.common.utils.datetime_utils import current_utc_timestamp
 
 from ..dtos import ChangePasswordDTO, CreateUserDTO, ListUsersDTO, PaginatedUsersDTO, UpdateUserDTO
@@ -14,10 +15,18 @@ class UserUseCases:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
+    def _get_user(self, user_id: str) -> User:
+        try:
+            return self.user_repository.get(user_id)
+        except NotFoundError:
+            raise UserNotFoundError(f"User not found: {user_id}")
+
+    def get_user(self, user_id: str) -> UserProfile:
+        user = self._get_user(user_id)
+        return UserProfile.model_validate(user)
+
     def change_password(self, dto: ChangePasswordDTO) -> bool:
-        user = self.user_repository.get(dto.user_id)
-        if not user:
-            raise UserNotFoundError(f"User not found: {dto.user_id}")
+        user = self._get_user(dto.user_id)
 
         # Verify current password
         if not generate_password_hash(dto.current_password, user.password_hash):
@@ -36,9 +45,7 @@ class UserUseCases:
         return True
 
     def update_user(self, dto: UpdateUserDTO):
-        user = self.user_repository.get(dto.user_id)
-        if not user:
-            raise NotFoundError(f"User not found: {dto.user_id}")
+        user = self._get_user(dto.user_id)
 
         # Update fields
         if dto.email:
@@ -61,15 +68,14 @@ class UserUseCases:
         # Save user
         self.user_repository.update(user)
 
-    def create_user(self, dto: CreateUserDTO) -> User:
+    def create_user(self, dto: CreateUserDTO) -> UserProfile:
         # Check email uniqueness
         try:
-            existing_user = self.user_repository.get_by_email(dto.email)
-            if existing_user:
-                raise EmailDuplicateError(f"User with email {dto.email} already exists")
+            self.user_repository.get_by_email(dto.email)
         except Exception as e:
-            if isinstance(e, EmailDuplicateError):
-                raise
+            logger.warning(f"Error checking existing user by email: {e}")
+        else:
+            raise EmailDuplicateError(f"User with email {dto.email} already exists")
 
         # Hash password
         password_hash = generate_password_hash(dto.password)
@@ -86,7 +92,7 @@ class UserUseCases:
         # Save user
         self.user_repository.create(user)
 
-        return user
+        return UserProfile.model_validate(user)
 
     def delete_user(self, user_id: str, requesting_user_id: str) -> bool:
         # Prevent self-deletion
@@ -94,20 +100,12 @@ class UserUseCases:
             raise SelfDeletionError("Cannot delete your own account")
 
         # Verify user exists
-        user = self.user_repository.get(user_id)
-        if not user:
-            raise UserNotFoundError(f"User not found: {user_id}")
+        self._get_user(user_id)
 
         # Delete user
         self.user_repository.delete(user_id)
 
         return True
-
-    def get_user(self, user_id: str) -> UserProfile:
-        if user := self.user_repository.get(user_id):
-            return UserProfile.model_validate(user)
-
-        raise UserNotFoundError(f"User not found: {user_id}")
 
     def list_users(self, dto: ListUsersDTO) -> PaginatedUsersDTO:
         # Use repository methods based on filters
@@ -118,8 +116,10 @@ class UserUseCases:
         else:
             results = self.user_repository.all(direction=dto.direction, limit=dto.limit, cursor=dto.cursor)
 
+        user_profiles = [UserProfile.model_validate(user) for user in results.items]
+
         return PaginatedUsersDTO(
-            items=results.items,
+            items=user_profiles,
             limit=dto.limit,
             previous=dto.next,
             next=results.cursor,

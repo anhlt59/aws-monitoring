@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 
 from src.common.models import PaginatedInputDTO, PaginatedOutputDTO
-from src.domain.iam.models import UserProfile, UserRole
+from .models import UserProfile, UserRole
 
 
 def _validate_email(value: str) -> str:
@@ -70,5 +70,4 @@ class ListUsersDTO(PaginatedInputDTO):
     role: UserRole | None = Field(None, description="Filter by role")
 
 
-class PaginatedUsersDTO(PaginatedOutputDTO):
-    items: list[UserProfile]
+PaginatedUsersDTO = PaginatedOutputDTO[UserProfile]

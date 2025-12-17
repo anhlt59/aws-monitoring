@@ -5,7 +5,7 @@ from typing import Iterable
 from src.adapters.aws import CloudwatchLogService, ECSService, LambdaService
 from src.common.logger import logger
 from src.common.utils.objects import chunks
-from src.domain.models.logs import LogEntry, LogQueryResult
+from src.domain.monitoring.models import LogEntry, LogQueryResult
 
 
 # Service -----------------------------------
