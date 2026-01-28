@@ -17,7 +17,7 @@ export PRINT_HELP_PYSCRIPT
 
 # =================================================================================
 help:
-	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 install: ## Install the packages
 	@bash ops/development/install.sh
 activate: ## Activate the virtual environment

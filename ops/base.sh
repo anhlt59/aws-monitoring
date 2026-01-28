@@ -76,3 +76,19 @@ function confirm_continue() {
         exit 1
     fi
 }
+
+function activate_venv() {
+    if [[ -d "${PY_VENV}" && -d "${NODE_VENV}" ]]; then
+        source "${PY_VENV}/bin/activate"
+        source "${NODE_VENV}/bin/activate"
+        echo -e "${GREEN}Virtual environment activated.${RESET}"
+        if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+          exec zsh
+         # exec "$SHELL"
+        fi
+    else
+        echo -e "${RED}Virtual environment not found.${RESET}"
+        echo -e "${YELLOW}Run 'make install' first.${RESET}"
+        exit 1
+    fi
+}
