@@ -1,0 +1,17 @@
+{
+  "version": "0.4.2",
+  "environments": [
+    "claude",
+    "github",
+    "gemini"
+  ],
+  "initializedPhases": [
+    "requirements",
+    "design",
+    "planning",
+    "implementation",
+    "testing"
+  ],
+  "createdAt": "2026-01-04T19:02:52.216Z",
+  "updatedAt": "2026-01-15T15:33:41.242Z"
+}
