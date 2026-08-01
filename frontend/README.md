@@ -84,7 +84,7 @@ npm run test:coverage
 
 - **Login** - User authentication
 - **Dashboard** - Overview with key metrics and statistics
-- **Events** - AWS monitoring events list with filtering
+- **Events** - AWS monitoring events all with filtering
 - **Tasks** - Task management with CRUD operations
 - **Users** - User management (admin only)
 - **Configuration** - AWS accounts and monitoring settings

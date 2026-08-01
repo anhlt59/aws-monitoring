@@ -103,5 +103,5 @@ def load_event(file: Path) -> EventBridgeEvent:
 def truncate_event_table():
     repo = EventRepository()
     dto = ListEventsDTO()
-    for event in repo.list(dto).items:
+    for event in repo.all(dto).items:
         repo.delete(event.persistence_id)

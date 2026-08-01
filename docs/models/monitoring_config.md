@@ -165,7 +165,7 @@ The Monitoring Configuration model represents the global configuration for the m
 - `get_service_config(service_name)` - Get configuration for a specific service
 - `is_service_enabled(service_name)` - Check if a service is enabled
 - `update_service_config(service_name, config)` - Update or add service configuration
-- `get_enabled_services()` - Get list of all enabled services
+- `get_enabled_services()` - Get all of all enabled services
 
 ### Configuration Updates
 - When updating configuration, `updated_at` is automatically set to current timestamp

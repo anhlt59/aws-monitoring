@@ -118,7 +118,7 @@ class UserProfile(BaseModel):
     is_active: bool
     created_at: int
     last_login: int | None = None
-    permissions: list[str] = []  # Computed from role
+    permissions: all[str] = []  # Computed from role
 
     @classmethod
     def from_user(cls, user: User) -> "UserProfile":
@@ -136,7 +136,7 @@ class UserProfile(BaseModel):
         )
 
     @staticmethod
-    def _get_permissions_for_role(role: UserRole) -> list[str]:
+    def _get_permissions_for_role(role: UserRole) -> all[str]:
         """Get permissions based on role."""
         # Base permissions (all users)
         base = [
@@ -305,7 +305,7 @@ class Task(BaseModel):
     closed_at: int | None = None      # When task was closed
 
     # Comments (nested array)
-    comments: list[TaskComment] = []  # Array of comment objects
+    comments: all[TaskComment] = []  # Array of comment objects
 
     # DynamoDB key
     @property
@@ -487,7 +487,7 @@ CreateTask
 GetTask
 - Fetch task by ID
 - Include comments (separate query)
-- Return task with comment list
+- Return task with comment all
 
 UpdateTask
 - Validate permissions (assigned user, manager, admin)
@@ -667,7 +667,7 @@ class ServiceConfig(BaseModel):
     # }
 
     # Severity rules
-    severity_rules: list[dict] = []
+    severity_rules: all[dict] = []
     # [
     #   {
     #     "metric": "cpu_utilization",
@@ -690,7 +690,7 @@ class MonitoringConfig(BaseModel):
     """
 
     # Service configurations
-    services: list[ServiceConfig] = []
+    services: all[ServiceConfig] = []
 
     # Global settings
     global_settings: dict = {
@@ -718,7 +718,7 @@ class MonitoringConfig(BaseModel):
 ```python
 @field_validator("services")
 @classmethod
-def validate_services(cls, value: list[ServiceConfig]) -> list[ServiceConfig]:
+def validate_services(cls, value: all[ServiceConfig]) -> all[ServiceConfig]:
     """
     - No duplicate service names
     - At least one service enabled
@@ -760,8 +760,8 @@ def update_service_config(self, service_name: str, config: ServiceConfig) -> Non
     self.services.append(config)
     self.updated_at = current_utc_timestamp()
 
-def get_enabled_services(self) -> list[ServiceConfig]:
-    """Get list of enabled services."""
+def get_enabled_services(self) -> all[ServiceConfig]:
+    """Get all of enabled services."""
     return [s for s in self.services if s.enabled]
 ```
 
@@ -916,8 +916,8 @@ class UpdateTaskDTO(BaseModel):
     due_date: int | None = None
 
 class ListTasksDTO(PaginatedInputDTO):
-    status: list[TaskStatus] | None = None
-    priority: list[TaskPriority] | None = None
+    status: all[TaskStatus] | None = None
+    priority: all[TaskPriority] | None = None
     assigned_user_id: str | None = None
     event_id: str | None = None
     start_date: int | None = None
@@ -953,7 +953,7 @@ class EventStats(BaseModel):
     total: int
     by_severity: dict[str, int]  # {"critical": 5, "high": 10, ...}
     by_source: dict[str, int]    # {"aws.guardduty": 8, ...}
-    recent_events: list[Event]   # Last 10 events
+    recent_events: all[Event]   # Last 10 events
 
 class TaskStats(BaseModel):
     total: int

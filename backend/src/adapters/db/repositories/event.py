@@ -1,8 +1,11 @@
 from src.adapters.db.mappers import EventMapper
 from src.adapters.db.models import EventPersistence
-from src.adapters.db.repositories.base import DynamoRepository
 from src.common.utils.encoding import base64_to_json
-from src.domain.models.event import Event, EventQueryResult, ListEventsDTO
+from src.domain.monitoring.models.event import Event
+
+from .base import DynamoRepository, QueryResult
+
+EventQueryResult = QueryResult[Event]
 
 
 class EventRepository(DynamoRepository):
@@ -13,39 +16,49 @@ class EventRepository(DynamoRepository):
         model = self._get(hash_key="EVENT", range_key=id)
         return self.mapper.to_entity(model)
 
-    def list(self, dto: ListEventsDTO | None = None) -> EventQueryResult:
-        """List all events with optional time range filtering."""
-        if dto is None:
-            dto = ListEventsDTO()
-
-        if dto.start_date and dto.end_date:
-            range_key_condition = self.model_cls.sk.between(f"EVENT#{dto.start_date}", f"EVENT#{dto.end_date}")
-        elif dto.start_date:
-            range_key_condition = self.model_cls.sk >= f"EVENT#{dto.start_date}"
-        elif dto.end_date:
-            range_key_condition = self.model_cls.sk <= f"EVENT#{dto.end_date}"
+    def all(
+        self,
+        start_date: int | None = None,
+        end_date: int | None = None,
+        direction: str = "desc",
+        limit: int = 50,
+        cursor: str | None = None,
+    ) -> EventQueryResult:
+        if start_date and end_date:
+            range_key_condition = self.model_cls.sk.between(f"EVENT#{start_date}", f"EVENT#{end_date}")
+        elif start_date:
+            range_key_condition = self.model_cls.sk >= f"EVENT#{start_date}"
+        elif end_date:
+            range_key_condition = self.model_cls.sk <= f"EVENT#{end_date}"
         else:
             range_key_condition = None
 
-        last_evaluated_key = base64_to_json(dto.cursor) if dto.cursor else None
-        scan_index_forward = "asc" == dto.direction
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
 
         result = self._query(
             hash_key="EVENT",
             range_key_condition=range_key_condition,
             last_evaluated_key=last_evaluated_key,
             scan_index_forward=scan_index_forward,
-            limit=dto.limit,
+            limit=limit,
         )
 
         return EventQueryResult(
             items=[self.mapper.to_entity(item) for item in result],
-            limit=dto.limit,
+            limit=limit,
             cursor=result.last_evaluated_key,
         )
 
-    def list_by_source(self, source: str, start_date: int | None = None, end_date: int | None = None) -> list[Event]:
-        """List events by source with optional time range."""
+    def list_by_source(
+        self,
+        source: str,
+        start_date: int | None = None,
+        end_date: int | None = None,
+        direction: str = "desc",
+        limit: int = 50,
+        cursor: str | None = None,
+    ) -> EventQueryResult:
         if start_date and end_date:
             range_key_condition = self.model_cls.gsi1sk.between(f"EVENT#{start_date}", f"EVENT#{end_date}")
         elif start_date:
@@ -55,13 +68,23 @@ class EventRepository(DynamoRepository):
         else:
             range_key_condition = None
 
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
+
         result = self._query(
             hash_key=f"SOURCE#{source}",
             range_key_condition=range_key_condition,
             index=self.model_cls.gsi1,
+            last_evaluated_key=last_evaluated_key,
+            scan_index_forward=scan_index_forward,
+            limit=limit,
         )
 
-        return [self.mapper.to_entity(item) for item in result]
+        return EventQueryResult(
+            items=[self.mapper.to_entity(item) for item in result],
+            limit=limit,
+            cursor=result.last_evaluated_key,
+        )
 
     def create(self, entity: Event):
         model = EventMapper.to_persistence(entity)

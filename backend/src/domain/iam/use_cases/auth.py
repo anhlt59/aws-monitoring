@@ -1,0 +1,93 @@
+from werkzeug.security import check_password_hash
+
+from src.adapters.db.repositories import UserRepository
+from src.adapters.jwt import JWTService
+
+from ..dtos import AccessTokenDTO, AuthenticateUserDTO, AuthTokensDTO, LogoutUserDTO, RefreshTokenDTO
+from ..exceptions import InvalidCredentialsError, UserNotFoundError
+from ..models import User, UserProfile
+
+
+class AuthUseCases:
+    def __init__(self, user_repository: UserRepository, jwt_service: JWTService):
+        self.user_repository = user_repository
+        self.jwt_service = jwt_service
+
+    def authenticate_user(self, dto: AuthenticateUserDTO) -> User:
+        # Normalize email
+        email = dto.email.lower().strip()
+
+        try:
+            # Find user by email
+            user = self.user_repository.get_by_email(email)
+        except Exception:
+            # Don't reveal whether user exists (security best practice)
+            raise InvalidCredentialsError("Invalid email or password")
+
+        # Verify password
+        if not check_password_hash(dto.password, user.password_hash):
+            raise InvalidCredentialsError("Invalid email or password")
+
+        return user
+
+    def generate_auth_tokens(self, user: User) -> AuthTokensDTO:
+        # Generate access token
+        access_token = self.jwt_service.generate_access_token(
+            user_id=user.id,
+            email=user.email,
+            role=user.role.value,
+        )
+
+        # Generate refresh token
+        refresh_token = self.jwt_service.generate_refresh_token(user_id=user.id)
+
+        # Get expiration time
+        expires_in = self.jwt_service.get_token_expiration()
+
+        return AuthTokensDTO(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="Bearer",  # nosec
+            expires_in=expires_in,
+        )
+
+    def get_current_user(self, user_id: str) -> UserProfile:
+        if user := self.user_repository.get(user_id):
+            return UserProfile.model_validate(user)
+
+        raise UserNotFoundError(f"User not found: {user_id}")
+
+    def logout_user(self, dto: LogoutUserDTO) -> bool:
+        # TODO: Implement token blacklisting in DynamoDB if needed
+        # For now, logout is handled client-side by removing the token
+        return True
+
+    def refresh_auth_token(self, dto: RefreshTokenDTO) -> AccessTokenDTO:
+        # Verify refresh token
+        payload = self.jwt_service.verify_token(dto.refresh_token, token_type="refresh")  # nosec
+
+        # Extract user ID
+        user_id = payload.get("sub")
+        if not user_id:
+            raise InvalidCredentialsError("Invalid refresh token: missing user ID")
+
+        # Verify user still exists and is active
+        user = self.user_repository.get(user_id)
+        if not user:
+            raise UserNotFoundError("User not found")
+
+        # Generate new access token
+        access_token = self.jwt_service.generate_access_token(
+            user_id=user.id,
+            email=user.email,
+            role=user.role.value,
+        )
+
+        # Get expiration time
+        expires_in = self.jwt_service.get_token_expiration()
+
+        return AccessTokenDTO(
+            access_token=access_token,
+            token_type="Bearer",  # nosec
+            expires_in=expires_in,
+        )

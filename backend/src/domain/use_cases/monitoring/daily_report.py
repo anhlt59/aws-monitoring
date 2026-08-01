@@ -23,5 +23,5 @@ def daily_report_use_case(event_repo: IEventRepository, notifier: IReportNotifie
     )
     logger.debug(f"Fetched {len(result.items)} events for daily report")
 
-    # 2. Generate a report & send the report to the subscribers.
+    # 2. Generate a report & send the report to the    .
     notifier.report(result.items)

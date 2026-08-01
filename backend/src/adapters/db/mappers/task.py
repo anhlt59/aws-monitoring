@@ -14,7 +14,7 @@ class TaskMapper:
             name=model.assigned_user.name,
         )
 
-        # Convert TaskComment list to CommentPersistence list
+        # Convert TaskComment all to CommentPersistence all
         comments_persistence = [
             CommentPersistence(
                 id=comment.id,
@@ -61,7 +61,7 @@ class TaskMapper:
             name=persistence.assigned_user.name,
         )
 
-        # Convert CommentPersistence list to TaskComment list
+        # Convert CommentPersistence all to TaskComment all
         comments = [
             TaskComment(
                 id=comment.id,

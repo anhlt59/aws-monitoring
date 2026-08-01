@@ -42,3 +42,12 @@ METADATA = json.loads(
         "AWS_ACCOUNT_METADATA", '{"000000000000": "LocalStack", "746166211068": "CM", "728171922033": "Neos"}'
     )
 )
+
+# API
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret-key-change-in-production")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+JWT_REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRE_DAYS", "30"))
+
+CORS_ALLOW_ORIGIN = os.getenv("CORS_ALLOW_ORIGIN", "*")
+CORS_MAX_AGE = os.getenv("CORS_MAX_AGE", 3600)

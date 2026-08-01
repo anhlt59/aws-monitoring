@@ -1,16 +1,22 @@
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 M = TypeVar("M", bound=BaseModel)
 
 
-class Page(BaseModel, Generic[M]):
-    items: list[M] = Field(alias="Items", default_factory=list)
-    limit: int = Field(alias="MaxResults", default=20)
-    next: str | None = Field(alias="NextToken", default=None)
-    previous: str | None = Field(alias="PreviousToken", default=None)
+class PaginatedInputDTO(BaseModel):
+    model_config = ConfigDict(extra="ignore", use_enum_values=True, str_strip_whitespace=True)
+    # Attributes
+    limit: int = Field(default=50, ge=10, le=100)
+    direction: str = "desc"
+    cursor: str | None = None
 
-    @property
-    def total(self):
-        return len(self.items)
+
+class PaginatedOutputDTO(BaseModel, Generic[M]):
+    model_config = ConfigDict(from_attributes=True, validate_assignment=True)
+    # Attributes
+    items: list[M]
+    limit: int = 50
+    next: str = None
+    previous: str = None

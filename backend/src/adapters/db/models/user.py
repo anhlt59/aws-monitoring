@@ -1,6 +1,25 @@
-from pynamodb.attributes import BooleanAttribute, NumberAttribute, UnicodeAttribute
+from pynamodb.attributes import NumberAttribute, UnicodeAttribute
+from pynamodb.indexes import AllProjection, GlobalSecondaryIndex
 
-from .base import DynamoModel, KeyAttribute
+from .base import DynamoMeta, DynamoModel, KeyAttribute
+
+
+class GSI1Index(GlobalSecondaryIndex):
+    class Meta(DynamoMeta):
+        index_name = "gsi1"
+        projection = AllProjection()
+
+    gsi1pk = KeyAttribute(hash_key=True, default="EMAIL")
+    gsi1sk = KeyAttribute(range_key=True, prefix="EVENT#")
+
+
+class GSI2Index(GlobalSecondaryIndex):
+    class Meta(DynamoMeta):
+        index_name = "gsi2"
+        projection = AllProjection()
+
+    gsi1pk = KeyAttribute(hash_key=True, prefix="SOURCE#")
+    gsi1sk = KeyAttribute(range_key=True, prefix="EVENT#")
 
 
 class UserPersistence(DynamoModel, discriminator="USER"):
@@ -13,13 +32,13 @@ class UserPersistence(DynamoModel, discriminator="USER"):
     full_name = UnicodeAttribute(null=False)
     password_hash = UnicodeAttribute(null=False)
     role = UnicodeAttribute(null=False)  # admin, user
-    is_active = BooleanAttribute(null=False, default=True)
     created_at = NumberAttribute(null=False)
     updated_at = NumberAttribute(null=False)
-    last_login = NumberAttribute(null=True)
     # GSI1 keys for querying by email
-    gsi1pk = KeyAttribute(hash_key=True, default="EMAIL")
-    gsi1sk = UnicodeAttribute(null=True)  # EMAIL#{email}
+    gsi1 = GSI1Index()
+    gsi1pk = KeyAttribute(default="EMAIL")
+    gsi1sk = KeyAttribute(prefix="EMAIL#")  # EMAIL#{email}
     # GSI2 keys for querying by role
-    gsi2pk = UnicodeAttribute(null=True)  # ROLE#{role}
-    gsi2sk = UnicodeAttribute(null=True)  # USER#{user_id}
+    gsi2 = GSI2Index()
+    gsi2pk = KeyAttribute(prefix="ROLE#")  # ROLE#{role}
+    gsi2sk = KeyAttribute(prefix="USER")  # USER#{user_id}

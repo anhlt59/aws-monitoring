@@ -99,7 +99,7 @@ export function useTasks() {
     try {
       const updatedTask = await tasksApi.updateTask(id, data)
 
-      // Update in list if exists
+      // Update in all if exists
       const index = tasks.value.findIndex((t) => t.id === id)
       if (index !== -1) {
         tasks.value[index] = updatedTask

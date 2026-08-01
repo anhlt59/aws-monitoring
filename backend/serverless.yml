@@ -75,9 +75,45 @@ functions:
   QueryErrorLogs: ${file(infra/functions/QueryErrorLogs.yml):function}
 
   # API -------------------------------------------------------------------------
-  # Events
-  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
-  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
+  # Auth
+  AuthLogin: ${file(infra/functions/api/Auth-Login.yml):function}
+#  AuthRefresh: ${file(infra/functions/api/Auth-Refresh.yml):function}
+  AuthLogout: ${file(infra/functions/api/Auth-Logout.yml):function}
+#  AuthMe: ${file(infra/functions/api/Auth-Me.yml):function}
+#
+#  # Events
+#  GetEvent: ${file(infra/functions/api/Event-GetItem.yml):function}
+#  ListEvents: ${file(infra/functions/api/Event-ListItems.yml):function}
+#
+#  # Tasks
+#  ListTasks: ${file(infra/functions/api/Tasks-List.yml):function}
+#  GetTask: ${file(infra/functions/api/Tasks-Get.yml):function}
+#  CreateTask: ${file(infra/functions/api/Tasks-Create.yml):function}
+#  UpdateTask: ${file(infra/functions/api/Tasks-Update.yml):function}
+#  UpdateTaskStatus: ${file(infra/functions/api/Tasks-UpdateStatus.yml):function}
+#  DeleteTask: ${file(infra/functions/api/Tasks-Delete.yml):function}
+#  AddTaskComment: ${file(infra/functions/api/Tasks-AddComment.yml):function}
+#
+#  # Users
+#  ListUsers: ${file(infra/functions/api/Users-List.yml):function}
+#  GetUser: ${file(infra/functions/api/Users-Get.yml):function}
+#  CreateUser: ${file(infra/functions/api/Users-Create.yml):function}
+#  UpdateUser: ${file(infra/functions/api/Users-Update.yml):function}
+#  ChangePassword: ${file(infra/functions/api/Users-ChangePassword.yml):function}
+#  DeleteUser: ${file(infra/functions/api/Users-Delete.yml):function}
+#
+#  # Dashboard
+#  DashboardOverview: ${file(infra/functions/api/Dashboard-Overview.yml):function}
+#  DashboardEventsStats: ${file(infra/functions/api/Dashboard-EventsStats.yml):function}
+#  DashboardTasksStats: ${file(infra/functions/api/Dashboard-TasksStats.yml):function}
+#  DashboardUsersStats: ${file(infra/functions/api/Dashboard-UsersStats.yml):function}
+#
+#  # Configuration
+#  ConfigGetAws: ${file(infra/functions/api/Config-GetAws.yml):function}
+#  ConfigUpdateAws: ${file(infra/functions/api/Config-UpdateAws.yml):function}
+#  ConfigTestAws: ${file(infra/functions/api/Config-TestAws.yml):function}
+#  ConfigGetMonitoring: ${file(infra/functions/api/Config-GetMonitoring.yml):function}
+#  ConfigUpdateMonitoring: ${file(infra/functions/api/Config-UpdateMonitoring.yml):function}
 
 resources:
   # -----------------------------------------------------------------------------
@@ -95,7 +131,8 @@ resources:
     EventBridgePolicy: ${file(infra/resources/iam.yml):EventBridgePolicy}
     # EventBridge
     MonitoringEventRule: ${file(infra/resources/event_bridge.yml):MonitoringEventRule}
-    DeploymentEventRule: ${file(infra/resources/event_bridge.yml):DeploymentEventRule}
+    # TODO: activate later
+    # DeploymentEventRule: ${file(infra/resources/event_bridge.yml):DeploymentEventRule}
     # SQS
     MonitoringEventRuleDLQ: ${file(infra/resources/sqs.yml):MonitoringEventRuleDLQ}
     # DynamoDB

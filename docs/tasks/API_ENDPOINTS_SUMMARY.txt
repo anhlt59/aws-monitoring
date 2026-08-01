@@ -4,9 +4,11 @@ MISSING BACKEND API ENDPOINTS - QUICK REFERENCE
 
 SUMMARY
 -------
-Total Missing: 31 endpoints
+Total Missing: 27 endpoints
 Partially Done: 2 endpoints (events GET operations)
-Total Required: 33 endpoints
+Total Required: 29 endpoints
+
+NOTE: Updated based on actual domain models (docs/models/*)
 
 ================================================================================
 AUTHENTICATION API - 4 endpoints (CRITICAL PRIORITY)
@@ -17,6 +19,7 @@ POST   /api/auth/logout          ❌ Logout current user
 GET    /api/auth/me              ❌ Get current user profile
 POST   /api/auth/refresh         ❌ Refresh access token
 
+User Roles: admin, user (manager role removed per updated model)
 Dependencies: pyjwt, bcrypt, passlib
 Estimated: 40-60 hours
 Timeline: Week 1-2
@@ -38,13 +41,14 @@ TASKS API - 7 endpoints (HIGH PRIORITY)
 ================================================================================
 
 GET    /api/tasks                ❌ List tasks with filters
-GET    /api/tasks/{id}           ❌ Get task details
+GET    /api/tasks/{id}           ❌ Get task details (includes embedded comments)
 POST   /api/tasks                ❌ Create new task
 PUT    /api/tasks/{id}           ❌ Update task
 DELETE /api/tasks/{id}           ❌ Delete task
-POST   /api/tasks/{id}/comments  ❌ Add comment to task
+POST   /api/tasks/{id}/comments  ❌ Add comment to task (comments are embedded in task entity)
 PUT    /api/tasks/{id}/status    ❌ Update task status
 
+Note: Comments are stored as embedded array within Task entity, not separate table
 Dependencies: None
 Estimated: 35-45 hours
 Timeline: Week 3-4
@@ -53,12 +57,13 @@ Timeline: Week 3-4
 USERS API - 5 endpoints (HIGH PRIORITY)
 ================================================================================
 
-GET    /api/users                ❌ List users (admin/manager)
+GET    /api/users                ❌ List users (admin only)
 GET    /api/users/{id}           ❌ Get user details
 POST   /api/users                ❌ Create user (admin only)
 PUT    /api/users/{id}           ❌ Update user
 DELETE /api/users/{id}           ❌ Delete user (admin only)
 
+Roles: admin, user (manager role removed from model)
 Dependencies: Authentication API
 Estimated: 25-35 hours
 Timeline: Week 5
@@ -77,18 +82,19 @@ Estimated: 16-24 hours
 Timeline: Week 6
 
 ================================================================================
-CONFIGURATION API - 8 endpoints (MEDIUM PRIORITY)
+CONFIGURATION API - 4 endpoints (MEDIUM PRIORITY)
 ================================================================================
 
-GET    /api/config/aws           ❌ Get AWS config
-POST   /api/config/aws           ❌ Create AWS config
-PUT    /api/config/aws           ❌ Update AWS config
-POST   /api/config/aws/{id}/test ❌ Test connection
-GET    /api/config/monitoring    ❌ Get monitoring config
-PUT    /api/config/monitoring    ❌ Update monitoring config
+GET    /api/config/aws           ❌ Get AWS config (singleton)
+PUT    /api/config/aws           ❌ Update AWS config (singleton)
+POST   /api/config/aws/test      ❌ Test connection
+GET    /api/config/monitoring    ❌ Get monitoring config (singleton)
+PUT    /api/config/monitoring    ❌ Update monitoring config (singleton)
 
+Note: Both AWS Config and Monitoring Config are singleton records (one per system)
+      AWS credentials stored separately in monitoring profile, not in config
 Dependencies: None (refactor existing agents API)
-Estimated: 32-48 hours
+Estimated: 20-30 hours
 Timeline: Week 7-8
 
 ================================================================================
@@ -107,10 +113,10 @@ PHASE 2 (Important - Enhanced functionality)
   Total: 9 endpoints, 41-59 hours, 2 weeks
 
 PHASE 3 (Nice-to-have - Additional features)
-  - Configuration API (8 endpoints)
-  Total: 8 endpoints, 32-48 hours, 1-2 weeks
+  - Configuration API (4 endpoints)
+  Total: 4 endpoints, 20-30 hours, 1-2 weeks
 
-GRAND TOTAL: 30 new endpoints, 156-224 hours, 7-9 weeks
+GRAND TOTAL: 26 new endpoints, 144-201 hours, 7-9 weeks
 
 ================================================================================
 TECHNICAL REQUIREMENTS
@@ -123,10 +129,14 @@ Dependencies to Add:
   - python-jose ^3.3.0 (optional)
 
 DynamoDB Tables Needed:
-  - User (with email-index, role-index GSIs)
-  - Task (with assigned-user-index, status-index, event-id-index GSIs)
-  - TaskComment (task-id-index GSI)
-  - MonitoringConfig
+  - User table with GSIs:
+    - GSI1: email lookup (pk=EMAIL, sk=EMAIL#{email})
+    - GSI2: role lookup (pk=ROLE#{role}, sk=USER#{user_id})
+  - Task table with GSIs:
+    - GSI1: assigned user lookup (pk=ASSIGNED#{user_id}, sk=STATUS#{status}#PRIORITY#{priority}#TASK#{id})
+    - GSI2: status lookup (pk=STATUS#{status}, sk=CREATED#{created_at}#TASK#{id})
+  - Config table (single table for both AWS and Monitoring configs as singletons)
+  - Event table (already exists)
 
 Files to Create: ~80+ new files
   - Domain entities: 4
@@ -198,6 +208,16 @@ NEXT ACTIONS
 7. ⬜ Continue with remaining endpoints
 
 ================================================================================
-Last Updated: 2025-11-20
-Status: Ready for Implementation
+MODEL CHANGES FROM DOCS/MODELS/*
+================================================================================
+
+1. User Model: Only 2 roles (admin, user) - manager role removed
+2. Task Model: Comments stored as embedded array within task (not separate table)
+3. AWS Config: Singleton record (pk=CONFIG, sk=AWS) - one per system
+4. Monitoring Config: Singleton record (pk=CONFIG, sk=MONITORING) - one per system
+5. AWS Credentials: Stored in separate monitoring profile, not in AWS Config
+
+================================================================================
+Last Updated: 2025-11-23
+Status: Updated to align with domain models (docs/models/*)
 ================================================================================

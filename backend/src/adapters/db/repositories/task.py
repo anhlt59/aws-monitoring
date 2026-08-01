@@ -1,7 +1,10 @@
+from common.utils.encoding import base64_to_json
 from src.adapters.db.mappers import TaskMapper
 from src.adapters.db.models import TaskPersistence
-from src.adapters.db.repositories.base import DynamoRepository
-from src.domain.models import Task, TaskPriority, TaskStatus
+from src.domain.models import Task, TaskStatus
+from .base import DynamoRepository, QueryResult
+
+TaskQueryResult = QueryResult[Task]
 
 
 class TaskRepository(DynamoRepository):
@@ -13,58 +16,72 @@ class TaskRepository(DynamoRepository):
         model = self._get(hash_key="TASK", range_key=f"TASK#{task_id}")
         return self.mapper.to_entity(model)
 
-    def list_all(self) -> list[Task]:
+    def all(self,
+            direction: str = "desc",
+            limit: int = 50,
+            cursor: str | None = None,
+            ) -> TaskQueryResult:
         """List all tasks, sorted by ID."""
-        result = self._query(hash_key="TASK")
-        return [self.mapper.to_entity(item) for item in result]
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
 
-    def list_by_assigned_user(self, user_id: str) -> list[Task]:
+        result = self._query(
+            hash_key="TASK",
+            last_evaluated_key=last_evaluated_key,
+            scan_index_forward=scan_index_forward,
+            limit=limit,
+        )
+
+        return TaskQueryResult(
+            items=[self.mapper.to_entity(item) for item in result],
+            limit=limit,
+            cursor=result.last_evaluated_key,
+        )
+
+    def list_by_assigned_user(
+        self, user_id: str,
+        status: TaskStatus | None = None,
+        direction: str = "desc",
+        limit: int = 50,
+        cursor: str | None = None
+    ) -> TaskQueryResult:
         """Get tasks assigned to a user, sorted by status & priority."""
-        result = self._query(
-            hash_key=f"ASSIGNED#{user_id}",
-            index=self.model_cls.gsi1,
-        )
-        return [self.mapper.to_entity(item) for item in result]
+        range_key_condition = self.model_cls.gsi1sk.begins_with(f"STATUS#{status.value}#") if status else None
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
 
-    def list_by_assigned_user_and_status(self, user_id: str, status: TaskStatus) -> list[Task]:
-        """Get tasks assigned to a user filtered by status."""
-        range_key_condition = self.model_cls.gsi1sk.begins_with(f"STATUS#{status.value}#")
         result = self._query(
             hash_key=f"ASSIGNED#{user_id}",
             range_key_condition=range_key_condition,
             index=self.model_cls.gsi1,
+            last_evaluated_key=last_evaluated_key,
+            scan_index_forward=scan_index_forward,
+            limit=limit,
         )
-        return [self.mapper.to_entity(item) for item in result]
+        return TaskQueryResult(
+            items=[self.mapper.to_entity(item) for item in result],
+            limit=limit,
+            cursor=result.last_evaluated_key,
+        )
 
-    def list_by_status(self, status: TaskStatus) -> list[Task]:
+    def list_by_status(self, status: TaskStatus, direction: str = "desc",
+                       limit: int = 50,
+                       cursor: str | None = None) -> TaskQueryResult:
         """List tasks by status, sorted by creation time."""
+        last_evaluated_key = base64_to_json(cursor) if cursor else None
+        scan_index_forward = "asc" == direction
         result = self._query(
             hash_key=f"STATUS#{status.value}",
             index=self.model_cls.gsi2,
+            last_evaluated_key=last_evaluated_key,
+            scan_index_forward=scan_index_forward,
+            limit=limit,
         )
-        return [self.mapper.to_entity(item) for item in result]
-
-    def list_by_status_and_date_range(
-        self, status: TaskStatus, start_date: int | None = None, end_date: int | None = None
-    ) -> list[Task]:
-        """List tasks by status and date range."""
-        if start_date and end_date:
-            range_key_condition = self.model_cls.gsi2sk.between(
-                f"CREATED#{start_date}", f"CREATED#{end_date}"
-            )
-        elif start_date:
-            range_key_condition = self.model_cls.gsi2sk >= f"CREATED#{start_date}"
-        elif end_date:
-            range_key_condition = self.model_cls.gsi2sk <= f"CREATED#{end_date}"
-        else:
-            range_key_condition = None
-
-        result = self._query(
-            hash_key=f"STATUS#{status.value}",
-            range_key_condition=range_key_condition,
-            index=self.model_cls.gsi2,
+        return TaskQueryResult(
+            items=[self.mapper.to_entity(item) for item in result],
+            limit=limit,
+            cursor=result.last_evaluated_key,
         )
-        return [self.mapper.to_entity(item) for item in result]
 
     def create(self, entity: Task):
         """Create a new task."""
